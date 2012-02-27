@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html debug="false">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<title>slide example</title>
+<style>
+html, body {
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	overflow:hidden;
+}
+#wrapper {
+	width: 100%;
+	height:100%;
+	overflow:hidden;
+}
+
+#wrap {
+	width: 100%;
+	height: 100%;
+}
+
+.panel {
+	position: absolute;
+	float:left;
+	top: 0;
+	width: 100%;
+	height: 100%;
+		
+	/* Safari and Chrome */
+	display:-webkit-box;
+	-webkit-box-orient:vertical;
+	-webkit-box-pack:center;
+	-webkit-box-align:center;
+	
+	/* W3C */
+	display:box;
+	box-orient:vertical;
+	box-pack:center;
+	box-align:center;
+}
+
+#panel1 {
+	left: 0%;
+}
+#panel2 {
+	left: 100%;
+}
+#panel3 {
+	left: -100%;
+}
+
+.box {
+	width:300px;
+	height:300px;
+
+	background: #eeeee0;
+	z-index: 1;
+	
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	font-size: 30px;
+}
+
+
+</style>
+<script type="text/javascript" src="js/lib/gesture.js"></script>
+<script type="text/javascript" src="js/slide.js"></script>
+
+</head>
+<body>
+<div id="wrapper">
+<div id="wrap">
+	<div class="panel" id="panel1"> 
+		
+		<img alt="Piazza del Duomo, Florence, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic01.jpg" width="300" height="213">
+	</div>
+	<div class="panel" id="panel2"> 
+		
+		<img alt="Tuscan Landscape" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic02.jpg" width="300" height="164">
+	</div>
+	<div class="panel" id="panel3"> 
+		
+		<img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic03.jpg" width="300" height="213">
+	</div>
+</div>
+</div>
+<script type="text/javascript">
+var slides = [
+      		{
+    			img: 'http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic01.jpg',
+    			width: 300,
+    			height: 213,
+    			desc: 'Piazza del Duomo, Florence, Italy'
+    		},
+    		{
+    			img: 'http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic02.jpg',
+    			width: 300,
+    			height: 164,
+    			desc: 'Tuscan Landscape'
+    		},
+    		{
+    			img: 'http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic03.jpg',
+    			width: 300,
+    			height: 213,
+    			desc: 'Colosseo, Rome, Italy'
+    		},
+    		{
+    			img: 'http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic04.jpg',
+    			width: 147,
+    			height: 220,
+    			desc: 'Somewhere near Chinatown, San Francisco'
+    		},
+    		{
+    			img: 'http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic05.jpg',
+    			width: 300,
+    			height: 213,
+    			desc: 'Medieval guard tower, Asciano, Siena, Italy'
+    		},
+    		{
+    			img: 'http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic06.jpg',
+    			width: 165,
+    			height: 220,
+    			desc: 'Leaning tower, Pisa, Italy'
+    		}
+    	];
+var s = new Slide(document.getElementById("wrap"), 0);
+</script>
+
+</body>
+</html>
