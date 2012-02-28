@@ -14,6 +14,11 @@ html, body {
 	padding: 0;
 	overflow:hidden;
 }
+ul, li {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+}
 #wrapper {
 	width: 100%;
 	height:100%;
@@ -23,6 +28,8 @@ html, body {
 #wrap {
 	width: 100%;
 	height: 100%;
+	position: relative;
+	top: 0;
 }
 
 .panel {
@@ -37,6 +44,7 @@ html, body {
 	-webkit-box-orient:vertical;
 	-webkit-box-pack:center;
 	-webkit-box-align:center;
+	-webkit-transform:translate3d(0,0,0);
 	
 	/* W3C */
 	display:box;
@@ -77,16 +85,13 @@ html, body {
 <div id="wrapper">
 <div id="wrap">
 	<div class="panel" id="panel1"> 
-		
-		<img alt="Piazza del Duomo, Florence, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic01.jpg" width="300" height="213">
+		<ul><li><a href="m.daum.net">1</a></li><li>2</li><li><img alt="Piazza del Duomo, Florence, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic01.jpg" width="300" height="213"></li></ul>
 	</div>
 	<div class="panel" id="panel2"> 
-		
-		<img alt="Tuscan Landscape" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic02.jpg" width="300" height="164">
+		<ul><li><a href="m.daum.net">1</a></li><li>2</li><li><img alt="Tuscan Landscape" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic02.jpg" width="300" height="164"></li></ul>
 	</div>
 	<div class="panel" id="panel3"> 
-		
-		<img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic03.jpg" width="300" height="213">
+		<ul><li><a href="m.daum.net">1</a></li><li>2</li><li><img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic03.jpg" width="300" height="213"></li></ul>
 	</div>
 </div>
 </div>

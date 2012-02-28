@@ -7,6 +7,7 @@ Slide.prototype = {
 		this.page = 0;
 		this.offset = 0;
 		this.el = (typeof(el) === "string")? document.getElementById(el) : el;
+
 		this.pageWidth = el.clientWidth;
 //		this.el.style.webkitTransformStyle = 'preserve-3d';
 		this.pages = Array.prototype.slice.call(el.getElementsByClassName("panel"));
@@ -30,16 +31,16 @@ Slide.prototype = {
 	__start: function (session) {
 		session.targetEvent.preventDefault();
 		this.pointX = session.startPos.x;
-		this.el.style.webkitTransitionDuration = '0ms';
+		this.el.style.webkitTransitionDuration = '0';
 	},
 	__move: function (session) {
 		if (session.isSwipe()) {
 			session.targetEvent.preventDefault();
 			this.__pos(-this.page*this.pageWidth + session.delta.x);
-			this.el.style.webkitTransitionDuration = '500ms';
 		}
 	},
 	__end: function (session) {
+		this.el.style.webkitTransitionDuration = '500ms';
 
 		if (this.__isNextSwipe(session)) {
 			this.__next();
@@ -50,7 +51,7 @@ Slide.prototype = {
 		}
 	},
 	__pos: function (x) {
-		this.el.style.webkitTransform = 'translateX('+ x +'px)';
+		this.el.style.webkitTransform = 'translate3d('+ x +'px,0,0)';
 	},
 	__isNextSwipe: function (session) {
 		if (session.isLeft() && (this.el.clientWidth * -0.2 > session.delta.x)) {
@@ -116,5 +117,4 @@ Slide.prototype = {
 	__cancel: function () {
 		this.__pos(-this.page * this.pageWidth);
 	}
-		
 };
