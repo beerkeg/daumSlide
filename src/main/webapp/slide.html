@@ -32,6 +32,10 @@ ul, li {
 	top: 0;
 }
 
+#wrap * {
+	-webkit-transform:translate3d(0,0,0);
+}
+
 .panel {
 	position: absolute;
 	float:left;
@@ -44,7 +48,7 @@ ul, li {
 	-webkit-box-orient:vertical;
 	-webkit-box-pack:center;
 	-webkit-box-align:center;
-	-webkit-transform:translate3d(0,0,0);
+	
 	
 	/* W3C */
 	display:box;
@@ -134,7 +138,27 @@ var slides = [
     			desc: 'Leaning tower, Pisa, Italy'
     		}
     	];
-var s = new Slide(document.getElementById("wrap"), 0);
+    	
+var s = slide.slideListener(document.getElementById("wrap"), 0);
+s.onSlideStart(function(){
+	console.log("start");
+});
+s.onSlidePrev(function(){
+	console.log("prev");
+});
+s.onSlideNext(function(){
+	console.log("next");
+});
+s.onSlideCancel(function(){
+	console.log("cancel");
+});
+s.onSlideEnd(function(){
+	console.log("end");
+});
+s.onSlideMove(function(){
+	console.log("move");
+});
+s.setSlideTreshold(0.3);
 </script>
 
 </body>
