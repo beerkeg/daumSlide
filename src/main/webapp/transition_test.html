@@ -1,0 +1,195 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <!--
+    http://zuu.kr/nwc
+
+    ref.
+    http://code.google.com/p/jqtouch/issues/detail?id=398
+    http://blazingcloud.net/2010/08/11/jqtouch-slide-transition-fix-for-android-2-0/
+    http://code.google.com/p/jqtouch/wiki/Animations
+    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>CSS3 Transition Test</title>
+    <style id="daum-reset" type="text/css">
+        body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,textarea,p,blockquote,th,td,input,select,textarea,button{margin:0;padding:0;}
+        fieldset,img{border:0 none;}
+        dl,ul,ol,menu,li {list-style:none;}
+        blockquote, q {quotes: none;}
+        blockquote:before, blockquote:after,q:before, q:after {content: '';content: none;}
+        input,select,textarea,button {vertical-align:middle;}
+
+        table {border-collapse: collapse;border-spacing: 0;}
+        body {-webkit-text-size-adjust: none} /* 뷰표트 변환시 폰트크기 자동확대 방지. */
+        input[type='text'],input[type='password'],input[type='submit'] {-webkit-appearance: none; -webkit-border-radius: 0; }
+        input:checked[type='checkbox']{background-color: #666; -webkit-appearance: checkbox;}
+        button,input[type='button'],input[type='submit'],input[type='reset'],input[type='file']{-webkit-appearance: button; -webkit-border-radius: 0;}
+        body {background:#fff;}
+        body,th,td,input,select,textarea,button {color:#333;} /* color값은 디자인가이드에 맞게사용 */
+        a {color:#333;text-decoration:none;}
+        a:active, a:hover {text-decoration:underline;}
+        address,caption,cite,code,dfn,em,var {font-style:normal;font-weight:normal;}
+
+        .ir_pm {display:block;overflow:hidden;font-size:0px;line-height:0;text-indent:-9999px;}
+        .ir_wa {display:block;overflow:hidden;position:relative;width:100%;height:100%;z-index:-1;}
+        .screen_out {display:block;overflow:hidden;position:absolute;left:-9999px;width:1px;height:1px;font-size:0;line-height:0;text-indent:-9999px;}
+        .screen_hide {font-size:0;line-height:0;visibility:hidden;}
+
+        .f_l {float:left;}
+        .f_r {float:right;}
+        .cl_b {clear:both;width:0;height:0;font-size:0;line-height:0;}
+        .show {display:block;}
+        .hide {display:none;}
+        body,th,td,input,select,textarea,button {font-size:14px; line-height:1.5em; font-family:'Malgun Gothic', '맑은 고딕', sans-serif;}
+            /* border round 3px button style */
+        .bround {display:inline-block;padding:0;border:1px solid;border-radius:3px;-webkit-border-radius:3px;font-size:12px;text-decoration:none;text-align:center;}
+            /* padding round 3px button style */
+        .pround {display:inline-block;padding:1px;border-radius:3px;-webkit-border-radius:3px;font-size:12px;text-decoration:none;}
+        .pround .inner {display:inline-block;width:100%;height:100%;border-radius:3px;-webkit-border-radius:3px;text-align:center;}
+    </style>
+    <style id="list-m3" type="text/css">
+        /***** list_thumb / m3. 제목한줄형 *****/
+        .list_0bfue8zq0s  {overflow:hidden;width:100%}
+        .list_0bfue8zq0s li  {overflow:hidden;float:left;width:100%;border-bottom:1px solid #eee}
+        .list_0bfue8zq0s .cont  {float:left;width:100%;text-decoration:none}
+        .list_0bfue8zq0s .thumb  {float:left;width:67px;margin:9px 8px 0 12px;line-height:0}
+        .list_0bfue8zq0s .thumb .frame  {border:1px solid #c5c5c5}
+        .list_0bfue8zq0s .cont .desc  {display:block;padding:13px 12px 12px;font-size:12px;color:#888}
+        .list_0bfue8zq0s .desc .tit  {display:block;overflow:hidden;padding-bottom:3px;font-weight:normal;font-size:14px;color:#000;line-height:20px;white-space:nowrap;-webkit-text-overflow:ellipsis;text-overflow:ellipsis}
+        .list_0bfue8zq0s .desc .num  {font-family:'helvetica',serif;}
+        .list_0bfue8zq0s .txt_recom .num  {color:#eb6127}
+        .list_0bfue8zq0s .cont .txt_bar  {color:#e7e7e7}
+    </style>
+    <style type="text/css">
+        .body-wrap {
+            overflow: hidden;
+        }
+        a, div, span, img, button {
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        }
+        .image-wrap, .list-wrap {
+            position: relative;
+            left: 0;
+            -webkit-transition-property: left, -webkit-transform;
+            -webkit-transition-duration: .5s;
+            -webkit-transition-timing: ease-in;
+        }
+        .ani-2d {
+            -webkit-transform: translate(0, 0);
+        }
+        .ani-3d {
+            -webkit-transform: translate3d(0, 0, 0);
+        }
+
+        .ani.moved {
+            left: 200px;
+        }
+
+        .ani-2d.moved {
+            -webkit-transform: translate(200px, 0);
+        }
+
+        .ani-3d.moved {
+            -webkit-transform: translate3d(200px, 0, 0);
+        }
+    </style>
+</head>
+<body>
+    <div class="body-wrap">
+        <div class="image-wrap ani">
+            <img src="http://m1.daumcdn.net/cfile76/T150x150/190315494F221592297D80"
+                 width="69" height="100" />
+            <span>Transition: left</span>
+        </div>
+
+        <div class="list-wrap ani">
+            <ul class="list_0bfue8zq0s">
+                <li>
+                    <a href="#" class="cont">
+                        <span class="thumb">
+                            <img src="http://cfile61.uf.daum.net/C115x85/1509D0414DEEF81816335D" alt="" class="frame" width="65"
+                                 height="48">
+                        </span>
+                        <span class="desc">
+                            <strong class="tit">Transition: left</strong>
+                            <span class="txt_name">쿡쿡알</span><span class="txt_bar"> | </span><span class="txt_hits">조회 <span
+                                class="num">12345</span></span><span class="txt_bar"> | </span><span class="txt_recom">추천 <span
+                                class="num">12345</span></span>
+                        </span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+
+        <div class="image-wrap ani-2d">
+            <img src="http://m1.daumcdn.net/cfile76/T150x150/190315494F221592297D80"
+                 width="69" height="100" />
+            <span>Transition: translate</span>
+        </div>
+
+        <div class="list-wrap ani-2d">
+            <ul class="list_0bfue8zq0s">
+                <li>
+                    <a href="#" class="cont">
+                        <span class="thumb">
+                            <img src="http://cfile61.uf.daum.net/C115x85/1509D0414DEEF81816335D" alt="" class="frame" width="65"
+                                 height="48">
+                        </span>
+                        <span class="desc">
+                            <strong class="tit">Transition: translate</strong>
+                            <span class="txt_name">쿡쿡알</span><span class="txt_bar"> | </span><span class="txt_hits">조회 <span
+                                class="num">12345</span></span><span class="txt_bar"> | </span><span class="txt_recom">추천 <span
+                                class="num">12345</span></span>
+                        </span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+
+        <div class="image-wrap ani-3d">
+            <img src="http://m1.daumcdn.net/cfile76/T150x150/190315494F221592297D80"
+                 width="69" height="100" />
+            <span>Transition: translate3d</span>
+        </div>
+
+        <div class="list-wrap ani-3d">
+            <ul class="list_0bfue8zq0s">
+                <li>
+                    <a href="#" class="cont">
+                        <span class="thumb">
+                            <img src="http://cfile61.uf.daum.net/C115x85/1509D0414DEEF81816335D" alt="" class="frame" width="65"
+                                 height="48">
+                        </span>
+                        <span class="desc">
+                            <strong class="tit">Transition: translate3d</strong>
+                            <span class="txt_name">쿡쿡알</span><span class="txt_bar"> | </span><span class="txt_hits">조회 <span
+                                class="num">12345</span></span><span class="txt_bar"> | </span><span class="txt_recom">추천 <span
+                                class="num">12345</span></span>
+                        </span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+    
+    <p>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+    <script type="text/javascript"
+            src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/jquery/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript">
+        var $j = jQuery;
+        var animate = function (e) {
+            $j(this).toggleClass('moved');
+            e.preventDefault();
+            e.stopPropagation();
+        };
+        $j('.list-wrap, .image-wrap').click(animate);
+    </script>
+</body>
+</html>
