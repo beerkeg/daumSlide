@@ -1,20 +1,22 @@
 (function (exports) {
 	var SLIDE_TRESHOLD = 0.2;
 	
-	var Slide = function(el, gestureTreshold, gestureHandlers) {
-		this.init(el, gestureTreshold, gestureHandlers);
+	var Slide = function(el, gestureTreshold, slideHandlers) {
+		this.init(el, gestureTreshold, slideHandlers);
 	};
 	
 	Slide.prototype = {
-		init: function (el, gestureTreshold, gestureHandlers) {
+		init: function (el, gestureTreshold, slideHandlers) {
 			this.page = 0;
 			this.offset = 0;
 			this.el = (typeof(el) === "string")? document.getElementById(el) : el;
 	
 			this.pageWidth = el.clientWidth;
 			this.pages = Array.prototype.slice.call(el.getElementsByClassName("panel"));
-			this.gestureHandlers = gestureHandlers;
+			this.slideHandlers = slideHandlers;
 			this.__bindEvent(gestureTreshold);
+			this.isScrolling = false;
+
 		},
 		__bindEvent: function (gestureTreshold) {
 			var resizeEvent = 'onorientationchange' in window ? 'orientationchange' : 'resize',
@@ -32,20 +34,21 @@
 			this.__pos(-this.page * this.pageWidth);
 		},
 		__start: function (session) {
-			session.targetEvent.preventDefault();
 			this.pointX = session.startPos.x;
 			this.el.style.webkitTransitionDuration = '0';
-			if (this.gestureHandlers.onSlideStart) {
-				this.gestureHandlers.onSlideStart();
+			if (this.slideHandlers.onSlideStart) {
+				this.slideHandlers.onSlideStart();
 			}
 		},
 		__move: function (session) {
-			if (session.isSwipe()) {
+			if (session.isSwipe() && !this.isScrolling) {
 				session.targetEvent.preventDefault();
 				this.__pos(-this.page*this.pageWidth + session.delta.x);
-				if (this.gestureHandlers.onSlideMove) {
-					this.gestureHandlers.onSlideMove();
+				if (this.slideHandlers.onSlideMove) {
+					this.slideHandlers.onSlideMove();
 				}
+			} else if (session.isScroll()) {
+				this.isScrolling = true; 
 			}
 		},
 		__end: function (session) {
@@ -58,8 +61,9 @@
 			} else {
 				this.__cancel();
 			}
-			if (this.gestureHandlers.onSlideEnd) {
-				this.gestureHandlers.onSlideEnd();
+			this.isScrolling = false;
+			if (this.slideHandlers.onSlideEnd) {
+				this.slideHandlers.onSlideEnd();
 			}
 		},
 		__pos: function (x) {
@@ -83,16 +87,16 @@
 			this.__pulsPageOffset();
 			this.__pos(-this.page * this.pageWidth);
 			this.__movePageTool(this.page+1, this.__getNextOffsetOfMovingPanel());
-			if (this.gestureHandlers.onSlideNext) {
-				this.gestureHandlers.onSlideNext();
+			if (this.slideHandlers.onSlideNext) {
+				this.slideHandlers.onSlideNext();
 			}
 		},
 		__prev: function () {
 			this.__minusPageOffset();
 			this.__pos(-this.page * this.pageWidth);
 			this.__movePageTool(this.page-1, this.__getPrevOffsetOfMovingPanel());
-			if (this.gestureHandlers.onSlidePrev) {
-				this.gestureHandlers.onSlidePrev();
+			if (this.slideHandlers.onSlidePrev) {
+				this.slideHandlers.onSlidePrev();
 			}
 		},
 		__getNextOffsetOfMovingPanel: function () {
@@ -134,8 +138,8 @@
 		},
 		__cancel: function () {
 			this.__pos(-this.page * this.pageWidth);
-			if (this.gestureHandlers.onSlideCancel) {
-				this.gestureHandlers.onSlideCancel();
+			if (this.slideHandlers.onSlideCancel) {
+				this.slideHandlers.onSlideCancel();
 			}
 		}
 	};
