@@ -162,20 +162,22 @@
 			this.movingOffset = movingOffset;
 		},
 		__loadData: function () {
-			var dataOffset;
-			var dataListLen = SLIDE_DATA_LIST.length;
-
-			if (this.loof && this.movingPage < 0) {
-				dataOffset = this.movingPage % dataListLen;
-				if (dataOffset !== 0) {
-					dataOffset = dataListLen + dataOffset;
+			if (typeof this.movingOffset !== 'undefined') {
+				var dataOffset;
+				var dataListLen = SLIDE_DATA_LIST.length;
+	
+				if (this.loof && this.movingPage < 0) {
+					dataOffset = this.movingPage % dataListLen;
+					if (dataOffset !== 0) {
+						dataOffset = dataListLen + dataOffset;
+					}
+				} else if (this.loof && this.movingPage >= dataListLen) {
+					dataOffset = this.movingPage % dataListLen;
+				} else {
+					dataOffset = this.movingPage;
 				}
-			} else if (this.loof && this.movingPage >= dataListLen) {
-				dataOffset = this.movingPage % dataListLen;
-			} else {
-				dataOffset = this.movingPage;
+				this.panels[this.movingOffset].innerHTML = SLIDE_DATA_LIST[dataOffset] || "";
 			}
-			this.panels[this.movingOffset].innerHTML = SLIDE_DATA_LIST[dataOffset] || "";
 		},
 		__cancel: function () {
 			this.__pos(-this.page * this.pageWidth);
