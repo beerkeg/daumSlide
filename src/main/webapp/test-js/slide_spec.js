@@ -1,11 +1,12 @@
 describe('slide.js', function () {
     var WRAPPER_ID = 'wrapper_fixture',
-        wrapper;
+        wrapper,
+        $j = jQuery;
 
     beforeEach(function () {
         wrapper = document.createElement('div');
         wrapper.id = WRAPPER_ID;
-        document.body.appendChild('wrapper');
+        document.body.appendChild(wrapper);
     });
 
     afterEach(function () {
@@ -13,9 +14,19 @@ describe('slide.js', function () {
         wrapper = null;
     });
 
-    describe('initialize', function () {
-//        var slide = new Slide(document.getElementById(WRAPPER_ID), 0);
-//        expect(slide).toBeDefined();
+    describe('slide.Slide', function () {
+        it('should init with element', function () {
+            var s = new slide.Slide(wrapper);
+            expect(s).toBeDefined();
+        });
+
+        it('should create three slide panels', function () {
+            new slide.Slide(wrapper);
+            expect($j('.slide > .panel:eq(0)', wrapper).css('left')).toBe('0%');
+            expect($j('.slide > .panel:eq(1)', wrapper).css('left')).toBe('100%');
+            expect($j('.slide > .panel:eq(2)', wrapper).css('left')).toBe('-100%');
+        });
+
     });
 
 });
