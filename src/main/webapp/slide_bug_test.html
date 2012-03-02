@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html debug="false">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<title>slide example</title>
+<style>
+html, body {
+	width: 100%;
+	margin: 0;
+	padding: 0;
+}
+ul, li {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+}
+#wrapper {
+	
+	width: 100%;
+	height:400px;
+	overflow:hidden;
+	background-color:#aaa;
+}
+
+.panel {
+	position: absolute;
+	float:left;
+	top: 0;
+	width: 100%;
+	height: 100%;
+		
+	/* Safari and Chrome */
+	display:-webkit-box;
+	-webkit-box-orient:vertical;
+	-webkit-box-pack:center;
+	-webkit-box-align:center;
+	-webkit-transform:translate3d(0,0,0);
+	
+	/* W3C */
+	display:box;
+	box-orient:vertical;
+	box-pack:center;
+	box-align:center;
+}
+
+</style>
+<script type="text/javascript" src="js/lib/gesture.js"></script>
+<script type="text/javascript" src="js/slide.js"></script>
+
+</head>
+<body>
+<div id="header">
+	<h1>테스트 페이지</h1>
+	<img alt="Piazza del Duomo, Florence, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic01.jpg" width="300" height="213">
+</div>
+<div id="wrapper">
+
+</div>
+<img alt="Piazza del Duomo, Florence, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic01.jpg" width="300" height="213">
+<div id="footer">
+</div>
+<script type="text/javascript">
+var slides = [
+        		'<ul><li><a href="m.daum.net">1</a></li><li>2</li><li><img alt="Piazza del Duomo, Florence, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic01.jpg" width="300" height="213"></li></ul>'
+        		,
+      		'<ul><li><a href="m.daum.net">1</a></li><li>2</li><li><img alt="Tuscan Landscape" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic02.jpg" width="300" height="164"></li></ul>'
+  			,
+      		'<ul><li><a href="m.daum.net">1</a></li><li>2</li><li><img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic03.jpg" width="300" height="213"></li></ul>'
+  			
+      	];
+      	
+  var s = slide.slideListener(document.getElementById("wrapper"), 0);
+  s.onSlideStart(function(){
+  	console.log("start");
+  });
+  s.onSlidePrev(function(){
+  	console.log("prev");
+  });
+  s.onSlideNext(function(){
+  	console.log("next");
+  });
+  s.onSlideCancel(function(){
+  	console.log("cancel");
+  });
+  s.onSlideEnd(function(){
+  	console.log("end");
+  });
+  s.onSlideMove(function(){
+  	//console.log("move");
+  });
+  s.setSlideTreshold(0.3);
+  s.setSlideDataList(slides);
+  </script>
+
+</body>
+</html>
