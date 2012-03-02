@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html debug="false">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<title>slide example</title>
+<style>
+html, body {
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	overflow:hidden;
+}
+ul, li {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+}
+#wrapper {
+	width: 100%;
+	height:100%;
+	overflow:hidden;
+}
+
+.panel {
+	position: absolute;
+	float:left;
+	top: 0;
+	width: 100%;
+	height: 100%;
+		
+	/* Safari and Chrome */
+	display:-webkit-box;
+	-webkit-box-orient:vertical;
+	-webkit-box-pack:center;
+	-webkit-box-align:center;
+	-webkit-transform:translate3d(0,0,0);
+	
+	/* W3C */
+	display:box;
+	box-orient:vertical;
+	box-pack:center;
+	box-align:center;
+}
+
+</style>
+<script type="text/javascript" src="js/lib/gesture.js"></script>
+<script type="text/javascript" src="js/slide.js"></script>
+
+</head>
+<body>
+<div>
+	<input type="text" id="query" value="" />
+	<button type="button" onclick="requestImageData();return false;">검색</button>
+</div>
+
+<div id="wrapper">
+</div>
+<script type="text/javascript">
+function parseImageData (jsonStr) {
+	var item = jsonStr.channel.item;
+	var arr = [];
+	console.log(item);
+	for (var i=0, len=item.length; i< len; i++) {
+		arr.push('<img alt="'+item[i].title+'" src="'+item[i].image+'" width="'+item[i].width+'" height="'+item[i].height+'">');
+	}
+	s.setSlideDataList(arr);
+}
+
+function requestImageData () {
+	var query = document.getElementById("query").value;
+	var url='http://apis.daum.net/search/image?apikey=080a78bc84cc6b814fb365591b1d7d7fc26575b3&output=json&callback=parseImageData&q=' + query;
+	
+	var s = document.createElement("script");
+	s.type = "text/javascript";
+	s.src = url;
+	document.getElementsByTagName("head")[0].appendChild(s);
+}
+   	
+var s = slide.slideListener(document.getElementById("wrapper"), 0);
+s.onSlideStart(function(){
+	console.log("start");
+});
+s.onSlidePrev(function(){
+	console.log("prev");
+});
+s.onSlideNext(function(){
+	console.log("next");
+});
+s.onSlideCancel(function(){
+	console.log("cancel");
+});
+s.onSlideEnd(function(){
+	console.log("end");
+});
+s.onSlideMove(function(){
+	//console.log("move");
+});
+s.setSlideTreshold(0.3);
+
+</script>
+
+</body>
+</html>
