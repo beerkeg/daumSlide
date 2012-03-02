@@ -34,7 +34,7 @@
 		},
 		__createSlide: function (el) {
 			var wrapper = (typeof(el) === "string")? document.getElementById(el) : el;
-			wrapper.innerHTML = '<div class="slide" id="slider-'+__slideIndex+'" style="width:100%;height: 100%;position: relative;top:0;"><div class="panel" style="left:0%"></div><div class="panel" style="left:100%"></div><div class="panel" style="left:-100%"></div></div>';
+			wrapper.innerHTML = '<div class="slide" id="slider-'+__slideIndex+'" style="width:100%;height: 100%;position: relative;top:0;"><div class="panel" style="left:0%;"></div><div class="panel" style="left:100%;"></div><div class="panel" style="left:-100%;"></div></div>';
 			
 			this.el = document.getElementById("slider-"+__slideIndex);
 			this.panels = this.el.getElementsByClassName("panel");
@@ -233,4 +233,5 @@
 	}
 	
 	exports.slideListener = slideListener;
+    exports.Slide = Slide;
 })(window.slide = {});
