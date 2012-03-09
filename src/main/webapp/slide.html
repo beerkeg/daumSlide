@@ -13,6 +13,7 @@ html, body {
 	margin: 0;
 	padding: 0;
 	overflow:hidden;
+	background-color: #000;
 }
 ul, li {
 	margin: 0;
@@ -23,6 +24,8 @@ ul, li {
 	width: 100%;
 	height:100%;
 	overflow:hidden;
+	background-color: #000;
+	position: relative;
 }
 
 .panel {
@@ -31,6 +34,7 @@ ul, li {
 	top: 0;
 	width: 100%;
 	height: 100%;
+	overflow:hidden;
 		
 	/* Safari and Chrome */
 	display:-webkit-box;
@@ -45,6 +49,56 @@ ul, li {
 	box-pack:center;
 	box-align:center;
 }
+
+.panel img {
+	width:100px;
+	height:100px;
+}
+
+#wrapper button {
+	width:50px;
+	height:50px;
+	position: absolute;
+	top: 45%;
+	
+	margin: 0;
+	-webkit-appearance: button;
+	cursor: pointer;
+	border-radius: 4px;
+	border: 1px solid #CCC;
+	vertical-align: middle;
+	text-align: center;
+	display: inline-block;
+	padding: 4px 10px 4px;
+	margin-bottom: 0;
+	font-size: 13px;
+	line-height: 18px;
+	border-color: #04C #04C #002A80;
+	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+	background-repeat: repeat-x;
+	outline: 0;
+	background-color: #FFAA32;
+}
+#wrapper button:hover {
+	text-decoration: none;
+	background-position: 0 -15px;
+	-webkit-transition: background-position 0.1s linear;
+	background-color: #F89406;
+}
+#wrapper button:active {
+	box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+	background-image: none;
+	-webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+	background-color: #a56504 9;
+}
+
+#wrapper .prevBtn {
+	left:0px;
+}
+#wrapper .nextBtn {
+	right:0px;
+}
+
 
 </style>
 <script type="text/javascript" src="js/lib/gesture.js"></script>
@@ -70,36 +124,23 @@ var slides = [
 			
     	];
     	
-var s = slide.slideListener(document.getElementById("wrapper"), 0);
-s.onSlideStart(function(){
-	console.log("start");
+var d = slideDataSource.listener(true);
+var s = null;
+d.onDataLoadEnd(function(){
+	if (s === null) {
+		var wrapper = document.getElementById("wrapper");
+		s = slide.slideListener(wrapper, d, 0);
+		s.setSlideTreshold(0.3);
+		var click = "ontouchstart" in window ? "touchstart" : "click";
+		wrapper.getElementsByClassName("prevBtn")[0].addEventListener(click, function(){
+			s.prevSlide();
+		});
+		wrapper.getElementsByClassName("nextBtn")[0].addEventListener(click, function(){
+			s.nextSlide();
+		});
+	}
 });
-s.onSlidePrev(function(){
-	console.log("prev");
-});
-s.onSlideNext(function(){
-	console.log("next");
-});
-s.onSlideCancel(function(){
-	console.log("cancel");
-});
-s.onSlideEnd(function(){
-	console.log("end");
-});
-s.onSlideMove(function(){
-	//console.log("move");
-});
-s.setSlideTreshold(0.3);
-s.setSlideDataList(slides);
-
-setTimeout(function(){
-	s.addSlideData('<img alt="Colosseo, Rome, Italy" src="http://cfile217.uf.daum.net/image/121C310F499B8FE272BC3E" width="300" height="220">');
-	s.addSlideData('<img alt="Colosseo, Rome, Italy" src="http://cfile215.uf.daum.net/image/131C310F499B8FE070B667" width="300" height="220">');
-	s.addSlideData('<img alt="Colosseo, Rome, Italy" src="http://cfile207.uf.daum.net/image/141C310F499B8FE373CE46" width="300" height="220">');
-	s.addSlideData('<img alt="Colosseo, Rome, Italy" src="http://cfile230.uf.daum.net/image/151C310F499B8FE1710A9A" width="300" height="220">');
-	console.log("after 10");
-}, 10000);
-
+d.sendRequestData({data:slides});
 </script>
 
 </body>

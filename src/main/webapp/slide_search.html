@@ -13,6 +13,7 @@ html, body {
 	margin: 0;
 	padding: 0;
 	overflow:hidden;
+	background-color: #000;
 }
 ul, li {
 	margin: 0;
@@ -23,6 +24,8 @@ ul, li {
 	width: 100%;
 	height:100%;
 	overflow:hidden;
+	background-color: #000;
+	position: relative;
 }
 
 .panel {
@@ -31,6 +34,7 @@ ul, li {
 	top: 0;
 	width: 100%;
 	height: 100%;
+	overflow:hidden;
 		
 	/* Safari and Chrome */
 	display:-webkit-box;
@@ -46,61 +50,125 @@ ul, li {
 	box-align:center;
 }
 
+.panel img {
+	width:100px;
+	height:100px;
+}
+
+#wrapper button {
+	width:50px;
+	height:50px;
+	position: absolute;
+	top: 45%;
+	
+	margin: 0;
+	-webkit-appearance: button;
+	cursor: pointer;
+	border-radius: 4px;
+	border: 1px solid #CCC;
+	vertical-align: middle;
+	text-align: center;
+	display: inline-block;
+	padding: 4px 10px 4px;
+	margin-bottom: 0;
+	font-size: 13px;
+	line-height: 18px;
+	border-color: #04C #04C #002A80;
+	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+	background-repeat: repeat-x;
+	outline: 0;
+	background-color: #FFAA32;
+}
+#wrapper button:hover {
+	text-decoration: none;
+	background-position: 0 -15px;
+	-webkit-transition: background-position 0.1s linear;
+	background-color: #F89406;
+}
+#wrapper button:active {
+	box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+	background-image: none;
+	-webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+	background-color: #a56504 9;
+}
+
+#wrapper .prevBtn {
+	left:0px;
+}
+#wrapper .nextBtn {
+	right:0px;
+}
+
 </style>
 <script type="text/javascript" src="js/lib/gesture.js"></script>
 <script type="text/javascript" src="js/slide.js"></script>
 
 </head>
 <body>
-<div>
+<div id="searchBox">
 	<input type="text" id="query" value="" />
-	<button type="button" onclick="requestImageData();return false;">검색</button>
+	<button id="searchbtn" type="button">검색</button>
 </div>
 
 <div id="wrapper">
 </div>
 <script type="text/javascript">
-function parseImageData (jsonStr) {
-	var item = jsonStr.channel.item;
-	var arr = [];
-	console.log(item);
-	for (var i=0, len=item.length; i< len; i++) {
-		arr.push('<img alt="'+item[i].title+'" src="'+item[i].image+'" width="'+item[i].width+'" height="'+item[i].height+'">');
-	}
-	s.setSlideDataList(arr);
-}
 
-function requestImageData () {
+   	
+var d = slideDataSource.listener(false, 5);
+var pageNum = (function (){
+	var pagenum = 1;
+	return function(){
+		return pagenum++;
+	};
+})();
+d.onRequestData(function(){
+	var callbackName = "d.responseData";
 	var query = document.getElementById("query").value;
-	var url='http://apis.daum.net/search/image?apikey=080a78bc84cc6b814fb365591b1d7d7fc26575b3&output=json&callback=parseImageData&q=' + query;
+	var url='http://apis.daum.net/search/image?apikey=080a78bc84cc6b814fb365591b1d7d7fc26575b3&output=json&callback='+ callbackName +'&q=' + query + '&pageno=' + pageNum();
 	
 	var s = document.createElement("script");
 	s.type = "text/javascript";
 	s.src = url;
 	document.getElementsByTagName("head")[0].appendChild(s);
-}
-   	
-var s = slide.slideListener(document.getElementById("wrapper"), 0);
-s.onSlideStart(function(){
-	console.log("start");
 });
-s.onSlidePrev(function(){
-	console.log("prev");
-});
-s.onSlideNext(function(){
-	console.log("next");
-});
-s.onSlideCancel(function(){
-	console.log("cancel");
-});
-s.onSlideEnd(function(){
-	console.log("end");
-});
-s.onSlideMove(function(){
-	//console.log("move");
-});
-s.setSlideTreshold(0.3);
+d.onParseData(function(jsonStr){
+	var item = jsonStr.channel.item;
+	var wrapper = document.getElementById("wrapper");
+	var arr = [];
+	console.log(jsonStr);
+	console.log(item);
+	for (var i=0, len=item.length; i< len; i++) {
+	//	arr.push('<img alt="'+item[i].title+'" src="'+item[i].image+'" width="'+item[i].width+'" height="'+item[i].height+'">');
+		arr.push('<img alt="'+item[i].title+'" src="'+item[i].image+'">');
+	}
+	document.getElementsByTagName("head")[0].removeChild(document.getElementsByTagName("head")[0].lastChild);
+	d.setDataTotalLength(parseInt(jsonStr.channel.totalCount));
 
+	return arr;
+});
+
+var s = null;
+d.onDataLoadEnd(function(){
+	if (s === null) {
+		var wrapper = document.getElementById("wrapper");
+		s = slide.slideListener(wrapper, d, 0);
+		s.setSlideTreshold(0.3);
+		var click = "ontouchstart" in window ? "touchstart" : "click";
+		wrapper.getElementsByClassName("prevBtn")[0].addEventListener(click, function(){
+			s.prevSlide();
+		});
+		wrapper.getElementsByClassName("nextBtn")[0].addEventListener(click, function(){
+			s.nextSlide();
+		});
+		wrapper.style.display = "block";
+	}
+});
+
+document.getElementById("searchbtn").addEventListener("click",function(){
+	document.getElementById("searchBox").style.display = "none";
+	d.sendRequestData();
+},false);
 </script>
 
 </body>
