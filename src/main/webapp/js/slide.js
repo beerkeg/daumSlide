@@ -1,7 +1,5 @@
 (function (exports) {
 	var SLIDE_TRESHOLD = 0.2;
-	var SLIDE_DATA_LIST = [];
-
 	var __slideIndex = 0;
 	
 	var Slide = function(slideHandlers, el, dataSource, gestureTreshold) {
@@ -13,7 +11,7 @@
 			this.slideHandlers = slideHandlers;
 			this.dataSource = dataSource;
 			this.__initPaging();
-
+			
 			this.__createSlide(el);
 			this.__setInitData();
 			
