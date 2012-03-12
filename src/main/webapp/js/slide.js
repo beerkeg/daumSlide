@@ -54,54 +54,88 @@
 		__resize: function () {
 			this.pageWidth = this.el.clientWidth;
 			this.__pos(-this.page * this.pageWidth);
+			this.__addExternalFunction(this.slideHandlers.onResize);
+		},
+		__isLandScape: function () {
+			if (window.innerHeight > window.innerWidth) {
+				return true;
+			} else {
+				return false;
+			}
 		},
 		__start: function (session) {
 			this.el.style.webkitTransitionDuration = '0';
 			this.isScrolling = false;
-			this.__addExternalFunction(this.slideHandlers.onSlideStart);
+			this.__addExternalFunction(this.slideHandlers.onSlideStart, session);
 		},
 		__move: function (session) {
 			if (session.isSwipe() && !this.isScrolling) {
 				session.targetEvent.preventDefault();
-				this.__pos(-this.page*this.pageWidth + session.delta.x);
-				this.__addExternalFunction(this.slideHandlers.onSlideMove);
+				this.__pos(-this.page*this.pageWidth + session.delta.x/2);
+				this.__addExternalFunction(this.slideHandlers.onSlideMove, session);
 			} else if (session.isScroll()) {
 				this.isScrolling = true; 
 			}
 		},
 		__end: function (session) {
 			if (this.__isNextSwipe(session)) {
-				this.__next();
+				this.__next(this.__setDurationTime(session));
 			} else if (this.__isPrevSwipe(session)) {
-				this.__prev();
+				this.__prev(this.__setDurationTime(session));
 			} else {
-				this.__cancel();
+				this.__cancel('500ms');
 			}
-			this.__addExternalFunction(this.slideHandlers.onSlideEnd);
+			this.__addExternalFunction(this.slideHandlers.onSlideEnd, session);
+		},
+		__setDurationTime: function (session) {
+			if (session.isFlick()) {
+				return '300ms';
+			} else {
+				var duration = Math.abs(parseInt(session.getTerm()*this.pageWidth/session.delta.x));
+				if (duration > 500) {
+					return '500ms';
+				} else {
+					return '' + duration + 'ms';
+				}
+			}
 		},
 		__pos: function (x) {
 			this.el.style.webkitTransform = 'translate3d('+ x +'px,0,0)';
 		},
 		__isNextSwipe: function (session) {
-			if (session.isLeft() && ((this.el.clientWidth * -1 * SLIDE_TRESHOLD > session.delta.x) || session.isFlick())) {
+			if (session.isLeft() && (this.__isNextThreshold(session) || session.isFlick())) {
+				return true;
+			} else {
+				return false;
+			}
+		},
+		__isNextThreshold: function (session) {
+			if (this.el.clientWidth * -1 * SLIDE_TRESHOLD > session.delta.x) {
 				return true;
 			} else {
 				return false;
 			}
 		},
 		__isPrevSwipe: function (session) {
-			if (session.isRight() && ((this.el.clientWidth * SLIDE_TRESHOLD < session.delta.x) || session.isFlick())) {
+			if (session.isRight() && (this.__isPrevThreshold(session) || session.isFlick())) {
 				return true;
 			} else {
 				return false;
 			}
 		},
-		__next: function () {
+		__isPrevThreshold: function (session) {
+			if (this.el.clientWidth * SLIDE_TRESHOLD < session.delta.x) {
+				return true;
+			} else {
+				return false;
+			}
+		},
+		__next: function (duration) {
 			var loadedData = this.dataSource.getNextData();
 			if (loadedData.type === "invalid") {
-				this.__cancel();
+				this.__cancel(duration);
 			} else {
-				this.el.style.webkitTransitionDuration = '500ms';
+				this.el.style.webkitTransitionDuration = duration;
 				this.__plusPageOffset();
 				this.__pos(-this.page * this.pageWidth);
 				var movingOffset = this.__getNextOffsetOfMovingPanel();
@@ -110,12 +144,12 @@
 				this.__addExternalFunction(this.slideHandlers.onSlideNext);
 			}
 		},
-		__prev: function () {
+		__prev: function (duration) {
 			var loadedData = this.dataSource.getPrevData();
 			if (loadedData.type === "invalid") {
-				this.__cancel();
+				this.__cancel(duration);
 			} else {
-				this.el.style.webkitTransitionDuration = '500ms';
+				this.el.style.webkitTransitionDuration = duration;
 				this.__minusPageOffset();
 				this.__pos(-this.page * this.pageWidth);
 				var movingOffset = this.__getPrevOffsetOfMovingPanel();
@@ -125,6 +159,9 @@
 			}
 		},
 		__setDataItem: function (movingOffset, loadedData) {
+			if (this.slideHandlers.onSetDataItem) {
+				loadedData = this.slideHandlers.onSetDataItem(loadedData);
+			}
 			this.panels[movingOffset].innerHTML = loadedData;
 		},
 		__getNextOffsetOfMovingPanel: function () {
@@ -164,14 +201,14 @@
 		__movePanel: function (movingPage, movingOffset) {
 			this.panels[movingOffset].style.left = movingPage * 100 + "%";
 		},
-		__cancel: function () {
-			this.el.style.webkitTransitionDuration = '500ms';
+		__cancel: function (duration) {
+			this.el.style.webkitTransitionDuration = duration;
 			this.__pos(-this.page * this.pageWidth);
 			this.__addExternalFunction(this.slideHandlers.onSlideCancel);
 		},
-		__addExternalFunction: function (fn) {
+		__addExternalFunction: function (fn, session) {
 			if (fn) {
-				fn();
+				fn(session);
 			}
 		}
 	};
@@ -183,7 +220,9 @@
 	            'onSlideEnd': null,
 	            'onSlidePrev': null,
 	            'onSlideNext': null,
-	            'onSlideCancel': null
+	            'onSlideCancel': null,
+	            'onResize': null,
+	            'onSetDataItem': null
 	        };
 		var slide = new Slide(slideHandlers, el, dataSourece, gestureTreshold);
 		__slideIndex++;
@@ -221,11 +260,23 @@
             onSlideCancel: function (fn) {
             	slideHandlers.onSlideCancel = fn;
             },
-            nextSlide: function () {
-            	slide.__next();
+            onResize: function (fn) {
+            	slideHandlers.onResize = fn;
             },
-            prevSlide: function () {
-            	slide.__prev();
+            onSetDataItem: function (fn) {
+            	slideHandlers.onSetDataItem = fn;
+            },
+            nextSlide: function (time) {
+            	slide.__next(time);
+            },
+            prevSlide: function (time) {
+            	slide.__prev(time);
+            },
+            isLandScape: function () {
+            	return slide.__isLandScape();
+            },
+            setInitData: function () {
+            	slide.__setInitData();
             }
 		};
 	}

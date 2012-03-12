@@ -133,10 +133,10 @@ d.onDataLoadEnd(function(){
 		s.setSlideTreshold(0.3);
 		var click = "ontouchstart" in window ? "touchstart" : "click";
 		wrapper.getElementsByClassName("prevBtn")[0].addEventListener(click, function(){
-			s.prevSlide();
+			s.prevSlide('500ms');
 		});
 		wrapper.getElementsByClassName("nextBtn")[0].addEventListener(click, function(){
-			s.nextSlide();
+			s.nextSlide('500ms');
 		});
 	}
 });

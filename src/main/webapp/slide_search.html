@@ -51,52 +51,111 @@ ul, li {
 }
 
 .panel img {
-	width:200px;
-	height:200px;
-}
-
-#wrapper button {
-	width:50px;
-	height:50px;
-	position: absolute;
-	top: 50%;
 	
-	margin: 0;
-	-webkit-appearance: button;
+}
+#wrapper button {
+	position: absolute;
+	top: 45%;
+	z-index: 30;
+	width: 23px;
+	height: 37px;
+	background: url(http://m1.daumcdn.net/imgsrc.search/search_all/2009/mobile/safari/btn_view_nav.png) 0 0 no-repeat;
+	text-indent: -10000px;
+	border-size: 0px;
+	border-style: none;
+	font: inherit;
+	cursor: hand;
 	cursor: pointer;
-	border-radius: 4px;
-	border: 1px solid #CCC;
-	vertical-align: middle;
-	text-align: center;
-	display: inline-block;
-	padding: 4px 10px 4px;
-	margin-bottom: 0;
-	font-size: 13px;
-	line-height: 18px;
-	border-color: #04C #04C #002A80;
-	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-	background-repeat: repeat-x;
-	outline: 0;
-	background-color: #FFAA32;
+	padding: 0px;
 }
-#wrapper button:hover {
-	text-decoration: none;
-	background-position: 0 -15px;
-	-webkit-transition: background-position 0.1s linear;
-	background-color: #F89406;
-}
-#wrapper button:active {
-	box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
-	background-image: none;
-	-webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
-	background-color: #a56504 9;
-}
-
 #wrapper .prevBtn {
-	left:0px;
+	left: 10px;
+	background-position: 0 0;
 }
 #wrapper .nextBtn {
-	right:0px;
+	right: 10px;
+	background-position: 0 -50px;
+}
+#desc_field {
+z-index: 1;
+}
+
+.wrap_desc {
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	z-index: 40;
+	width: 100%;
+	height: 82px;
+	padding-top: 12px;
+	border-top: 1px solid #434346;
+	background-color: black;
+	opacity: 0.7;
+	text-align: center;
+	line-height: 16px;
+}
+
+.wrap_desc .tit {
+	font-size: 15px;
+	color: #D2D6DD;
+	letter-spacing: -1px;
+	display: block;
+	text-decoration: none;
+}
+
+.wrap_desc .link_src {
+	margin-left: 17px;
+	font-size: 13px;
+	color: #7E93FF;
+	text-decoration: none;
+}
+
+.wrap_desc .info {
+	font-size: 12px;
+	color: #B8BDC3;
+}
+
+.wrap_desc .wrap_btn {
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	width: 100%;
+	height: 39px;
+	border-top: 1px solid #434346;
+}
+
+.wrap_desc .wrap_btn a {
+	display: block;
+	position: absolute;
+	top: 0px;
+	width: 50%;
+	height: 39px;
+	font-size: 14px;
+	font-weight: bold;
+	letter-spacing: -1px;
+	color: #B8BDC3;
+	text-decoration: none;
+	line-height: 39px;
+}
+
+.wrap_desc .wrap_btn a.left_wrap {
+	left: 0px;
+}
+.wrap_desc .wrap_btn a.right_wrap {
+	right: 0px;
+}
+.wrap_desc .wrap_btn a.right_wrap .bar {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 1px;
+	height: 39px;
+	border-left: 1px solid #434346;
+}
+.wrap_desc .wrap_btn .prev {
+	display: inline-block;
+	padding-left: 11px;
+	background: url(http://m1.daumcdn.net/imgsrc.search/search_all/2009/mobile/safari/btn_prev_search.png) 0 15px no-repeat;
 }
 
 </style>
@@ -106,7 +165,7 @@ ul, li {
 </head>
 <body>
 <div id="searchBox">
-	<input type="text" id="query" value="" />
+	<input type="text" id="query" value="이민정" />
 	<button id="searchbtn" type="button">검색</button>
 </div>
 
@@ -116,7 +175,6 @@ ul, li {
 
 	var d = slideDataSource.listener(false, 5);
 	var s = null;
-	
 	var pageNum = (function (){
 		var pagenum = 1;
 		return function(){
@@ -140,29 +198,65 @@ ul, li {
 		console.log(jsonStr);
 		console.log(item);
 		for (var i=0, len=item.length; i< len; i++) {
-		//	arr.push('<img alt="'+item[i].title+'" src="'+item[i].image+'" width="'+item[i].width+'" height="'+item[i].height+'">');
-			arr.push('<img alt="'+item[i].title+'" src="'+item[i].image+'">');
+			arr.push( item[i] );
 		}
+		
 		document.getElementsByTagName("head")[0].removeChild(document.getElementsByTagName("head")[0].lastChild);
 		d.setDataTotalLength(parseInt(jsonStr.channel.totalCount));
-	
+		
 		return arr;
 	});
 	d.onDataLoadEnd(function(){
 		if (s === null) {
 			var wrapper = document.getElementById("wrapper");
 			s = slide.slideListener(wrapper, d, 0);
-			s.setSlideTreshold(0.3);
+			s.setSlideTreshold(0.1);
 			var click = "ontouchstart" in window ? "touchstart" : "click";
 			wrapper.getElementsByClassName("prevBtn")[0].addEventListener(click, function(){
-				s.prevSlide();
+				s.prevSlide('500ms');
 			});
 			wrapper.getElementsByClassName("nextBtn")[0].addEventListener(click, function(){
-				s.nextSlide();
+				s.nextSlide('500ms');
 			});
 			wrapper.style.display = "block";
-			s.onSlideStart
-			s.onSlideEnd
+			var clientHeight = wrapper.clientHeight - 10;
+			var clientWidth = wrapper.clientWidth - 10;
+			s.onResize(function(){
+				clientHeight = wrapper.clientHeight - 10;
+				clientWidth = wrapper.clientWidth - 10;
+			});
+			function resizeImg(width, height) {
+				var imgSize = {};
+				if (clientHeight > clientWidth) {
+					imgSize.width = clientWidth;
+					imgSize.height = parseInt(clientWidth * height / width);
+				} else {
+					imgSize.height = clientHeight;
+					imgSize.width = parseInt(clientHeight * width / height);
+				}
+				return imgSize;
+			}
+			s.onSetDataItem(function(item){
+				if (item && item.type !== '') {
+					var imgSize = resizeImg(item.width, item.height);
+					var str = '<img alt="'+item.title+'" src="'+item.image+'" width="'+imgSize.width+'" height="'+imgSize.height+'">' +
+					'<div class="wrap_desc" style="opacity: 0.7; " id="desc_field">' +
+							'<a href="'+item.link+'" class="tit" id="desc_title">'+item.title+'</a>' +
+							'<span class="info" id="desc_info">'+item.width+' x '+item.height+'</span><a href="'+item.link+'" id="desc_url" class="link_src">'+item.link+'</a>' +
+							'<div class="wrap_btn">' +
+								'<a href="" class="left_wrap"><span class="prev">검색결과로 돌아가기</span></a>' + 
+								'<a id="desc_link" href="'+item.image+'" target="_blank" class="right_wrap"><span class="bar"></span><span>원본 바로보기</span></a>' +
+							'</div></div>';
+					return str;
+				} else {
+					return '';
+				}
+			});
+			s.setInitData();
+			s.onSlideStart(function(session){
+				session.targetEvent.preventDefault();
+			});
+			
 		}
 	});
 	
