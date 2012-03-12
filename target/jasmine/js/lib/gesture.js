@@ -1,19 +1,22 @@
-(function(c){var b=30;function f(i,h){this.type="unindentified";this.direction="unindentified";this.startPos=a(i,h);
-this.delta=a(0,0);this.targetEvent=null}f.prototype={};f.prototype.isSwipe=function(){return this.type==="swipe"
-};f.prototype.isScroll=function(){return this.type==="scroll"};f.prototype.isLeft=function(){return this.direction==="left"
-};f.prototype.isRight=function(){return this.direction==="right"};f.prototype.isUp=function(){return this.direction==="up"
-};f.prototype.isDown=function(){return this.direction==="down"};f.prototype.identifyWithCurrentPos=function(h,k){var i=a(h,k);
-var j=this.delta=i.minus(this.startPos);if(this.type==="unindentified"){if(Math.abs(j.x)>b&&Math.abs(j.x)>=Math.abs(j.y)){this.type="swipe";
-if(j.x<0){this.direction="left"}else{this.direction="right"}}else{if(Math.abs(j.y)>b&&Math.abs(j.y)>Math.abs(j.x)){this.type="scroll";
-if(j.y<0){this.direction="up"}else{this.direction="down"}}}}};function a(h,i){return{x:h,y:i,minus:function(j){return a(this.x-j.x,this.y-j.y)
-}}}function d(h){return(document.addEventListener)?h:"on"+h}var g={START:function(){return("ontouchstart" in window)?"touchstart":d("mousedown")
-}(),MOVE:function(){return("ontouchstart" in window)?"touchmove":d("mousemove")}(),END:function(){return("ontouchstart" in window)?"touchend":d("mouseup")
-}(),listen:function(){if(document.addEventListener){return function(j,i,h){j.addEventListener(i,function(k){h.call(j,k)
-},false)}}else{return function(j,i,h){j.attachEvent(i,function(){h.call(j,window.event)})}}}(),getX:function(i){var h=i.touches?i.touches[0]:i;
-return h.pageX||h.clientX},getY:function(i){var h=i.touches?i.touches[0]:i;return h.pageY||h.clientY}};
-function e(j,h){var k=null;if(typeof h==="number"){b=h}var i={onGestureStart:null,onGestureMove:null,onGetstureEnd:null};
-g.listen(j,g.START,function(l){k=new f(g.getX(l),g.getY(l));k.targetEvent=l;if(i.onGestureStart){i.onGestureStart(k)
-}});g.listen(j,g.MOVE,function(l){if(k){k.identifyWithCurrentPos(g.getX(l),g.getY(l));k.targetEvent=l;
-if(i.onGestureMove){i.onGestureMove(k)}}});g.listen(j,g.END,function(l){if(k){k.targetEvent=l;if(i.onGestureEnd){i.onGestureEnd(k)
-}k=null}});return{onGestureStart:function(l){i.onGestureStart=l},onGestureMove:function(l){i.onGestureMove=l
-},onGestureEnd:function(l){i.onGestureEnd=l}}}c.GestureListener=e;c.GestureSession=f;c.EventUtil=g})(window.gesture={});
+(function(d){var c=30;var b=200;function g(j,i){this.type="unindentified";this.direction="unindentified";
+this.startPos=a(j,i);this.delta=a(0,0);this.targetEvent=null;this.flickState=false;this.startTime=new Date()
+}g.prototype={};g.prototype.isSwipe=function(){return this.type==="swipe"};g.prototype.isScroll=function(){return this.type==="scroll"
+};g.prototype.isLeft=function(){return this.direction==="left"};g.prototype.isRight=function(){return this.direction==="right"
+};g.prototype.isUp=function(){return this.direction==="up"};g.prototype.isDown=function(){return this.direction==="down"
+};g.prototype.isFlick=function(){return this.flickState};g.prototype.identifyWithCurrentPos=function(i,l){var j=a(i,l);
+var k=this.delta=j.minus(this.startPos);if(this.type==="unindentified"){if(Math.abs(k.x)>c&&Math.abs(k.x)>=Math.abs(k.y)){this.type="swipe";
+if(k.x<0){this.direction="left"}else{this.direction="right"}}else{if(Math.abs(k.y)>c&&Math.abs(k.y)>Math.abs(k.x)){this.type="scroll";
+if(k.y<0){this.direction="up"}else{this.direction="down"}}}}};g.prototype.checkFlick=function(){var i=new Date-this.startTime;
+if(i<b){this.flickState=true}else{this.flickState=false}};function a(i,j){return{x:i,y:j,minus:function(k){return a(this.x-k.x,this.y-k.y)
+}}}function e(i){return(document.addEventListener)?i:"on"+i}var h={START:function(){return("ontouchstart" in window)?"touchstart":e("mousedown")
+}(),MOVE:function(){return("ontouchstart" in window)?"touchmove":e("mousemove")}(),END:function(){return("ontouchstart" in window)?"touchend":e("mouseup")
+}(),listen:function(){if(document.addEventListener){return function(k,j,i){k.addEventListener(j,function(l){i.call(k,l)
+},false)}}else{return function(k,j,i){k.attachEvent(j,function(){i.call(k,window.event)})}}}(),getX:function(j){var i=j.touches?j.touches[0]:j;
+return i.pageX||i.clientX},getY:function(j){var i=j.touches?j.touches[0]:j;return i.pageY||i.clientY}};
+function f(k,i,m){var l=null;if(i){if(typeof i==="number"){c=i}else{throw new Error("gestureThreshold must be a number")
+}}if(m){if(typeof m==="number"){b=m}else{throw new Error("flickThreshold must be a number")}}var j={onGestureStart:null,onGestureMove:null,onGetstureEnd:null};
+h.listen(k,h.START,function(n){l=new g(h.getX(n),h.getY(n));l.targetEvent=n;if(j.onGestureStart){j.onGestureStart(l)
+}});h.listen(k,h.MOVE,function(n){if(l){l.identifyWithCurrentPos(h.getX(n),h.getY(n));l.targetEvent=n;
+if(j.onGestureMove){j.onGestureMove(l)}}});h.listen(k,h.END,function(n){if(l){l.checkFlick();l.targetEvent=n;
+if(j.onGestureEnd){j.onGestureEnd(l)}l=null}});return{onGestureStart:function(n){j.onGestureStart=n},onGestureMove:function(n){j.onGestureMove=n
+},onGestureEnd:function(n){j.onGestureEnd=n}}}d.GestureListener=f;d.GestureSession=g;d.EventUtil=h})(window.gesture={});

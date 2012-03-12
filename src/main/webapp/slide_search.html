@@ -51,15 +51,15 @@ ul, li {
 }
 
 .panel img {
-	width:100px;
-	height:100px;
+	width:200px;
+	height:200px;
 }
 
 #wrapper button {
 	width:50px;
 	height:50px;
 	position: absolute;
-	top: 45%;
+	top: 50%;
 	
 	margin: 0;
 	-webkit-appearance: button;
@@ -114,61 +114,63 @@ ul, li {
 </div>
 <script type="text/javascript">
 
-   	
-var d = slideDataSource.listener(false, 5);
-var pageNum = (function (){
-	var pagenum = 1;
-	return function(){
-		return pagenum++;
-	};
-})();
-d.onRequestData(function(){
-	var callbackName = "d.responseData";
-	var query = document.getElementById("query").value;
-	var url='http://apis.daum.net/search/image?apikey=080a78bc84cc6b814fb365591b1d7d7fc26575b3&output=json&callback='+ callbackName +'&q=' + query + '&pageno=' + pageNum();
+	var d = slideDataSource.listener(false, 5);
+	var s = null;
 	
-	var s = document.createElement("script");
-	s.type = "text/javascript";
-	s.src = url;
-	document.getElementsByTagName("head")[0].appendChild(s);
-});
-d.onParseData(function(jsonStr){
-	var item = jsonStr.channel.item;
-	var wrapper = document.getElementById("wrapper");
-	var arr = [];
-	console.log(jsonStr);
-	console.log(item);
-	for (var i=0, len=item.length; i< len; i++) {
-	//	arr.push('<img alt="'+item[i].title+'" src="'+item[i].image+'" width="'+item[i].width+'" height="'+item[i].height+'">');
-		arr.push('<img alt="'+item[i].title+'" src="'+item[i].image+'">');
-	}
-	document.getElementsByTagName("head")[0].removeChild(document.getElementsByTagName("head")[0].lastChild);
-	d.setDataTotalLength(parseInt(jsonStr.channel.totalCount));
-
-	return arr;
-});
-
-var s = null;
-d.onDataLoadEnd(function(){
-	if (s === null) {
+	var pageNum = (function (){
+		var pagenum = 1;
+		return function(){
+			return pagenum++;
+		};
+	})();
+	d.onRequestData(function(){
+		var callbackName = "d.responseData";
+		var query = document.getElementById("query").value;
+		var url='http://apis.daum.net/search/image?apikey=080a78bc84cc6b814fb365591b1d7d7fc26575b3&output=json&callback='+ callbackName +'&q=' + query + '&pageno=' + pageNum();
+		
+		var s = document.createElement("script");
+		s.type = "text/javascript";
+		s.src = url;
+		document.getElementsByTagName("head")[0].appendChild(s);
+	});
+	d.onParseData(function(jsonStr){
+		var item = jsonStr.channel.item;
 		var wrapper = document.getElementById("wrapper");
-		s = slide.slideListener(wrapper, d, 0);
-		s.setSlideTreshold(0.3);
-		var click = "ontouchstart" in window ? "touchstart" : "click";
-		wrapper.getElementsByClassName("prevBtn")[0].addEventListener(click, function(){
-			s.prevSlide();
-		});
-		wrapper.getElementsByClassName("nextBtn")[0].addEventListener(click, function(){
-			s.nextSlide();
-		});
-		wrapper.style.display = "block";
-	}
-});
+		var arr = [];
+		console.log(jsonStr);
+		console.log(item);
+		for (var i=0, len=item.length; i< len; i++) {
+		//	arr.push('<img alt="'+item[i].title+'" src="'+item[i].image+'" width="'+item[i].width+'" height="'+item[i].height+'">');
+			arr.push('<img alt="'+item[i].title+'" src="'+item[i].image+'">');
+		}
+		document.getElementsByTagName("head")[0].removeChild(document.getElementsByTagName("head")[0].lastChild);
+		d.setDataTotalLength(parseInt(jsonStr.channel.totalCount));
+	
+		return arr;
+	});
+	d.onDataLoadEnd(function(){
+		if (s === null) {
+			var wrapper = document.getElementById("wrapper");
+			s = slide.slideListener(wrapper, d, 0);
+			s.setSlideTreshold(0.3);
+			var click = "ontouchstart" in window ? "touchstart" : "click";
+			wrapper.getElementsByClassName("prevBtn")[0].addEventListener(click, function(){
+				s.prevSlide();
+			});
+			wrapper.getElementsByClassName("nextBtn")[0].addEventListener(click, function(){
+				s.nextSlide();
+			});
+			wrapper.style.display = "block";
+			s.onSlideStart
+			s.onSlideEnd
+		}
+	});
+	
+	document.getElementById("searchbtn").addEventListener("click",function(){
+		document.getElementById("searchBox").style.display = "none";
+		d.sendRequestData();
+	},false);
 
-document.getElementById("searchbtn").addEventListener("click",function(){
-	document.getElementById("searchBox").style.display = "none";
-	d.sendRequestData();
-},false);
 </script>
 
 </body>

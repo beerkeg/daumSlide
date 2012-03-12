@@ -83,14 +83,14 @@
 			this.el.style.webkitTransform = 'translate3d('+ x +'px,0,0)';
 		},
 		__isNextSwipe: function (session) {
-			if (session.isLeft() && (this.el.clientWidth * -1 * SLIDE_TRESHOLD > session.delta.x)) {
+			if (session.isLeft() && ((this.el.clientWidth * -1 * SLIDE_TRESHOLD > session.delta.x) || session.isFlick())) {
 				return true;
 			} else {
 				return false;
 			}
 		},
 		__isPrevSwipe: function (session) {
-			if (session.isRight() && (this.el.clientWidth * SLIDE_TRESHOLD < session.delta.x)) {
+			if (session.isRight() && ((this.el.clientWidth * SLIDE_TRESHOLD < session.delta.x) || session.isFlick())) {
 				return true;
 			} else {
 				return false;
