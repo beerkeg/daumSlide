@@ -33,9 +33,10 @@
 		},
 		__createSlide: function (el) {
 			var wrapper = (typeof(el) === "string")? document.getElementById(el) : el;
-			wrapper.innerHTML = '<div class="slide" id="slider-'+__slideIndex+'" style="width:100%;height: 100%;position: relative;top:0;"><div class="panel" style="left:0%"></div><div class="panel" style="left:100%"></div><div class="panel" style="left:-100%"></div></div>' + 
-								'<button type="button" class="prevBtn">prev</button>' +
-								'<button type="button" class="nextBtn">next</button>';
+			wrapper.innerHTML = '<div class="slide" id="slider-'+__slideIndex+'" style="width:100%;height: 100%;position: relative;top:0;">' 
+									+ '<div class="panel" style="left:0%"></div><div class="panel" style="left:100%"></div><div class="panel" style="left:-100%"></div></div>'
+									+ wrapper.innerHTML; 
+								
 			
 			this.el = document.getElementById("slider-"+__slideIndex);
 			this.panels = this.el.getElementsByClassName("panel");
@@ -52,9 +53,18 @@
 			window.addEventListener(resizeEvent, function(){return self.__resize.call(self);});
 		},
 		__resize: function () {
-			this.pageWidth = this.el.clientWidth;
-			this.__pos(-this.page * this.pageWidth);
-			this.__addExternalFunction(this.slideHandlers.onResize);
+			var self = this;
+			window.setTimeout(function(){return self.__checkChangeValue.call(self);}, 50);
+		},
+		__checkChangeValue: function () {
+			if (this.pageWidth === this.el.clientWidth) {
+				var self = this;
+				window.setTimeout(function(){return self.__checkChangeValue.call(self);}, 50);
+			} else {
+				this.pageWidth = this.el.clientWidth;
+				this.__pos(-this.page * this.pageWidth);
+				this.__addExternalFunction(this.slideHandlers.onResize);
+			}
 		},
 		__isLandScape: function () {
 			if (window.innerHeight > window.innerWidth) {
@@ -89,7 +99,7 @@
 		},
 		__setDurationTime: function (session) {
 			if (session.isFlick()) {
-				return '500ms';
+				return '300ms';
 			} else {
 				var duration = Math.abs(parseInt(session.getTerm()*this.pageWidth/session.delta.x));
 				if (duration > 500) {
@@ -354,6 +364,9 @@
 			} 
 			return index;
 		},
+		getCurrentData: function () {
+			return this.getDataByIndex(this.currentIndex);
+		},
 		getPrevData: function () {
 			var dataInfo = this.getDataByIndex(this.getPrevIndex());
 			
@@ -437,6 +450,9 @@
 			},
 			getDataSourceLength: function () {
 				return dataSource.getDataListLength();
+			},
+			getCurrentData: function () {
+				return dataSource.getCurrentData();
 			},
 			getPrevData: function () {
 				return dataSource.getPrevData();
