@@ -60,7 +60,7 @@ ul, li {
 	height:50px;
 	position: absolute;
 	top: 50%;
-	
+	z-index: 999;
 	margin: 0;
 	-webkit-appearance: button;
 	cursor: pointer;
@@ -130,13 +130,16 @@ d.onDataLoadEnd(function(){
 	if (s === null) {
 		var wrapper = document.getElementById("wrapper");
 		s = slide.slideListener(wrapper, d, 0);
-		s.setSlideTreshold(0.3);
+		s.setSlideTreshold(0.2);
 		var click = "ontouchstart" in window ? "touchstart" : "click";
 		wrapper.getElementsByClassName("prevBtn")[0].addEventListener(click, function(){
 			s.prevSlide('500ms');
 		});
 		wrapper.getElementsByClassName("nextBtn")[0].addEventListener(click, function(){
 			s.nextSlide('500ms');
+		});
+		s.onSlideStart(function(session){
+			session.targetEvent.preventDefault();
 		});
 	}
 });
