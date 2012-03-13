@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html debug="false">
+<html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -159,7 +159,7 @@ z-index: 1;
 }
 
 </style>
-<script type="text/javascript" src="js/lib/gesture.js"></script>
+<script type="text/javascript" src="http://east.ftdev.daum.net/g/js/gesture.js"></script>
 <script type="text/javascript" src="js/slide.js"></script>
 
 </head>
@@ -170,9 +170,13 @@ z-index: 1;
 </div>
 
 <div id="wrapper">
+	<button type="button" class="prevBtn">prev</button>
+	<button type="button" class="nextBtn">next</button>
+	<div id="footer"></div>
 </div>
 <script type="text/javascript">
 
+var d = (function(){
 	var d = slideDataSource.listener(false, 5);
 	var s = null;
 	var pageNum = (function (){
@@ -195,8 +199,6 @@ z-index: 1;
 		var item = jsonStr.channel.item;
 		var wrapper = document.getElementById("wrapper");
 		var arr = [];
-		console.log(jsonStr);
-		console.log(item);
 		for (var i=0, len=item.length; i< len; i++) {
 			arr.push( item[i] );
 		}
@@ -210,20 +212,31 @@ z-index: 1;
 		if (s === null) {
 			var wrapper = document.getElementById("wrapper");
 			s = slide.slideListener(wrapper, d, 0);
-			s.setSlideTreshold(0.1);
+			s.setSlideTreshold(0.2);
 			var click = "ontouchstart" in window ? "touchstart" : "click";
 			wrapper.getElementsByClassName("prevBtn")[0].addEventListener(click, function(){
 				s.prevSlide('500ms');
-			});
+				setCurrentDesc();
+			}, false);
 			wrapper.getElementsByClassName("nextBtn")[0].addEventListener(click, function(){
 				s.nextSlide('500ms');
-			});
+				setCurrentDesc();
+			}, false);
+			
 			wrapper.style.display = "block";
 			var clientHeight = wrapper.clientHeight - 10;
 			var clientWidth = wrapper.clientWidth - 10;
 			s.onResize(function(){
 				clientHeight = wrapper.clientHeight - 10;
 				clientWidth = wrapper.clientWidth - 10;
+				
+				var imgs = document.getElementsByTagName("img");
+				var imgSize;
+				for(var k=0, len = imgs.length; k<len; k++) {
+					imgSize = resizeImg(imgs[k].width, imgs[k].height);
+					imgs[k].width = imgSize.width;
+					imgs[k].height = imgSize.height;
+				}
 			});
 			function resizeImg(width, height) {
 				var imgSize = {};
@@ -239,22 +252,52 @@ z-index: 1;
 			s.onSetDataItem(function(item){
 				if (item && item.type !== '') {
 					var imgSize = resizeImg(item.width, item.height);
-					var str = '<img alt="'+item.title+'" src="'+item.image+'" width="'+imgSize.width+'" height="'+imgSize.height+'">' +
-					'<div class="wrap_desc" style="opacity: 0.7; " id="desc_field">' +
-							'<a href="'+item.link+'" class="tit" id="desc_title">'+item.title+'</a>' +
-							'<span class="info" id="desc_info">'+item.width+' x '+item.height+'</span><a href="'+item.link+'" id="desc_url" class="link_src">'+item.link+'</a>' +
-							'<div class="wrap_btn">' +
-								'<a href="" class="left_wrap"><span class="prev">검색결과로 돌아가기</span></a>' + 
-								'<a id="desc_link" href="'+item.image+'" target="_blank" class="right_wrap"><span class="bar"></span><span>원본 바로보기</span></a>' +
-							'</div></div>';
+					var str = '<img alt="'+item.title+'" src="'+item.image+'" width="'+imgSize.width+'" height="'+imgSize.height+'">';
 					return str;
 				} else {
 					return '';
 				}
 			});
 			s.setInitData();
+			setCurrentDesc();
 			s.onSlideStart(function(session){
 				session.targetEvent.preventDefault();
+			});
+			var viewState = "block";
+			function setCurrentDesc() {
+				var item = d.getCurrentData();
+				if (item) {
+					var data = item.data;
+					var str = '<div class="wrap_desc" style="opacity: 0.7;display:'+ viewState +';" id="desc_field">' +
+								'<a href="'+data.link+'" class="tit" id="desc_title">'+data.title+'</a>' +
+								'<span class="info" id="desc_info">'+data.width+' x '+data.height+'</span><a href="'+data.link+'" id="desc_url" class="link_src">'+data.link+'</a>' +
+								'<div class="wrap_btn">' +
+									'<a href="" class="left_wrap"><span class="prev">검색결과로 돌아가기</span></a>' + 
+									'<a id="desc_link" href="'+data.image+'" target="_blank" class="right_wrap"><span class="bar"></span><span>원본 바로보기</span></a>' +
+								'</div></div>';
+				} else {
+					var str = '';
+				}
+				document.getElementById("footer").innerHTML = str;
+			}
+			s.onSlideEnd(function(session){
+				if (!session.isSwipe() && !session.isScroll()) {
+					var descs = wrapper.getElementsByClassName("wrap_desc");
+					console.log(descs.length);
+					if (viewState === "none") {
+						for (var m=0,len=descs.length; m<len; m++) {
+							descs[m].style.display = "block";
+						}
+						viewState = "block";
+					} else {
+						for (var m=0,len=descs.length; m<len; m++) {
+							descs[m].style.display = "none";
+						}
+						viewState = "none";
+					}
+				} else {
+					setCurrentDesc();
+				}
 			});
 			
 		}
@@ -264,7 +307,16 @@ z-index: 1;
 		document.getElementById("searchBox").style.display = "none";
 		d.sendRequestData();
 	},false);
-
+	
+	window.addEventListener("keypress", function(e){
+		if (e.keyCode === 13) {
+			document.getElementById("searchBox").style.display = "none";
+			d.sendRequestData();
+		}
+	});
+	
+	return d;
+})();
 </script>
 
 </body>
