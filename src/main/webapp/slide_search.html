@@ -42,12 +42,16 @@ ul, li {
 	-webkit-box-pack:center;
 	-webkit-box-align:center;
 	-webkit-transform:translate3d(0,0,0);
-	
+
 	/* W3C */
 	display:box;
 	box-orient:vertical;
 	box-pack:center;
 	box-align:center;
+	transform:translate3d(0,0,0);
+	transition-duration:0;	
+	
+	text-align: center;
 }
 
 .panel img {
@@ -58,7 +62,7 @@ ul, li {
 	top: 45%;
 	z-index: 30;
 	width: 23px;
-	height: 37px;
+	height: 45px;
 	background: url(http://m1.daumcdn.net/imgsrc.search/search_all/2009/mobile/safari/btn_view_nav.png) 0 0 no-repeat;
 	text-indent: -10000px;
 	border-size: 0px;
@@ -189,10 +193,11 @@ var d = (function(){
 		var callbackName = "d.responseData";
 		var query = document.getElementById("query").value;
 		var url='http://apis.daum.net/search/image?apikey=080a78bc84cc6b814fb365591b1d7d7fc26575b3&output=json&callback='+ callbackName +'&q=' + query + '&pageno=' + pageNum();
-		
+		console.log(url);
 		var s = document.createElement("script");
 		s.type = "text/javascript";
 		s.src = url;
+		s.charset = "utf-8";
 		document.getElementsByTagName("head")[0].appendChild(s);
 	});
 	d.onParseData(function(jsonStr){
@@ -203,7 +208,7 @@ var d = (function(){
 			arr.push( item[i] );
 		}
 		
-		document.getElementsByTagName("head")[0].removeChild(document.getElementsByTagName("head")[0].lastChild);
+//		document.getElementsByTagName("head")[0].removeChild(document.getElementsByTagName("head")[0].lastChild);
 		d.setDataTotalLength(parseInt(jsonStr.channel.totalCount));
 		
 		return arr;
@@ -259,18 +264,38 @@ var d = (function(){
 				}
 			});
 			s.setInitData();
-			setCurrentDesc();
 			s.onSlideStart(function(session){
 				session.targetEvent.preventDefault();
 			});
 			var viewState = "block";
+			function replaceAll(txt, replace, with_this) {
+				return txt.replace(new RegExp(replace, 'g'),with_this);
+			}
+			function changeText(text) {
+				text = replaceAll(text, "&lt;", "<");
+				text = replaceAll(text, "&gt;", ">");
+				text = replaceAll(text, "&nbsp; "," ");
+				text = replaceAll(text, "&amp;", "&");
+				text = replaceAll(text, "&quot;", "\"");
+				
+				return text;
+			}
+			function changeLinkText(link) {
+				if (link.length > 37) {
+					return link.substring(0,35) + ".."
+				} else {
+					return link;
+				}
+			}
 			function setCurrentDesc() {
 				var item = d.getCurrentData();
 				if (item) {
 					var data = item.data;
+					var title = changeText(data.title);
+					var linktext = changeLinkText(data.link);
 					var str = '<div class="wrap_desc" style="opacity: 0.7;display:'+ viewState +';" id="desc_field">' +
-								'<a href="'+data.link+'" class="tit" id="desc_title">'+data.title+'</a>' +
-								'<span class="info" id="desc_info">'+data.width+' x '+data.height+'</span><a href="'+data.link+'" id="desc_url" class="link_src">'+data.link+'</a>' +
+								'<a href="'+data.link+'" class="tit" id="desc_title">'+ title +'</a>' +
+								'<span class="info" id="desc_info">'+data.width+' x '+data.height+'</span><a href="'+data.link+'" id="desc_url" class="link_src">'+ linktext +'</a>' +
 								'<div class="wrap_btn">' +
 									'<a href="" class="left_wrap"><span class="prev">검색결과로 돌아가기</span></a>' + 
 									'<a id="desc_link" href="'+data.image+'" target="_blank" class="right_wrap"><span class="bar"></span><span>원본 바로보기</span></a>' +
@@ -280,19 +305,21 @@ var d = (function(){
 				}
 				document.getElementById("footer").innerHTML = str;
 			}
+			setCurrentDesc();
 			s.onSlideEnd(function(session){
 				if (!session.isSwipe() && !session.isScroll()) {
-					var descs = wrapper.getElementsByClassName("wrap_desc");
-					console.log(descs.length);
+					var footer = wrapper.getElementsByClassName("wrap_desc")[0];
+					var prevBtn = wrapper.getElementsByClassName("prevBtn")[0];
+					var nextBtn = wrapper.getElementsByClassName("nextBtn")[0];
 					if (viewState === "none") {
-						for (var m=0,len=descs.length; m<len; m++) {
-							descs[m].style.display = "block";
-						}
+						footer.style.display = "block";
+						prevBtn.style.display = "block";
+						nextBtn.style.display = "block";
 						viewState = "block";
 					} else {
-						for (var m=0,len=descs.length; m<len; m++) {
-							descs[m].style.display = "none";
-						}
+						footer.style.display = "none";
+						prevBtn.style.display = "none";
+						nextBtn.style.display = "none";
 						viewState = "none";
 					}
 				} else {

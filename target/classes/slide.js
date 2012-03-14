@@ -13,10 +13,16 @@
 			this.__initPaging();
 			
 			this.__createSlide(el);
-			this.__setInitData();
+//			this.__setInitData();
+			
+			this.__checkUa();
 			
 			this.__resize();
 			this.__bindEvent(gestureTreshold);
+		},
+		__checkUa: function () {
+	    	var ua = navigator.userAgent.toLowerCase();
+	    	this.webkit = ua.indexOf('applewebkit') > -1 ? true : false;
 		},
 		__initPaging: function () {
 			this.page = 0;
@@ -33,7 +39,7 @@
 		},
 		__createSlide: function (el) {
 			var wrapper = (typeof(el) === "string")? document.getElementById(el) : el;
-			wrapper.innerHTML = '<div class="slide" id="slider-'+__slideIndex+'" style="width:100%;height: 100%;position: relative;top:0;">' 
+			wrapper.innerHTML = '<div class="slide" id="slider-'+__slideIndex+'" style="width:100%;height: 100%;position: relative;top:0;transform:translate3d(0,0,0);">' 
 									+ '<div class="panel" style="left:0%"></div><div class="panel" style="left:100%"></div><div class="panel" style="left:-100%"></div></div>'
 									+ wrapper.innerHTML; 
 								
@@ -50,31 +56,23 @@
 			listener.onGestureMove(function(session){return self.__move.call(self, session)});
 			listener.onGestureEnd(function(session){return self.__end.call(self, session)});
 			
-			window.addEventListener(resizeEvent, function(){return self.__resize.call(self);});
+			window.addEventListener(resizeEvent, function(){return self.__checkChangeValueByResize.call(self);});
 		},
-		__resize: function () {
-			var self = this;
-			window.setTimeout(function(){return self.__checkChangeValue.call(self);}, 50);
-		},
-		__checkChangeValue: function () {
+		__checkChangeValueByResize: function () {
 			if (this.pageWidth === this.el.clientWidth) {
 				var self = this;
-				window.setTimeout(function(){return self.__checkChangeValue.call(self);}, 50);
+				window.setTimeout(function(){return self.__checkChangeValueByResize.call(self);}, 50);
 			} else {
-				this.pageWidth = this.el.clientWidth;
-				this.__pos(-this.page * this.pageWidth);
-				this.__addExternalFunction(this.slideHandlers.onResize);
+				this.__resize();
 			}
 		},
-		__isLandScape: function () {
-			if (window.innerHeight > window.innerWidth) {
-				return true;
-			} else {
-				return false;
-			}
+		__resize: function () {
+			this.pageWidth = this.el.clientWidth;
+			this.__pos(-this.page * this.pageWidth);
+			this.__addExternalFunction(this.slideHandlers.onResize);
 		},
 		__start: function (session) {
-			this.el.style.webkitTransitionDuration = '0';
+			this.__setTransitionDuration('0ms');
 			this.isScrolling = false;
 			this.__addExternalFunction(this.slideHandlers.onSlideStart, session);
 		},
@@ -110,7 +108,16 @@
 			}
 		},
 		__pos: function (x) {
-			this.el.style.webkitTransform = 'translate3d('+ x +'px,0,0)';
+			if (this.webkit) {
+				this.el.style.webkitTransform = 'translate3d('+ x +'px,0,0)';
+			} else {
+				this.el.style.left = ''+ x +'px';
+			}
+		},
+		__setTransitionDuration: function (duration) {
+			if (this.webkit) {
+				this.el.style.webkitTransitionDuration = duration;
+			}
 		},
 		__isNextSwipe: function (session) {
 			if (session.isLeft() && (this.__isNextThreshold(session) || session.isFlick())) {
@@ -145,7 +152,7 @@
 			if (loadedData.type === "invalid") {
 				this.__cancel(duration);
 			} else {
-				this.el.style.webkitTransitionDuration = duration;
+				this.__setTransitionDuration(duration);
 				this.__plusPageOffset();
 				this.__pos(-this.page * this.pageWidth);
 				var movingOffset = this.__getNextOffsetOfMovingPanel();
@@ -159,7 +166,7 @@
 			if (loadedData.type === "invalid") {
 				this.__cancel(duration);
 			} else {
-				this.el.style.webkitTransitionDuration = duration;
+				this.__setTransitionDuration(duration);
 				this.__minusPageOffset();
 				this.__pos(-this.page * this.pageWidth);
 				var movingOffset = this.__getPrevOffsetOfMovingPanel();
@@ -212,7 +219,7 @@
 			this.panels[movingOffset].style.left = movingPage * 100 + "%";
 		},
 		__cancel: function (duration) {
-			this.el.style.webkitTransitionDuration = duration;
+			this.__setTransitionDuration(duration);
 			this.__pos(-this.page * this.pageWidth);
 			this.__addExternalFunction(this.slideHandlers.onSlideCancel);
 		},
@@ -222,7 +229,7 @@
 			}
 		}
 	};
-	
+			
 	function slideListener (el, dataSourece, gestureTreshold) {
 		var slideHandlers = {
 	            'onSlideStart': null,
@@ -238,17 +245,6 @@
 		__slideIndex++;
 	
 		return {
-			setSlideDataList: function (dataList) {
-				SLIDE_DATA_LIST = dataList;
-				slide.__setData();
-			},
-			addSlideData: function (data) {
-				SLIDE_DATA_LIST.push(data);
-				slide.__loadData();
-			},
-			initSlidePaging: function () {
-				slide.__initPaging();
-			},
 			setSlideTreshold: function (slideTreshold) {
 				SLIDE_TRESHOLD = slideTreshold;
 			},
@@ -281,9 +277,6 @@
             },
             prevSlide: function (time) {
             	slide.__prev(time);
-            },
-            isLandScape: function () {
-            	return slide.__isLandScape();
             },
             setInitData: function () {
             	slide.__setInitData();
