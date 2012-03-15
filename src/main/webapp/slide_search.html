@@ -41,21 +41,16 @@ ul, li {
 	-webkit-box-orient:vertical;
 	-webkit-box-pack:center;
 	-webkit-box-align:center;
-	-webkit-transform:translate3d(0,0,0);
 
 	/* W3C */
 	display:box;
 	box-orient:vertical;
 	box-pack:center;
 	box-align:center;
-	transform:translate3d(0,0,0);
-	transition-duration:0;	
-	
-	text-align: center;
 }
 
 .panel img {
-	
+	background-color: #000;
 }
 #wrapper button {
 	position: absolute;
@@ -162,6 +157,10 @@ z-index: 1;
 	background: url(http://m1.daumcdn.net/imgsrc.search/search_all/2009/mobile/safari/btn_prev_search.png) 0 15px no-repeat;
 }
 
+.footer {
+	transform:translate3d(0,0,0);
+}
+
 </style>
 <script type="text/javascript" src="http://east.ftdev.daum.net/g/js/gesture.js"></script>
 <script type="text/javascript" src="js/slide.js"></script>
@@ -208,7 +207,7 @@ var d = (function(){
 			arr.push( item[i] );
 		}
 		
-//		document.getElementsByTagName("head")[0].removeChild(document.getElementsByTagName("head")[0].lastChild);
+		document.getElementsByTagName("head")[0].removeChild(document.getElementsByTagName("head")[0].lastChild);
 		d.setDataTotalLength(parseInt(jsonStr.channel.totalCount));
 		
 		return arr;
@@ -229,16 +228,16 @@ var d = (function(){
 			}, false);
 			
 			wrapper.style.display = "block";
-			var clientHeight = wrapper.clientHeight - 10;
-			var clientWidth = wrapper.clientWidth - 10;
+			var clientHeight = wrapper.clientHeight-10;
+			var clientWidth = wrapper.clientWidth-10;
 			s.onResize(function(){
-				clientHeight = wrapper.clientHeight - 10;
-				clientWidth = wrapper.clientWidth - 10;
-				
+				clientHeight = wrapper.clientHeight-10;
+				clientWidth = wrapper.clientWidth-10;
+
 				var imgs = document.getElementsByTagName("img");
-				var imgSize;
+				var imgSize = {};
 				for(var k=0, len = imgs.length; k<len; k++) {
-					imgSize = resizeImg(imgs[k].width, imgs[k].height);
+					imgSize = resizeImg(imgs[k].getAttribute("data-width"), imgs[k].getAttribute("data-height"));
 					imgs[k].width = imgSize.width;
 					imgs[k].height = imgSize.height;
 				}
@@ -246,18 +245,29 @@ var d = (function(){
 			function resizeImg(width, height) {
 				var imgSize = {};
 				if (clientHeight > clientWidth) {
-					imgSize.width = clientWidth;
-					imgSize.height = parseInt(clientWidth * height / width);
+					if (clientWidth * height > clientHeight * width) {
+						imgSize.height = clientHeight;
+						imgSize.width = parseInt(clientHeight * width / height);
+					} else {
+						imgSize.width = clientWidth;
+						imgSize.height = parseInt(clientWidth * height / width);
+					}
 				} else {
-					imgSize.height = clientHeight;
-					imgSize.width = parseInt(clientHeight * width / height);
+					if (clientWidth * height < clientHeight * width) {
+						imgSize.width = clientWidth;
+						imgSize.height = parseInt(clientWidth * height / width);
+					} else {
+						imgSize.height = clientHeight;
+						imgSize.width = parseInt(clientHeight * width / height);
+					}
 				}
+				console.log(imgSize);
 				return imgSize;
 			}
 			s.onSetDataItem(function(item){
 				if (item && item.type !== '') {
 					var imgSize = resizeImg(item.width, item.height);
-					var str = '<img alt="'+item.title+'" src="'+item.image+'" width="'+imgSize.width+'" height="'+imgSize.height+'">';
+					var str = '<img alt="'+item.title+'" src="'+item.image+'" width="'+imgSize.width+'" height="'+imgSize.height+'" data-width="'+item.width+'" data-height="'+item.height+'">';
 					return str;
 				} else {
 					return '';
