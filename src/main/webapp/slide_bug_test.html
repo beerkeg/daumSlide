@@ -18,7 +18,7 @@ ul, li {
 	list-style-type: none;
 }
 #wrapper {
-	
+	position: relative;
 	width: 100%;
 	height:400px;
 	overflow:hidden;
@@ -37,7 +37,6 @@ ul, li {
 	-webkit-box-orient:vertical;
 	-webkit-box-pack:center;
 	-webkit-box-align:center;
-	-webkit-transform:translate3d(0,0,0);
 	
 	/* W3C */
 	display:box;
@@ -45,6 +44,22 @@ ul, li {
 	box-pack:center;
 	box-align:center;
 }
+#wrapper button {
+	width:50px;
+	height:50px;
+	position: absolute;
+	top: 50%;
+	z-index: 999;
+	margin: 0;
+}
+
+#wrapper .prevBtn {
+	left:0px;
+}
+#wrapper .nextBtn {
+	right:0px;
+}
+
 
 </style>
 <script type="text/javascript" src="js/lib/gesture.js"></script>
@@ -57,42 +72,51 @@ ul, li {
 	<img alt="Piazza del Duomo, Florence, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic01.jpg" width="300" height="213">
 </div>
 <div id="wrapper">
-
+	<button type="button" class="prevBtn">prev</button>
+	<button type="button" class="nextBtn">next</button>
 </div>
+	<h1>테스트 페이지</h1>
+	<h1>테스트 페이지</h1>
+	<h1>테스트 페이지</h1>
+
 <img alt="Piazza del Duomo, Florence, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic01.jpg" width="300" height="213">
 <div id="footer">
 </div>
 <script type="text/javascript">
 var slides = [
-        		'<ul><li><a href="m.daum.net">1</a></li><li>2</li><li><img alt="Piazza del Duomo, Florence, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic01.jpg" width="300" height="213"></li></ul>'
+        		'<h1>테스트 페이지</h1><img alt="Piazza del Duomo, Florence, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic01.jpg" width="300" height="213">'
         		,
-      		'<ul><li><a href="m.daum.net">1</a></li><li>2</li><li><img alt="Tuscan Landscape" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic02.jpg" width="300" height="164"></li></ul>'
+      		'<h1>테스트 페이지</h1><img alt="Tuscan Landscape" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic02.jpg" width="300" height="164">'
   			,
-      		'<ul><li><a href="m.daum.net">1</a></li><li>2</li><li><img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic03.jpg" width="300" height="213"></li></ul>'
+      		'<h1>테스트 페이지</h1><img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic03.jpg" width="300" height="213">'
+  			,
+      		'<h1>테스트 페이지</h1><img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic04.jpg" width="147" height="220">'
+  			,
+      		'<h1>테스트 페이지</h1><img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic05.jpg" width="300" height="213">'
+  			,
+      		'<h1>테스트 페이지</h1><img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic06.jpg" width="165" height="220">'
   			
       	];
       	
-  var s = slide.slideListener(document.getElementById("wrapper"), 0);
-  s.onSlideStart(function(){
-  	console.log("start");
+  var d = slideDataSource.listener(true);
+  var s = null;
+  d.onDataLoadEnd(function(){
+  	if (s === null) {
+  		var wrapper = document.getElementById("wrapper");
+  		s = slide.slideListener(wrapper, d, 0);
+  		s.setSlideTreshold(0.2);
+  		var click = "ontouchstart" in window ? "touchstart" : "click";
+  		wrapper.getElementsByClassName("prevBtn")[0].addEventListener(click, function(){
+  			s.prevSlide('500ms');
+  		});
+  		wrapper.getElementsByClassName("nextBtn")[0].addEventListener(click, function(){
+  			s.nextSlide('500ms');
+  		});
+  		s.setInitData();
+  		
+  	}
   });
-  s.onSlidePrev(function(){
-  	console.log("prev");
-  });
-  s.onSlideNext(function(){
-  	console.log("next");
-  });
-  s.onSlideCancel(function(){
-  	console.log("cancel");
-  });
-  s.onSlideEnd(function(){
-  	console.log("end");
-  });
-  s.onSlideMove(function(){
-  	//console.log("move");
-  });
-  s.setSlideTreshold(0.3);
-  s.setSlideDataList(slides);
+  d.sendRequestData({data:slides});
   </script>
 
 </body>
