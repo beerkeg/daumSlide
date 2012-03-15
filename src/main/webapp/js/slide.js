@@ -70,7 +70,7 @@
 			window.addEventListener(resizeEvent, function(){return self.__checkChangeValueByResize.call(self);});
 		},
 		__checkChangeValueByResize: function () {
-			if (this.pageWidth === this.el.clientWidth) {
+			if (this.pageWidth === this.el.clientWidth && this.pageHeight === this.el.clientHeight) {
 				var self = this;
 				window.setTimeout(function(){return self.__checkChangeValueByResize.call(self);}, 50);
 			} else {
@@ -79,6 +79,7 @@
 		},
 		__resize: function () {
 			this.pageWidth = this.el.clientWidth;
+			this.pageHeight = this.el.clientHeight;
 			this.__pos(-this.page * this.pageWidth);
 			this.__addExternalFunction(this.slideHandlers.onResize);
 		},
