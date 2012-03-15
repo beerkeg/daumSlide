@@ -297,6 +297,9 @@ var d = (function(){
 					return link;
 				}
 			}
+			var footer = document.getElementById("footer");
+			var prevBtn = wrapper.getElementsByClassName("prevBtn")[0];
+			var nextBtn = wrapper.getElementsByClassName("nextBtn")[0];
 			function setCurrentDesc() {
 				var item = d.getCurrentData();
 				if (item) {
@@ -313,14 +316,11 @@ var d = (function(){
 				} else {
 					var str = '';
 				}
-				document.getElementById("footer").innerHTML = str;
+				footer.innerHTML = str;
 			}
 			setCurrentDesc();
 			s.onSlideEnd(function(session){
 				if (!session.isSwipe() && !session.isScroll()) {
-					var footer = wrapper.getElementsByClassName("wrap_desc")[0];
-					var prevBtn = wrapper.getElementsByClassName("prevBtn")[0];
-					var nextBtn = wrapper.getElementsByClassName("nextBtn")[0];
 					if (viewState === "none") {
 						footer.style.display = "block";
 						prevBtn.style.display = "block";
