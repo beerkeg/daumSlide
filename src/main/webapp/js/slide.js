@@ -11,18 +11,27 @@
 			this.slideHandlers = slideHandlers;
 			this.dataSource = dataSource;
 			this.__initPaging();
-			
 			this.__createSlide(el);
-//			this.__setInitData();
-			
-			this.__checkUa();
-			
+			this.__checkEnable3D();
 			this.__resize();
 			this.__bindEvent(gestureTreshold);
 		},
-		__checkUa: function () {
+		__checkEnable3D: function () {
 	    	var ua = navigator.userAgent.toLowerCase();
-	    	this.webkit = ua.indexOf('applewebkit') > -1 ? true : false;
+	    	
+	    	if (ua.indexOf('android') > -1) {
+		    	var tempUa = ua.split(" android ")[1];
+		    	var version = tempUa.substring(0, tempUa.indexOf(";")).split(".");
+		    	if (parseInt(version[0]) > 2 || (parseInt(version[0]) === 2 && parseInt(version[1]) >= 3)) {
+		    		this.enableTransform = true;
+		    	} else {
+		    		this.enableTransform = false;
+		    	}
+	    	} else if (ua.indexOf('applewebkit') > -1 ) {
+	    		this.enableTransform = true;
+	    	} else {
+	    		this.enableTransform = false;
+	    	}
 		},
 		__initPaging: function () {
 			this.page = 0;
@@ -40,7 +49,9 @@
 		__createSlide: function (el) {
 			var wrapper = (typeof(el) === "string")? document.getElementById(el) : el;
 			wrapper.innerHTML = '<div class="slide" id="slider-'+__slideIndex+'" style="width:100%;height: 100%;position: relative;top:0;transform:translate3d(0,0,0);">' 
-									+ '<div class="panel" style="left:0%"></div><div class="panel" style="left:100%"></div><div class="panel" style="left:-100%"></div></div>'
+									+ '<div class="panel" style="left:0%;-webkit-transform:translate3d(0,0,0);"></div>'
+									+ '<div class="panel" style="left:100%;-webkit-transform:translate3d(0,0,0);"></div>'
+									+ '<div class="panel" style="left:-100%;-webkit-transform:translate3d(0,0,0);"></div></div>'
 									+ wrapper.innerHTML; 
 								
 			
@@ -108,14 +119,14 @@
 			}
 		},
 		__pos: function (x) {
-			if (this.webkit) {
+			if (this.enableTransform) {
 				this.el.style.webkitTransform = 'translate3d('+ x +'px,0,0)';
 			} else {
 				this.el.style.left = ''+ x +'px';
 			}
 		},
 		__setTransitionDuration: function (duration) {
-			if (this.webkit) {
+			if (this.enableTransform) {
 				this.el.style.webkitTransitionDuration = duration;
 			}
 		},
