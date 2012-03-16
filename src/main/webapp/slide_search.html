@@ -266,7 +266,6 @@ var d = (function(){
 					}
 				}
 				return imgSize;
-//				return {width: width, height: height};
 			}
 			s.onSetDataItem(function(item){
 				if (item && item.type !== '') {
@@ -336,11 +335,10 @@ var d = (function(){
 						nextBtn.style.display = "none";
 						viewState = "none";
 					}
-				} else {
-					setCurrentDesc();
 				}
 			});
-			
+			s.onSlideNext(function(){setCurrentDesc();});
+			s.onSlideNext(function(){setCurrentDesc();});
 		}
 	});
 	

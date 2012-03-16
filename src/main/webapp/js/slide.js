@@ -38,6 +38,8 @@
 		__initPaging: function () {
 			this.page = 0;
 			this.offset = 0;
+			this.dataDirect = "";
+			this.translate = true;
 		},
 		__setInitData: function () {
 			var loadedInitData = this.dataSource.getInitData(0);
@@ -68,6 +70,7 @@
 			listener.onGestureEnd(function(session){return self.__end.call(self, session)});
 			
 			window.addEventListener(resizeEvent, function(){return self.__checkChangeValueByResize.call(self);});
+			this.el.addEventListener("webkitTransitionEnd", function(){return self.__setData.call(self);});
 		},
 		__checkChangeValueByResize: function () {
 			if (this.pageWidth === this.el.clientWidth && this.pageHeight === this.el.clientHeight) {
@@ -89,12 +92,14 @@
 			this.__addExternalFunction(this.slideHandlers.onSlideStart, session);
 		},
 		__move: function (session) {
-			if (session.isSwipe() && !this.isScrolling) {
-				session.targetEvent.preventDefault();
-				this.__pos(-this.page*this.pageWidth + session.delta.x/2);
-				this.__addExternalFunction(this.slideHandlers.onSlideMove, session);
-			} else if (session.isScroll()) {
-				this.isScrolling = true; 
+			if (this.translate) {
+				if (session.isSwipe() && !this.isScrolling) {
+					session.targetEvent.preventDefault();
+					this.__pos(-this.page*this.pageWidth + session.delta.x/2);
+					this.__addExternalFunction(this.slideHandlers.onSlideMove, session);
+				} else if (session.isScroll()) {
+					this.isScrolling = true; 
+				}
 			}
 		},
 		__end: function (session) {
@@ -108,15 +113,11 @@
 			this.__addExternalFunction(this.slideHandlers.onSlideEnd, session);
 		},
 		__setDurationTime: function (session) {
-			if (session.isFlick()) {
-				return '300ms';
+			var duration = Math.abs(parseInt(session.getTerm()*this.pageWidth/session.delta.x));
+			if (duration > 500) {
+				return '500ms';
 			} else {
-				var duration = Math.abs(parseInt(session.getTerm()*this.pageWidth/session.delta.x));
-				if (duration > 500) {
-					return '500ms';
-				} else {
-					return '' + duration + 'ms';
-				}
+				return '' + duration + 'ms';
 			}
 		},
 		__pos: function (x) {
@@ -160,31 +161,42 @@
 			}
 		},
 		__next: function (duration) {
-			var loadedData = this.dataSource.getNextData();
-			if (loadedData.type === "invalid") {
+			this.loadedData = this.dataSource.getNextData();
+			if (this.loadedData.type === "invalid") {
 				this.__cancel(duration);
 			} else {
 				this.__setTransitionDuration(duration);
 				this.__plusPageOffset();
+				this.dataDirect = "next";
+				this.translate = false;
 				this.__pos(-this.page * this.pageWidth);
-				var movingOffset = this.__getNextOffsetOfMovingPanel();
-				this.__movePanel(this.page+1, movingOffset);
-				this.__setDataItem(movingOffset, loadedData.data);
-				this.__addExternalFunction(this.slideHandlers.onSlideNext);
+				this.movingOffset = this.__getNextOffsetOfMovingPanel();
 			}
 		},
+		__setData: function () {
+			if (this.dataDirect === "next") {
+				this.__movePanel(this.page+1, this.movingOffset);
+				this.__setDataItem(this.movingOffset, this.loadedData.data);
+				this.__addExternalFunction(this.slideHandlers.onSlideNext);
+			} else if (this.dataDirect === "prev") {
+				this.__movePanel(this.page-1, this.movingOffset);
+				this.__setDataItem(this.movingOffset, this.loadedData.data);
+				this.__addExternalFunction(this.slideHandlers.onSlidePrev);
+			}
+			this.dataDirect = "";
+			this.translate = true; 
+		},
 		__prev: function (duration) {
-			var loadedData = this.dataSource.getPrevData();
-			if (loadedData.type === "invalid") {
+			this.loadedData = this.dataSource.getPrevData();
+			if (this.loadedData.type === "invalid") {
 				this.__cancel(duration);
 			} else {
 				this.__setTransitionDuration(duration);
 				this.__minusPageOffset();
+				this.dataDirect = "prev";
+				this.translate = false;
 				this.__pos(-this.page * this.pageWidth);
 				var movingOffset = this.__getPrevOffsetOfMovingPanel();
-				this.__movePanel(this.page-1, movingOffset);
-				this.__setDataItem(movingOffset, loadedData.data);
-				this.__addExternalFunction(this.slideHandlers.onSlidePrev);
 			}
 		},
 		__setDataItem: function (movingOffset, loadedData) {
