@@ -24,11 +24,13 @@
 		    	var version = tempUa.substring(0, tempUa.indexOf(";")).split(".");
 		    	if (parseInt(version[0]) > 2 || (parseInt(version[0]) === 2 && parseInt(version[1]) >= 3)) {
 		    		this.enableTransform = true;
+		    		this.el.style.webkitTransformStyle = "preserve-3d";
 		    	} else {
 		    		this.enableTransform = false;
 		    	}
 	    	} else if (ua.indexOf('applewebkit') > -1 ) {
 	    		this.enableTransform = true;
+	    		this.el.style.webkitTransformStyle = "preserve-3d";
 	    	} else {
 	    		this.enableTransform = false;
 	    	}
@@ -53,8 +55,6 @@
 									+ '<div class="panel" style="left:100%;-webkit-transform:translate3d(0,0,0);"></div>'
 									+ '<div class="panel" style="left:-100%;-webkit-transform:translate3d(0,0,0);"></div></div>'
 									+ wrapper.innerHTML; 
-								
-			
 			this.el = document.getElementById("slider-"+__slideIndex);
 			this.panels = this.el.getElementsByClassName("panel");
 		},
