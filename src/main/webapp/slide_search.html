@@ -28,27 +28,6 @@ ul, li {
 	position: relative;
 }
 
-.panel {
-	position: absolute;
-	float:left;
-	top: 0;
-	width: 100%;
-	height: 100%;
-	overflow:hidden;
-		
-	/* Safari and Chrome */
-	display:-webkit-box;
-	-webkit-box-orient:vertical;
-	-webkit-box-pack:center;
-	-webkit-box-align:center;
-
-	/* W3C */
-	display:box;
-	box-orient:vertical;
-	box-pack:center;
-	box-align:center;
-}
-
 .panel img {
 	background-color: #999;
 }
@@ -162,8 +141,11 @@ z-index: 30;
 	background: url(http://m1.daumcdn.net/imgsrc.search/search_all/2009/mobile/safari/btn_prev_search.png) 0 15px no-repeat;
 }
 
-.footer {
-	z-index: 30;
+#footer {
+	width: 100%;
+	z-index: 999;
+	position: absolute;
+	bottom:0;
 }
 
 </style>
@@ -180,8 +162,8 @@ z-index: 30;
 <div id="wrapper">
 	<button type="button" class="prevBtn">prev</button>
 	<button type="button" class="nextBtn">next</button>
-	<div id="footer"></div>
 </div>
+<div id="footer"></div>
 <script type="text/javascript">
 
 var d = (function(){
@@ -220,15 +202,13 @@ var d = (function(){
 	d.onDataLoadEnd(function(){
 		if (s === null) {
 			s = slide.slideListener(wrapper, d, 0);
-			s.setSlideTreshold(0.2);
+			s.setSlideTreshold(0.1);
 			var click = "ontouchstart" in window ? "touchstart" : "click";
 			wrapper.getElementsByClassName("prevBtn")[0].addEventListener(click, function(){
 				s.prevSlide('500ms');
-				setCurrentDesc();
 			}, false);
 			wrapper.getElementsByClassName("nextBtn")[0].addEventListener(click, function(){
 				s.nextSlide('500ms');
-				setCurrentDesc();
 			}, false);
 			
 			wrapper.style.display = "block";
@@ -338,7 +318,7 @@ var d = (function(){
 				}
 			});
 			s.onSlideNext(function(){setCurrentDesc();});
-			s.onSlideNext(function(){setCurrentDesc();});
+			s.onSlidePrev(function(){setCurrentDesc();});
 		}
 	});
 	

@@ -10,9 +10,9 @@
 		init: function (slideHandlers, el, dataSource, gestureTreshold) {
 			this.slideHandlers = slideHandlers;
 			this.dataSource = dataSource;
-			this.__initPaging();
-			this.__createSlide(el);
+			this.__initPaging(el);
 			this.__checkEnable3D();
+			this.__createSlide();
 			this.__resize();
 			this.__bindEvent(gestureTreshold);
 		},
@@ -24,39 +24,45 @@
 		    	var version = tempUa.substring(0, tempUa.indexOf(";")).split(".");
 		    	if (parseInt(version[0]) > 2 || (parseInt(version[0]) === 2 && parseInt(version[1]) >= 3)) {
 		    		this.enableTransform = true;
-		    		this.el.style.webkitTransformStyle = "preserve-3d";
 		    	} else {
 		    		this.enableTransform = false;
 		    	}
 	    	} else if (ua.indexOf('applewebkit') > -1 ) {
 	    		this.enableTransform = true;
-	    		this.el.style.webkitTransformStyle = "preserve-3d";
 	    	} else {
 	    		this.enableTransform = false;
 	    	}
 		},
-		__initPaging: function () {
+		__initPaging: function (el) {
 			this.page = 0;
 			this.offset = 0;
 			this.dataDirect = "";
 			this.translate = true;
+			this.wrapper = (typeof(el) === "string")? document.getElementById(el) : el;
 		},
 		__setInitData: function () {
 			var loadedInitData = this.dataSource.getInitData(0);
-			
+			var data = '';
 			for (var i=0; i< 3; i++) {
 				if (loadedInitData[i].type !== "invalid") {
-					this.__setDataItem(i, loadedInitData[i].data);
+					data = loadedInitData[i].data;
+					if (this.slideHandlers.onSetDataItem) {
+						data = this.slideHandlers.onSetDataItem(data);
+					}
+					this.panels[i].innerHTML = data;
 				}
 			}
 		},
-		__createSlide: function (el) {
-			var wrapper = (typeof(el) === "string")? document.getElementById(el) : el;
-			wrapper.innerHTML = '<div class="slide" id="slider-'+__slideIndex+'" style="width:100%;height: 100%;position: relative;top:0;transform:translate3d(0,0,0);">' 
-									+ '<div class="panel" style="left:0%;-webkit-transform:translate3d(0,0,0);"></div>'
-									+ '<div class="panel" style="left:100%;-webkit-transform:translate3d(0,0,0);"></div>'
-									+ '<div class="panel" style="left:-100%;-webkit-transform:translate3d(0,0,0);"></div></div>'
-									+ wrapper.innerHTML; 
+		__createPanelStyle: function () {
+			var enableStr = this.enableTransform ? '-webkit-transform:translate3d(0,0,0);' : '';
+			return 'float:left;height: 100%;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-box-pack:center;-webkit-box-align:center;'+ enableStr + 'width:'+this.pageWidth +'px;';
+		},
+		__createSlide: function () {
+			this.pageWidth = this.wrapper.clientWidth;
+			var panelString = '<div class="panel" style="' + this.__createPanelStyle() + '"></div>';
+			this.wrapper.innerHTML = '<div class="slide" id="slider-'+__slideIndex+'" style="overflow:hidden;position:absolute;height: 100%;position: relative;top:0;transform:translate3d(0,0,0);'
+									+ 'left:'+(-this.pageWidth)+'px;width:'+(this.pageWidth * 3)+'px;">' 
+									+ panelString + panelString + panelString + '</div>' + wrapper.innerHTML; 
 			this.el = document.getElementById("slider-"+__slideIndex);
 			this.panels = this.el.getElementsByClassName("panel");
 		},
@@ -73,7 +79,7 @@
 			this.el.addEventListener("webkitTransitionEnd", function(){return self.__setData.call(self);});
 		},
 		__checkChangeValueByResize: function () {
-			if (this.pageWidth === this.el.clientWidth && this.pageHeight === this.el.clientHeight) {
+			if (this.pageWidth === this.wrapper.clientWidth && this.pageHeight === this.wrapper.clientHeight) {
 				var self = this;
 				window.setTimeout(function(){return self.__checkChangeValueByResize.call(self);}, 50);
 			} else {
@@ -81,9 +87,14 @@
 			}
 		},
 		__resize: function () {
-			this.pageWidth = this.el.clientWidth;
-			this.pageHeight = this.el.clientHeight;
-			this.__pos(-this.page * this.pageWidth);
+			this.pageWidth = this.wrapper.clientWidth;
+			this.pageHeight = this.wrapper.clientHeight;
+//			this.__pos(-this.page * this.pageWidth);
+			for (var i=0;i<3;i++) {
+				this.panels[i].style.width = '' + this.pageWidth + 'px';
+			}
+			this.el.style.width = '' + (this.pageWidth*3) + 'px';
+			this.el.style.left = '' + (-this.pageWidth) + 'px';
 			this.__addExternalFunction(this.slideHandlers.onResize);
 		},
 		__start: function (session) {
@@ -95,7 +106,7 @@
 			if (this.translate) {
 				if (session.isSwipe() && !this.isScrolling) {
 					session.targetEvent.preventDefault();
-					this.__pos(-this.page*this.pageWidth + session.delta.x/2);
+					this.__pos(session.delta.x/2);
 					this.__addExternalFunction(this.slideHandlers.onSlideMove, session);
 				} else if (session.isScroll()) {
 					this.isScrolling = true; 
@@ -169,18 +180,21 @@
 				this.__plusPageOffset();
 				this.dataDirect = "next";
 				this.translate = false;
-				this.__pos(-this.page * this.pageWidth);
-				this.movingOffset = this.__getNextOffsetOfMovingPanel();
+				this.__pos(-this.pageWidth);
 			}
 		},
 		__setData: function () {
 			if (this.dataDirect === "next") {
-				this.__movePanel(this.page+1, this.movingOffset);
-				this.__setDataItem(this.movingOffset, this.loadedData.data);
+				this.el.removeChild(this.panels[0]);
+				this.__setTransitionDuration(0);
+				this.__pos(0);
+				this.el.appendChild(this.__setDataItem(this.loadedData.data));
 				this.__addExternalFunction(this.slideHandlers.onSlideNext);
 			} else if (this.dataDirect === "prev") {
-				this.__movePanel(this.page-1, this.movingOffset);
-				this.__setDataItem(this.movingOffset, this.loadedData.data);
+				this.el.removeChild(this.panels[2]);
+				this.__setTransitionDuration(0);
+				this.__pos(0);
+				this.el.insertBefore(this.__setDataItem(this.loadedData.data), this.panels[0]);
 				this.__addExternalFunction(this.slideHandlers.onSlidePrev);
 			}
 			this.dataDirect = "";
@@ -195,33 +209,19 @@
 				this.__minusPageOffset();
 				this.dataDirect = "prev";
 				this.translate = false;
-				this.__pos(-this.page * this.pageWidth);
-				var movingOffset = this.__getPrevOffsetOfMovingPanel();
+				this.__pos(this.pageWidth);
 			}
 		},
-		__setDataItem: function (movingOffset, loadedData) {
+		__setDataItem: function (loadedData) {
 			if (this.slideHandlers.onSetDataItem) {
 				loadedData = this.slideHandlers.onSetDataItem(loadedData);
 			}
-			this.panels[movingOffset].innerHTML = loadedData;
-		},
-		__getNextOffsetOfMovingPanel: function () {
-			var len =  this.panels.length,
-				value = this.offset + parseInt(len/2);
-	
-			if (value >= len) {
-				value = value - len;
-			}
-			return value;
-		},
-		__getPrevOffsetOfMovingPanel: function () {
-			var len =  this.panels.length,
-				value = this.offset - parseInt(len/2);
-	
-			if (value < 0) {
-				value = value + len;
-			}
-			return value;
+			var panel = document.createElement("div");
+			panel.className = "panel";
+			panel.style.cssText = this.__createPanelStyle();
+			panel.innerHTML = loadedData;
+			
+			return panel
 		},
 		__plusPageOffset: function () {
 			this.page++;
@@ -239,12 +239,9 @@
 				this.offset = len - 1;
 			}
 		},
-		__movePanel: function (movingPage, movingOffset) {
-			this.panels[movingOffset].style.left = movingPage * 100 + "%";
-		},
 		__cancel: function (duration) {
 			this.__setTransitionDuration(duration);
-			this.__pos(-this.page * this.pageWidth);
+			this.__pos(0);
 			this.__addExternalFunction(this.slideHandlers.onSlideCancel);
 		},
 		__addExternalFunction: function (fn, session) {
@@ -418,9 +415,9 @@
 		getInitData: function (index) {
 			var dataArr = [];
 			this.currentIndex = index;
+			dataArr.push(this.getDataByIndex(index - 1));
 			dataArr.push(this.getDataByIndex(index));
 			dataArr.push(this.getDataByIndex(index + 1));
-			dataArr.push(this.getDataByIndex(index - 1));
 			
 			return dataArr;
 		},
