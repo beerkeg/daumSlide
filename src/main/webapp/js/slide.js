@@ -27,8 +27,8 @@
 		    	} else {
 		    		this.enableTransform = false;
 		    	}
-//	    	} else if (ua.indexOf('applewebkit') > -1 ) {
-//	    		this.enableTransform = true;
+	    	} else if (ua.indexOf('applewebkit') > -1 ) {
+	    		this.enableTransform = true;
 	    	} else {
 	    		this.enableTransform = false;
 	    	}
@@ -55,14 +55,14 @@
 		},
 		__createPanelStyle: function () {
 			var enableStr = this.enableTransform ? '-webkit-transform:translate3d(0,0,0);' : '';
-			return 'float:left;height: 100%;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-box-pack:center;-webkit-box-align:center;'+ enableStr + 'width:'+this.pageWidth +'px;';
+			return 'height: 100%;overflow:hidden;display:inline-block;'+ enableStr + 'width:'+this.pageWidth +'px;';
 		},
 		__createSlide: function () {
 			this.pageWidth = this.wrapper.clientWidth;
 			var panelString = '<div class="panel" style="' + this.__createPanelStyle() + '"></div>';
 			this.wrapper.innerHTML = '<div class="slide" id="slide-'+__slideIndex+'" style="overflow:hidden;position:absolute;height: 100%;position: relative;top:0;transform:translate3d(0,0,0);'
 									+ 'left:'+(-this.pageWidth)+'px;width:'+(this.pageWidth * 3)+'px;">' 
-									+ panelString + panelString + panelString + '</div>' + wrapper.innerHTML; 
+									+ panelString + panelString + panelString + '</div>' + this.wrapper.innerHTML; 
 			this.el = document.getElementById("slide-"+__slideIndex);
 			this.panels = this.el.getElementsByClassName("panel");
 		},
