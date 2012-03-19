@@ -27,8 +27,13 @@ ul, li {
 	background-color: #000;
 	position: relative;
 }
-
+.panel {
+	position: relative;
+	
+}
 .panel img {
+	position: absolute;
+	top: 0;
 	background-color: #999;
 }
 #wrapper button {
@@ -220,10 +225,15 @@ var d = (function(){
 
 				var imgs = document.getElementsByTagName("img");
 				var imgSize = {};
+				var imgOffset = {};
 				for(var k=0, len = imgs.length; k<len; k++) {
 					imgSize = resizeImg(imgs[k].getAttribute("data-width"), imgs[k].getAttribute("data-height"));
+					imgOffset = getImgOffset(imgSize.width, imgSize.height);
 					imgs[k].width = imgSize.width;
 					imgs[k].height = imgSize.height;
+					imgs[k].style.position = 'absolute';
+					imgs[k].style.left = ''+imgOffset.left+'px';
+					imgs[k].style.top = ''+imgOffset.top+'px';
 				}
 			});
 			function resizeImg(width, height) {
@@ -247,10 +257,17 @@ var d = (function(){
 				}
 				return imgSize;
 			}
+			function getImgOffset(width, height) {
+				var imgOffset = {};
+				imgOffset.left = parseInt((clientWidth+10-width)/2);
+				imgOffset.top = parseInt((clientHeight+10-height)/2);
+				return imgOffset;
+			}
 			s.onSetDataItem(function(item){
 				if (item && item.type !== '') {
 					var imgSize = resizeImg(item.width, item.height);
-					var str = '<img alt="'+item.title+'" src="'+item.image+'" width="'+imgSize.width+'" height="'+imgSize.height+'" data-width="'+item.width+'" data-height="'+item.height+'">';
+					var imgOffset = getImgOffset(imgSize.width, imgSize.height);
+					var str = '<img alt="'+item.title+'" src="'+item.image+'" width="'+imgSize.width+'" height="'+imgSize.height+'" data-width="'+item.width+'" data-height="'+item.height+'"style=position:absolute;top:'+imgOffset.top+'px;left:'+imgOffset.left+'px;">';
 					return str;
 				} else {
 					return '';
