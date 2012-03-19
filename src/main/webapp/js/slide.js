@@ -27,8 +27,8 @@
 		    	} else {
 		    		this.enableTransform = false;
 		    	}
-	    	} else if (ua.indexOf('applewebkit') > -1 ) {
-	    		this.enableTransform = true;
+//	    	} else if (ua.indexOf('applewebkit') > -1 ) {
+//	    		this.enableTransform = true;
 	    	} else {
 	    		this.enableTransform = false;
 	    	}
@@ -60,10 +60,10 @@
 		__createSlide: function () {
 			this.pageWidth = this.wrapper.clientWidth;
 			var panelString = '<div class="panel" style="' + this.__createPanelStyle() + '"></div>';
-			this.wrapper.innerHTML = '<div class="slide" id="slider-'+__slideIndex+'" style="overflow:hidden;position:absolute;height: 100%;position: relative;top:0;transform:translate3d(0,0,0);'
+			this.wrapper.innerHTML = '<div class="slide" id="slide-'+__slideIndex+'" style="overflow:hidden;position:absolute;height: 100%;position: relative;top:0;transform:translate3d(0,0,0);'
 									+ 'left:'+(-this.pageWidth)+'px;width:'+(this.pageWidth * 3)+'px;">' 
 									+ panelString + panelString + panelString + '</div>' + wrapper.innerHTML; 
-			this.el = document.getElementById("slider-"+__slideIndex);
+			this.el = document.getElementById("slide-"+__slideIndex);
 			this.panels = this.el.getElementsByClassName("panel");
 		},
 		__bindEvent: function (gestureTreshold) {
@@ -76,7 +76,9 @@
 			listener.onGestureEnd(function(session){return self.__end.call(self, session)});
 			
 			window.addEventListener(resizeEvent, function(){return self.__checkChangeValueByResize.call(self);});
-			this.el.addEventListener("webkitTransitionEnd", function(){return self.__setData.call(self);});
+			if (this.enableTransform) {
+				this.el.addEventListener("webkitTransitionEnd", function(){return self.__setData.call(self);});
+			}
 		},
 		__checkChangeValueByResize: function () {
 			if (this.pageWidth === this.wrapper.clientWidth && this.pageHeight === this.wrapper.clientHeight) {
@@ -135,7 +137,7 @@
 			if (this.enableTransform) {
 				this.el.style.webkitTransform = 'translate3d('+ x +'px,0,0)';
 			} else {
-				this.el.style.left = ''+ x +'px';
+				this.el.style.left = ''+ (x-this.pageWidth) +'px';
 			}
 		},
 		__setTransitionDuration: function (duration) {
@@ -181,6 +183,9 @@
 				this.dataDirect = "next";
 				this.translate = false;
 				this.__pos(-this.pageWidth);
+				if (!this.enableTransform) {
+					this.__setData();
+				}
 			}
 		},
 		__setData: function () {
@@ -210,6 +215,9 @@
 				this.dataDirect = "prev";
 				this.translate = false;
 				this.__pos(this.pageWidth);
+				if (!this.enableTransform) {
+					this.__setData();
+				}
 			}
 		},
 		__setDataItem: function (loadedData) {
@@ -494,6 +502,9 @@
 			},
 			responseData: function (data) {
 				dataSource.responseData(data);
+			},
+			getCurrentIndex: function () {
+				return dataSource.currentIndex;
 			}
 		}
 	}
