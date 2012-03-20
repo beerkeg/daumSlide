@@ -120,6 +120,7 @@
 			</plugin>
 			
 			<!-- jasmine unittest -->
+			<!--
 			<plugin>
 				<groupId>com.github.searls</groupId>
 				<artifactId>jasmine-maven-plugin</artifactId>
@@ -147,6 +148,7 @@
 					</preloadSources>
 				</configuration>
 			</plugin>
+			-->
 		</plugins>
 	</build>
 </project>
