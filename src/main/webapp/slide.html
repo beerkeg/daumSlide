@@ -144,7 +144,13 @@ d.onDataLoadEnd(function(){
 			session.targetEvent.preventDefault();
 		});
 		s.setInitData();
-
+		
+		function getImgOffset(width, height) {
+			var imgOffset = {};
+			imgOffset.left = parseInt((clientWidth+10-width)/2);
+			imgOffset.top = parseInt((clientHeight+10-height)/2);
+			return imgOffset;
+		}
 	}
 });
 d.sendRequestData({data:slides});
