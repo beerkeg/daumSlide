@@ -91,7 +91,6 @@
 		__resize: function () {
 			this.pageWidth = this.wrapper.clientWidth;
 			this.pageHeight = this.wrapper.clientHeight;
-//			this.__pos(-this.page * this.pageWidth);
 			for (var i=0;i<3;i++) {
 				this.panels[i].style.width = '' + this.pageWidth + 'px';
 			}
