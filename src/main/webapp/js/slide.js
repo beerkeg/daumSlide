@@ -62,7 +62,7 @@
             var panelString = '<div class="panel" style="' + this.__createPanelStyle() + '"></div>';
             this.wrapper.innerHTML = '<div class="slide" id="slide-'+__slideIndex+'" style="overflow:hidden;position:relative;top:0;transform:translate3d(0,0,0);'
                                     + 'left:'+(-this.pageWidth)+'px;width:'+(this.pageWidth * 3)+'px;">' 
-                                    + panelString + panelString + panelString + '</div>' + this.wrapper.innerHTML; 
+                                    + panelString + panelString + panelString + '</div>'; 
             this.el = document.getElementById("slide-"+__slideIndex);
             this.panels = this.el.getElementsByClassName("panel");
         },
@@ -503,7 +503,7 @@
                 dataSource.responseData(data);
             },
             getCurrentIndex: function () {
-                return dataSource.currentIndex;
+                return dataSource.__iterationIndexing(dataSource.currentIndex);
             }
         }
     }

@@ -38,7 +38,7 @@ ul, li {
     top: 0;
     background-color: #999;
 }
-#wrapper button {
+.prevBtn, .nextBtn {
     position: absolute;
     top: 45%;
     z-index: 30;
@@ -53,11 +53,11 @@ ul, li {
     cursor: pointer;
     padding: 0px;
 }
-#wrapper .prevBtn {
+.prevBtn {
     left: 10px;
     background-position: 0 0;
 }
-#wrapper .nextBtn {
+.nextBtn {
     right: 10px;
     background-position: 0 -50px;
 }
@@ -166,10 +166,9 @@ z-index: 30;
     <button id="searchbtn" type="button">검색</button>
 </div>
 
-<div id="wrapper">
-    <button type="button" class="prevBtn">prev</button>
-    <button type="button" class="nextBtn">next</button>
-</div>
+<div id="wrapper"></div>
+<button type="button" class="prevBtn">prev</button>
+<button type="button" class="nextBtn">next</button>
 <div id="footer"></div>
 <script type="text/javascript">
 
@@ -211,10 +210,10 @@ var d = (function(){
             s = slide.slideListener(wrapper, d, 0);
             s.setSlideTreshold(0.1);
             var click = "ontouchstart" in window ? "touchstart" : "click";
-            wrapper.getElementsByClassName("prevBtn")[0].addEventListener(click, function(){
+            document.getElementsByClassName("prevBtn")[0].addEventListener(click, function(){
                 s.prevSlide('500ms');
             }, false);
-            wrapper.getElementsByClassName("nextBtn")[0].addEventListener(click, function(){
+            document.getElementsByClassName("nextBtn")[0].addEventListener(click, function(){
                 s.nextSlide('500ms');
             }, false);
             
