@@ -24,7 +24,7 @@
             if (ua.indexOf('android') > -1) {
                 var tempUa = ua.split(" android ")[1];
                 var version = tempUa.substring(0, tempUa.indexOf(";")).split(".");
-                if (parseInt(version[0]) > 2 || (parseInt(version[0]) === 2 && parseInt(version[1]) >= 3)) {
+                if (parseInt(version[0], 10) > 2 || (parseInt(version[0], 10) === 2 && parseInt(version[1], 10) >= 3)) {
                     this.enableTransform = true;
                 } else {
                     this.enableTransform = false;
@@ -127,7 +127,7 @@
             this.__addExternalFunction(this.slideHandlers.onSlideEnd, session);
         },
         __setDurationTime: function (session) {
-            var duration = Math.abs(parseInt(session.getTerm()*this.pageWidth/session.delta.x));
+            var duration = Math.abs(parseInt(session.getTerm() * this.pageWidth / session.delta.x, 10));
             if (duration > 500) {
                 return '500ms';
             } else {
