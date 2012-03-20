@@ -147,32 +147,16 @@
             }
         },
         __isNextSwipe: function (session) {
-            if (session.isLeft() && (this.__isNextThreshold(session) || session.isFlick())) {
-                return true;
-            } else {
-                return false;
-            }
+            return session.isLeft() && (this.__isNextThreshold(session) || session.isFlick());
         },
         __isNextThreshold: function (session) {
-            if (this.el.clientWidth * -1 * SLIDE_TRESHOLD > session.delta.x) {
-                return true;
-            } else {
-                return false;
-            }
+            return this.el.clientWidth * -1 * SLIDE_TRESHOLD > session.delta.x;
         },
         __isPrevSwipe: function (session) {
-            if (session.isRight() && (this.__isPrevThreshold(session) || session.isFlick())) {
-                return true;
-            } else {
-                return false;
-            }
+            return session.isRight() && (this.__isPrevThreshold(session) || session.isFlick());
         },
         __isPrevThreshold: function (session) {
-            if (this.el.clientWidth * SLIDE_TRESHOLD < session.delta.x) {
-                return true;
-            } else {
-                return false;
-            }
+            return this.el.clientWidth * SLIDE_TRESHOLD < session.delta.x;
         },
         __next: function (duration) {
             this.loadedData = this.dataSource.getNextData();
