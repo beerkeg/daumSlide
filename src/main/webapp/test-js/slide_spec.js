@@ -1,3 +1,5 @@
+/*global describe: false, it: false, expect: false, beforeEach: false, afterEach: false,
+  jQuery: false, slide: false */
 describe('slide.js', function () {
     "use strict";
 

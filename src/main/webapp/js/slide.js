@@ -1,3 +1,4 @@
+/*global gesture: false */
 (function (exports) {
     "use strict";
 
