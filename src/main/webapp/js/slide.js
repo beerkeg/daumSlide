@@ -1,4 +1,6 @@
 (function (exports) {
+    "use strict";
+
     var SLIDE_TRESHOLD = 0.2;
     var __slideIndex = 0;
     

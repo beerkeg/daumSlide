@@ -1,4 +1,6 @@
 describe('slide.js', function () {
+    "use strict";
+
     var WRAPPER_ID = 'wrapper_fixture',
         wrapper,
         $j = jQuery;
