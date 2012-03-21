@@ -210,10 +210,12 @@ var d = (function(){
             s = slide.slideListener(wrapper, d, 0);
             s.setSlideTreshold(0.1);
             var click = "ontouchstart" in window ? "touchstart" : "click";
-            document.getElementsByClassName("prevBtn")[0].addEventListener(click, function(){
+            var prevBtn = document.getElementsByClassName("prevBtn")[0];
+            var nextBtn = document.getElementsByClassName("nextBtn")[0];
+            prevBtn.addEventListener(click, function(){
                 s.prevSlide('500ms');
             }, false);
-            document.getElementsByClassName("nextBtn")[0].addEventListener(click, function(){
+            nextBtn.addEventListener(click, function(){
                 s.nextSlide('500ms');
             }, false);
             
@@ -299,8 +301,6 @@ var d = (function(){
                 }
             }
             var footer = document.getElementById("footer");
-            var prevBtn = wrapper.getElementsByClassName("prevBtn")[0];
-            var nextBtn = wrapper.getElementsByClassName("nextBtn")[0];
             function setCurrentDesc() {
                 var item = d.getCurrentData();
                 if (item) {
