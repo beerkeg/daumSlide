@@ -80,7 +80,7 @@
             
             window.addEventListener(resizeEvent, function(){return self.__checkChangeValueByResize.call(self);});
             if (this.enableTransform) {
-                this.el.addEventListener("webkitTransitionEnd", function(){return self.__setData.call(self);});
+                this.el.addEventListener("webkitTransitionEnd", function(){return self.__onTransitionEnd.call(self);});
             }
         },
         __checkChangeValueByResize: function () {
@@ -174,23 +174,6 @@
                 }
             }
         },
-        __setData: function () {
-            if (this.dataDirect === "next") {
-                this.el.removeChild(this.panels[0]);
-                this.__setTransitionDuration(0);
-                this.__pos(0);
-                this.el.appendChild(this.__setDataItem(this.loadedData.data));
-                this.__addExternalFunction(this.slideHandlers.onSlideNext);
-            } else if (this.dataDirect === "prev") {
-                this.el.removeChild(this.panels[2]);
-                this.__setTransitionDuration(0);
-                this.__pos(0);
-                this.el.insertBefore(this.__setDataItem(this.loadedData.data), this.panels[0]);
-                this.__addExternalFunction(this.slideHandlers.onSlidePrev);
-            }
-            this.dataDirect = "";
-            this.translate = true; 
-        },
         __prev: function (duration) {
             this.loadedData = this.dataSource.getPrevData();
             if (this.loadedData.type === "invalid") {
@@ -205,6 +188,33 @@
                     this.__setData();
                 }
             }
+        },
+        __onTransitionEnd: function () {
+        	this.__setData();
+        	this.__addExternalFunction(this.slideHandlers.onTransitionEnd);
+        },
+        __setData: function () {
+            if (this.dataDirect === "next") {
+                this.__setNextData();
+            } else if (this.dataDirect === "prev") {
+                this.__setPrevData();
+            }
+            this.dataDirect = "";
+            this.translate = true;
+        },
+        __setNextData: function () {
+        	this.el.removeChild(this.panels[0]);
+            this.__setTransitionDuration(0);
+            this.__pos(0);
+            this.el.appendChild(this.__setDataItem(this.loadedData.data));
+            this.__addExternalFunction(this.slideHandlers.onSlideNext);
+        },
+        __setPrevData: function () {
+        	this.el.removeChild(this.panels[2]);
+            this.__setTransitionDuration(0);
+            this.__pos(0);
+            this.el.insertBefore(this.__setDataItem(this.loadedData.data), this.panels[0]);
+            this.__addExternalFunction(this.slideHandlers.onSlidePrev);
         },
         __setDataItem: function (loadedData) {
             if (this.slideHandlers.onSetDataItem) {
@@ -286,6 +296,9 @@
             },
             onSetDataItem: function (fn) {
                 slideHandlers.onSetDataItem = fn;
+            },
+            onTransitionEnd: function (fn) {
+            	slideHandlers.onTransitionEnd = fn;
             },
             nextSlide: function (time) {
                 slide.__next(time);
