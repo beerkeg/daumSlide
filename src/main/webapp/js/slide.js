@@ -316,21 +316,27 @@
 })(window.slide = {});
 
 (function (exports) {
-    var DataSource = function (dataHandlers, isIterating, loadIndex) {
-        this.init(dataHandlers, isIterating, loadIndex);
+    var DataSource = function (dataHandlers, isIterating, nextLoadIndex, prevLoadIndex) {
+        this.init(dataHandlers, isIterating, nextLoadIndex, prevLoadIndex);
     };
     DataSource.prototype = {
-        init: function (dataHandlers, isIterating, loadIndex) {
+        init: function (dataHandlers, isIterating, nextLoadIndex, prevLoadIndex) {
             this.dataHandlers = dataHandlers;
             this.isIterating = isIterating || false;
-            this.loadIndex = loadIndex || 0;
+            this.nextLoadIndex = nextLoadIndex || 0;
+            this.prevLoadIndex = prevLoadIndex || 0;
             this.dataList = [];
+    		this.currentIndex = 0;
         },
         addData: function (data) {
             this.dataList.push(data);
         },
-        addDataList: function (dataList) {
-            this.dataList = this.dataList.concat(dataList);
+        addDataList: function (dataArr) {
+            this.dataList = this.dataList.concat(dataArr);
+        },
+        addPrevDataList: function (dataArr) {
+    		this.currentIndex = this.currentIndex + dataArr.length;
+        	this.dataList = dataArr.concat(this.dataList);
         },
         setDataTotalLength: function (length) {
             this.totalLen = length;
@@ -392,7 +398,10 @@
             var dataInfo = this.getDataByIndex(this.getPrevIndex());
             
             if (dataInfo.type !== "invalid") {
-                this.currentIndex--;    
+                this.currentIndex--;  
+                if (this.checkPrevLoadingData()) {
+                    this.requestData();
+                }
             } 
             return dataInfo;    
         },
@@ -400,14 +409,21 @@
             var dataInfo = this.getDataByIndex(this.getNextIndex());
             if (dataInfo.type !== "invalid") {
                 this.currentIndex++;    
-                if (this.checkLoadingData()) {
+                if (this.checkNextLoadingData()) {
                     this.requestData();
                 }
             } 
             return dataInfo;
         },
-        checkLoadingData: function () {
-            if (this.loadIndex !== 0 && this.loadIndex === this.getDataListLength() - this.currentIndex) {
+        checkNextLoadingData: function () {
+            if (this.nextLoadIndex !== 0 && this.nextLoadIndex === this.getDataListLength() - this.currentIndex) {
+                return true;
+            } else {
+                return false;
+            }
+        },
+        checkPrevLoadingData: function () {
+            if (this.prevLoadIndex !== 0 && this.prevLoadIndex === this.currentIndex) {
                 return true;
             } else {
                 return false;
@@ -451,17 +467,20 @@
         }
     };
     
-    function dataSourceListener (isIterating, loadIndex) {
+    function dataSourceListener (isIterating, nextLoadIndex, prevLoadIndex) {
         var dataHandlers = {
                 parseDataHandler : null,
                 requestDataHandler : null,
                 dataLoadEndHandler : null
         };
-        var dataSource = new DataSource(dataHandlers, isIterating, loadIndex);
+        var dataSource = new DataSource(dataHandlers, isIterating, nextLoadIndex, prevLoadIndex);
         
         return {
             addDataList: function (dataArr) {
                 dataSource.addDataList(dataArr);
+            },
+            addPrevDataList: function (dataArr) {
+                dataSource.addPrevDataList(dataArr);
             },
             addData: function (data) {
                 data.addData(data);
