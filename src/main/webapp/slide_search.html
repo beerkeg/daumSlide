@@ -280,7 +280,6 @@ var d = (function(){
             s.onSlideStart(function(session){
                 session.targetEvent.preventDefault();
             });
-            var viewState = "block";
             function replaceAll(txt, replace, with_this) {
                 return txt.replace(new RegExp(replace, 'g'),with_this);
             }
@@ -307,7 +306,7 @@ var d = (function(){
                     var data = item.data;
                     var title = changeText(data.title);
                     var linktext = changeLinkText(data.link);
-                    var str = '<div class="wrap_desc" style="opacity: 0.7;display:'+ viewState +';" id="desc_field">' +
+                    var str = '<div class="wrap_desc" style="opacity: 0.7;" id="desc_field">' +
                                 '<a href="'+data.link+'" class="tit" id="desc_title">'+ title +'</a>' +
                                 '<span class="info" id="desc_info">'+data.width+' x '+data.height+'</span><a href="'+data.link+'" id="desc_url" class="link_src">'+ linktext +'</a>' +
                                 '<div class="wrap_btn">' +
@@ -320,6 +319,7 @@ var d = (function(){
                 footer.innerHTML = str;
             }
             setCurrentDesc();
+            var viewState = "block";
             s.onSlideEnd(function(session){
                 if (!session.isSwipe() && !session.isScroll()) {
                     if (viewState === "none") {
