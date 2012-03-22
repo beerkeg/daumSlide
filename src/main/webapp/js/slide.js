@@ -162,37 +162,42 @@
             return this.el.clientWidth * SLIDE_TRESHOLD < session.delta.x;
         },
         __next: function (duration) {
-            this.loadedData = this.dataSource.getNextData();
-            if (this.loadedData.type === "invalid") {
-                this.__cancel(duration);
-            } else {
-                this.__setTransitionDuration(duration);
-                this.__plusPageOffset();
-                this.dataDirect = "next";
-                this.translate = false;
-                this.__pos(-this.pageWidth);
-                if (!this.enableTransform) {
-                    this.__setData();
-                }
-            }
+        	if (this.translate) {
+	            this.loadedData = this.dataSource.getNextData();
+	            if (this.loadedData.type === "invalid") {
+	                this.__cancel(duration);
+	            } else {
+	                this.__setTransitionDuration(duration);
+	                this.__plusPageOffset();
+	                this.dataDirect = "next";
+	                this.translate = false;
+	                this.__pos(-this.pageWidth);
+	                if (!this.enableTransform) {
+	                    this.__setData();
+	                }
+	            }
+        	}
         },
         __prev: function (duration) {
-            this.loadedData = this.dataSource.getPrevData();
-            if (this.loadedData.type === "invalid") {
-                this.__cancel(duration);
-            } else {
-                this.__setTransitionDuration(duration);
-                this.__minusPageOffset();
-                this.dataDirect = "prev";
-                this.translate = false;
-                this.__pos(this.pageWidth);
-                if (!this.enableTransform) {
-                    this.__setData();
-                }
-            }
+        	if (this.translate) {
+	            this.loadedData = this.dataSource.getPrevData();
+	            if (this.loadedData.type === "invalid") {
+	                this.__cancel(duration);
+	            } else {
+	                this.__setTransitionDuration(duration);
+	                this.__minusPageOffset();
+	                this.dataDirect = "prev";
+	                this.translate = false;
+	                this.__pos(this.pageWidth);
+	                if (!this.enableTransform) {
+	                    this.__setData();
+	                }
+	            }
+        	}
         },
         __onTransitionEnd: function () {
             this.__setData();
+            this.translate = true;
             this.__addExternalFunction(this.slideHandlers.onTransitionEnd);
         },
         __setData: function () {
@@ -202,7 +207,6 @@
                 this.__setPrevData();
             }
             this.dataDirect = "";
-            this.translate = true;
         },
         __setNextData: function () {
             this.el.removeChild(this.panels[0]);
