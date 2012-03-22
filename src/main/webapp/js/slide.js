@@ -2,10 +2,11 @@
 (function (exports) {
     "use strict";
 
-    var SLIDE_TRESHOLD = 0.2;
-    var __slideIndex = 0;
+    var SLIDE_TRESHOLD = 0.2,
+        __slideIndex = 0,
+        Slide;
     
-    var Slide = function(slideHandlers, el, dataSource, gestureTreshold) {
+    Slide = function(slideHandlers, el, dataSource, gestureTreshold) {
         this.init(slideHandlers, el, dataSource, gestureTreshold);
     };
     
@@ -23,8 +24,8 @@
             var ua = navigator.userAgent.toLowerCase();
             
             if (ua.indexOf('android') > -1) {
-                var tempUa = ua.split(" android ")[1];
-                var version = tempUa.substring(0, tempUa.indexOf(";")).split(".");
+                var tempUa = ua.split(" android ")[1],
+                    version = tempUa.substring(0, tempUa.indexOf(";")).split(".");
                 if (parseInt(version[0], 10) > 2 || (parseInt(version[0], 10) === 2 && parseInt(version[1], 10) >= 3)) {
                     this.enableTransform = true;
                 } else {
@@ -44,9 +45,9 @@
             this.wrapper = (typeof(el) === "string")? document.getElementById(el) : el;
         },
         __setInitData: function (num) {
-            var loadedInitData = this.dataSource.getInitData(num);
-            var data = '';
-            for (var i=0; i< 3; i++) {
+            var loadedInitData = this.dataSource.getInitData(num),
+                data = '', i;
+            for (i=0; i< 3; i += 1) {
                 if (loadedInitData[i].type !== "invalid") {
                     data = loadedInitData[i].data;
                     if (this.slideHandlers.onSetDataItem) {
@@ -63,9 +64,9 @@
         __createSlide: function () {
             this.pageWidth = this.wrapper.clientWidth;
             var panelString = '<div class="panel" style="' + this.__createPanelStyle() + '"></div>';
-            this.wrapper.innerHTML = '<div class="slide" id="slide-'+__slideIndex+'" style="overflow:hidden;position:relative;top:0;transform:translate3d(0,0,0);'
-                                    + 'left:'+(-this.pageWidth)+'px;width:'+(this.pageWidth * 3)+'px;">' 
-                                    + panelString + panelString + panelString + '</div>'; 
+            this.wrapper.innerHTML = '<div class="slide" id="slide-'+__slideIndex+'" style="overflow:hidden;position:relative;top:0;transform:translate3d(0,0,0);' +
+                                    'left:'+(-this.pageWidth)+'px;width:'+(this.pageWidth * 3)+'px;">' +
+                                    panelString + panelString + panelString + '</div>';
             this.el = document.getElementById("slide-"+__slideIndex);
             this.panels = this.el.getElementsByClassName("panel");
         },
@@ -74,9 +75,9 @@
                 listener = gesture.GestureListener(this.el, gestureTreshold),
                 self = this;
     
-            listener.onGestureStart(function(session){return self.__start.call(self, session)});
-            listener.onGestureMove(function(session){return self.__move.call(self, session)});
-            listener.onGestureEnd(function(session){return self.__end.call(self, session)});
+            listener.onGestureStart(function(session){return self.__start.call(self, session);});
+            listener.onGestureMove(function(session){return self.__move.call(self, session);});
+            listener.onGestureEnd(function(session){return self.__end.call(self, session);});
             
             window.addEventListener(resizeEvent, function(){return self.__checkChangeValueByResize.call(self);});
             if (this.enableTransform) {
@@ -92,9 +93,10 @@
             }
         },
         __resize: function () {
+            var i;
             this.pageWidth = this.wrapper.clientWidth;
             this.pageHeight = this.wrapper.clientHeight;
-            for (var i=0;i<3;i++) {
+            for (i=0;i<3;i += 1) {
                 this.panels[i].style.width = '' + this.pageWidth + 'px';
             }
             this.el.style.width = '' + (this.pageWidth*3) + 'px';
@@ -190,8 +192,8 @@
             }
         },
         __onTransitionEnd: function () {
-        	this.__setData();
-        	this.__addExternalFunction(this.slideHandlers.onTransitionEnd);
+            this.__setData();
+            this.__addExternalFunction(this.slideHandlers.onTransitionEnd);
         },
         __setData: function () {
             if (this.dataDirect === "next") {
@@ -203,14 +205,14 @@
             this.translate = true;
         },
         __setNextData: function () {
-        	this.el.removeChild(this.panels[0]);
+            this.el.removeChild(this.panels[0]);
             this.__setTransitionDuration(0);
             this.__pos(0);
             this.el.appendChild(this.__setDataItem(this.loadedData.data));
             this.__addExternalFunction(this.slideHandlers.onSlideNext);
         },
         __setPrevData: function () {
-        	this.el.removeChild(this.panels[2]);
+            this.el.removeChild(this.panels[2]);
             this.__setTransitionDuration(0);
             this.__pos(0);
             this.el.insertBefore(this.__setDataItem(this.loadedData.data), this.panels[0]);
@@ -225,20 +227,20 @@
             panel.style.cssText = this.__createPanelStyle();
             panel.innerHTML = loadedData;
             
-            return panel
+            return panel;
         },
         __plusPageOffset: function () {
-            this.page++;
+            this.page += 1;
             var len = this.panels.length;
-            this.offset++;
+            this.offset += 1;
             if (this.offset > len - 1) {
                 this.offset = 0;
             }
         },
         __minusPageOffset: function () {
-            this.page--;
+            this.page -= 1;
             var len = this.panels.length;
-            this.offset--;
+            this.offset -= 1;
             if (this.offset < 0) {
                 this.offset = len - 1;
             }
@@ -265,10 +267,11 @@
                 'onSlideCancel': null,
                 'onResize': null,
                 'onSetDataItem': null
-            };
-        var slide = new Slide(slideHandlers, el, dataSourece, gestureTreshold);
-        __slideIndex++;
-    
+            },
+            slide = new Slide(slideHandlers, el, dataSourece, gestureTreshold);
+
+        __slideIndex += 1;
+
         return {
             setSlideTreshold: function (slideTreshold) {
                 SLIDE_TRESHOLD = slideTreshold;
@@ -298,7 +301,7 @@
                 slideHandlers.onSetDataItem = fn;
             },
             onTransitionEnd: function (fn) {
-            	slideHandlers.onTransitionEnd = fn;
+                slideHandlers.onTransitionEnd = fn;
             },
             nextSlide: function (time) {
                 slide.__next(time);
@@ -316,6 +319,8 @@
 })(window.slide = {});
 
 (function (exports) {
+    "use strict";
+
     var DataSource = function (dataHandlers, isIterating, nextLoadIndex, prevLoadIndex) {
         this.init(dataHandlers, isIterating, nextLoadIndex, prevLoadIndex);
     };
@@ -326,7 +331,7 @@
             this.nextLoadIndex = nextLoadIndex || 0;
             this.prevLoadIndex = prevLoadIndex || 0;
             this.dataList = [];
-    		this.currentIndex = 0;
+            this.currentIndex = 0;
         },
         addData: function (data) {
             this.dataList.push(data);
@@ -335,8 +340,8 @@
             this.dataList = this.dataList.concat(dataArr);
         },
         addPrevDataList: function (dataArr) {
-    		this.currentIndex = this.currentIndex + dataArr.length;
-        	this.dataList = dataArr.concat(this.dataList);
+            this.currentIndex = this.currentIndex + dataArr.length;
+            this.dataList = dataArr.concat(this.dataList);
         },
         setDataTotalLength: function (length) {
             this.totalLen = length;
