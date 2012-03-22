@@ -4,7 +4,9 @@
 
     var SLIDE_TRESHOLD = 0.2,
         __slideIndex = 0,
-        Slide;
+
+        Slide,
+        userAgent;
     
     Slide = function(slideHandlers, el, dataSource, gestureTreshold) {
         this.init(slideHandlers, el, dataSource, gestureTreshold);
@@ -14,27 +16,21 @@
         init: function (slideHandlers, el, dataSource, gestureTreshold) {
             this.slideHandlers = slideHandlers;
             this.dataSource = dataSource;
+            this.enableTransform = false;
             this.__initPaging(el);
-            this.__checkEnable3D();
+            this.enable3DTransform();
             this.__createSlide();
             this.__resize();
             this.__bindEvent(gestureTreshold);
         },
-        __checkEnable3D: function () {
-            var ua = navigator.userAgent.toLowerCase();
-            
-            if (ua.indexOf('android') > -1) {
-                var tempUa = ua.split(" android ")[1],
-                    version = tempUa.substring(0, tempUa.indexOf(";")).split(".");
-                if (parseInt(version[0], 10) > 2 || (parseInt(version[0], 10) === 2 && parseInt(version[1], 10) >= 3)) {
-                    this.enableTransform = true;
-                } else {
-                    this.enableTransform = false;
-                }
-            } else if (ua.indexOf('applewebkit') > -1 ) {
+        enable3DTransform: function (uaString) {
+            var ua = userAgent(uaString),
+                isOverGingerBread = ua.androidVersion.major > 2 ||
+                                    (ua.androidVersion.major === 2 && ua.androidVersion.minor >= 3);
+            if (ua.isAndroid() && isOverGingerBread) {
                 this.enableTransform = true;
-            } else {
-                this.enableTransform = false;
+            } else if (!ua.isAndroid() && ua.isWebkit()) {
+                this.enableTransform = true;
             }
         },
         __initPaging: function (el) {
@@ -318,9 +314,39 @@
             }
         };
     }
-    
+
+    userAgent = function (ua) {
+        ua = (ua || window.navigator.userAgent).toString();
+        return {
+            ua: ua,
+            isAndroid: function () {
+                return ua.match(/android/i);
+            },
+            isWebkit: function () {
+                return ua.match(/applewebkit/i);
+            },
+            androidVersion: function() {
+                var major = 1, minor = 0, versions,
+                    matches = / android ([0-9\.]+);/i.exec(ua);
+                if (matches && matches.length === 2) {
+                    versions = matches[1].split('.');
+                    major = parseInt(versions[0], 10);
+                    minor = parseInt(versions[1], 10);
+                }
+                return {
+                    major: major,
+                    minor: minor
+                };
+            }()
+        };
+    };
+
+
+    exports.Slide = Slide;
     exports.slideListener = slideListener;
+    exports.userAgent = userAgent;
 })(window.slide = {});
+
 
 (function (exports) {
     "use strict";
