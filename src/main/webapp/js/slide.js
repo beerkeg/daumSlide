@@ -506,6 +506,9 @@
             setDataTotalLength: function (len) {
                 dataSource.setDataTotalLength(len);
             },
+            getDataTotalLength: function () {
+            	return dataSource.getDataTotalLength();
+            },
             onParseData: function (fn) {
                 dataHandlers.parseDataHandler = fn;
             },
