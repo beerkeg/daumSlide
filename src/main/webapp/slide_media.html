@@ -66,6 +66,13 @@ ul, li {
 	margin-left: 24px;
 }
 
+#header {
+    width: 100%;
+    z-index: 999;
+    position: absolute;
+    top:0;
+}
+
 #footer {
     width: 100%;
     z-index: 999;
@@ -73,6 +80,91 @@ ul, li {
     bottom:0;
 }
 
+#title-wrap {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	z-index: 9999;
+	width: 100%;
+	display: none;
+	background-color: black;
+	color: white;
+	text-align: center;
+	letter-spacing: -1px;
+}
+#title-wrap .inner {
+    margin: 13px;
+}
+#title-wrap .title {
+	font: bold 16px dotum;
+	color: white;
+	text-decoration: none;
+}
+#title-wrap .bar {
+	padding: 0 9px;
+	font-size: 14px;
+	color: #2E2F2A;
+	position: relative;
+	top: -2px;
+}
+#title-wrap .link {
+	color: #9AF;
+	font-size: 12px;
+	position: relative;
+	top: -2px;
+}
+#title-wrap .ico {
+    padding: 0 0 0 3px;
+}
+#title-wrap .ico span {
+	position: relative;
+	top: 7px;
+	padding: 0 0 0 5px;
+	background: url(http://i1.daumcdn.net/img-section/enter/common/pv_icon1.png) 0 -90px no-repeat;
+	overflow: hidden;
+}
+
+div.ps-caption {
+	background: black;
+	color: #9AF;
+	font: bold 14px dotum;
+	text-align: center;
+	width: 100%!important;
+	z-index: 9999!important;
+}
+.ps-caption-content {
+	padding: 13px;
+	display: block;
+}
+.ps-caption-content .count {
+	color: white;
+	font-size: 12px;
+	font-weight: normal;
+	padding-left: 3px;
+}
+.ps-caption-content .count em {
+	color: #9AF;
+	font-style: normal;
+	font-size: 12px;
+}
+#close-button {
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 100%;
+	width: 70px;
+	border-left: 1px solid #2F2F2F;
+	cursor: pointer;
+	text-align: center;
+	background-color: black;
+}
+#close-button .ico {
+	width: 25px;
+	height: 23px;
+	overflow: hidden;
+	margin: 10px auto 0 auto;
+	background: url(http://i1.daumcdn.net/img-section/enter/common/pv_icon1.png) 0 0 no-repeat;
+}
 </style>
 <script type="text/javascript" src="http://east.ftdev.daum.net/g/js/gesture.js"></script>
 <script type="text/javascript" src="js/slide.js"></script>
@@ -80,7 +172,12 @@ ul, li {
 </head>
 <body>
 <div id="wrapper"></div>
-<div id="header"></div>
+<div id="header">
+    <div class="ps-caption" style="left: 0px; position: absolute; overflow-x: hidden; overflow-y: hidden; z-index: 1000; top: 0px; width: 1078px; opacity: 0.8; display: block; ">
+        <div class="ps-caption-content">스타들의 결혼<span class="count">(<em>2</em>/5364)</span></div>
+        <div id="close-button"><div class="ico"></div></div>
+    </div>
+</div>
 <div id="prev-button" class="btn"><div class="ico"></div></div>
 <div id="next-button" class="btn"><div class="ico"></div></div>
 <div id="footer"></div>
@@ -107,17 +204,23 @@ var d = (function(){
         s.charset = "utf-8";
         headTag.appendChild(s);
     });
+    var header = document.getElementById("header");
+    var desc = header.getElementsByClassName("ps-caption")[0];
     d.onParseData(function(jsonStr){
     	console.log(jsonStr);
         var list = jsonStr.list;
         var data = list.data;
+        var totalcount = parseInt(jsonStr.count);
         var arr = [];
         for (var i=0, len=data.length; i< len; i++) {
             arr.push( data[i] );
         }
                 
         headTag.removeChild(headTag.lastChild);
-        d.setDataTotalLength(parseInt(list.pageNavigation.totalRowCount));
+        d.setDataTotalLength(totalcount);
+        
+        var headerStr = '<div class="ps-caption-content">'+jsonStr.title+'<span class="count">(<em>'+(d.getCurrentIndex()+1)+'</em>/'+totalcount+')</span></div><div id="close-button"><div class="ico"></div></div>';      
+        desc.innerHTML = headerStr;
         
         return arr;
     });
@@ -128,11 +231,15 @@ var d = (function(){
             var click = "ontouchstart" in window ? "touchstart" : "click";
             var prevBtn = document.getElementById("prev-button");
             var nextBtn = document.getElementById("next-button");
+            var closeBtn = document.getElementById("close-button");
             prevBtn.addEventListener(click, function(){
                 s.prevSlide('500ms');
             }, false);
             nextBtn.addEventListener(click, function(){
                 s.nextSlide('500ms');
+            }, false);
+            closeBtn.addEventListener(click, function() {
+            	window.history.back();
             }, false);
             
             var clientHeight = wrapper.clientHeight-10;
@@ -145,10 +252,10 @@ var d = (function(){
                 var imgSize = {};
                 var imgOffset = {};
                 for(var k=0, len = imgs.length; k<len; k++) {
-                    imgSize = resizeImg(imgs[k].getAttribute("data-width"), imgs[k].getAttribute("data-height"));
+                    imgSize = resizeImg(imgs[k].naturalWidth, imgs[k].naturalHeight);
                     imgOffset = getImgOffset(imgSize.width, imgSize.height);
-                    imgs[k].width = imgSize.width;
-                    imgs[k].height = imgSize.height;
+                    imgs[k].style.width = ''+imgSize.width+'px';
+                    imgs[k].style.height = ''+imgSize.height+'px';
                     imgs[k].style.position = 'absolute';
                     imgs[k].style.left = ''+imgOffset.left+'px';
                     imgs[k].style.top = ''+imgOffset.top+'px';
@@ -181,11 +288,22 @@ var d = (function(){
                 imgOffset.top = parseInt((clientHeight+10-height)/2);
                 return imgOffset;
             }
+            d.onImgLoad = function (el) {
+                var imgSize = resizeImg(el.naturalWidth, el.naturalHeight);
+                var imgOffset = getImgOffset(imgSize.width, imgSize.height);
+                console.log(el.naturalWidth);
+                
+                el.style.width = ''+imgSize.width+'px';
+                el.style.height = ''+imgSize.height+'px';
+                el.style.top = ''+imgOffset.top+'px';
+                el.style.left = ''+imgOffset.left+'px';
+            };
             s.onSetDataItem(function(item){
                 if (item && item.type !== '') {
                     var imgSize = resizeImg(item.width, item.height);
                     var imgOffset = getImgOffset(imgSize.width, imgSize.height);
-                    var str = '<img alt="'+item.title+'" src="'+item.image+'" width="'+imgSize.width+'" height="'+imgSize.height+'" data-width="'+item.width+'" data-height="'+item.height+'"style=position:absolute;top:'+imgOffset.top+'px;left:'+imgOffset.left+'px;">';
+                    
+                    var str = '<img alt="'+item.title+'" src="'+item.image.replace("http://photo-media.daum-img.net","http://m1.daumcdn.net/photo-media")+' "style=position:absolute;" onload="d.onImgLoad(this);">';
                     return str;
                 } else {
                     return '';
@@ -195,54 +313,38 @@ var d = (function(){
             s.onSlideStart(function(session){
                 session.targetEvent.preventDefault();
             });
-            function replaceAll(txt, replace, with_this) {
-                return txt.replace(new RegExp(replace, 'g'),with_this);
-            }
-            function changeText(text) {
-                text = replaceAll(text, "&lt;", "<");
-                text = replaceAll(text, "&gt;", ">");
-                text = replaceAll(text, "&nbsp; "," ");
-                text = replaceAll(text, "&amp;", "&");
-                text = replaceAll(text, "&quot;", "\"");
-                
-                return text;
-            }
-            function changeLinkText(link) {
-                if (link.length > 37) {
-                    return link.substring(0,35) + ".."
-                } else {
-                    return link;
-                }
-            }
             var footer = document.getElementById("footer");
+            var em = header.getElementsByTagName("em")[0];
             function setCurrentDesc() {
                 var item = d.getCurrentData();
                 if (item) {
                     var data = item.data;
-                    var title = changeText(data.title);
-                    var linktext = changeLinkText(data.link);
-                    var str = '<div class="wrap_desc" style="opacity: 0.7;" id="desc_field">' +
-                                '<a href="'+data.link+'" class="tit" id="desc_title">'+ title +'</a>' +
-                                '<span class="info" id="desc_info">'+data.width+' x '+data.height+'</span><a href="'+data.link+'" id="desc_url" class="link_src">'+ linktext +'</a>' +
-                                '<div class="wrap_btn">' +
-                                    '<a href="" class="left_wrap"><span class="prev">검색결과로 돌아가기</span></a>' + 
-                                    '<a id="desc_link" href="'+data.image+'" target="_blank" class="right_wrap"><span class="bar"></span><span>원본 바로보기</span></a>' +
-                                '</div></div>';
+                    var footerStr = '<div id="title-wrap" style="opacity: 0.8; display: block;">'
+	                                + '<div class="inner">'
+	                                        + '<a href="http://newslink.media.daum.net/mobile/'+data.id+'" class="title">'+data.title+'</a>'
+	                                        + '<span class="bar">|</span>'
+	                                        + '<a href="http://newslink.media.daum.net/mobile/'+data.id+'" class="link">기사보기</a>'
+	                                        + '<span class="ico"><span></span></span>'
+	                                + '</div>'
+	                              + '</div>';
                 } else {
-                    var str = '';
+                    var footerStr = '';
                 }
-                footer.innerHTML = str;
+                em.innerHTML = ''+(d.getCurrentIndex()+1);
+                footer.innerHTML = footerStr;
             }
             setCurrentDesc();
             var viewState = "block";
             s.onSlideEnd(function(session){
                 if (!session.isSwipe() && !session.isScroll()) {
                     if (viewState === "none") {
+                    	header.style.display = "block";
                         footer.style.display = "block";
                         prevBtn.style.display = "block";
                         nextBtn.style.display = "block";
                         viewState = "block";
                     } else {
+                    	header.style.display = "none";
                         footer.style.display = "none";
                         prevBtn.style.display = "none";
                         nextBtn.style.display = "none";
