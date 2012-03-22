@@ -301,7 +301,7 @@ var d = (function(){
             s.onSetDataItem(function(item){
                 if (item && item.type !== '') {
                 	var cdnImgUrl = item.image.replace("http://photo-media.daum-img.net","http://m1.daumcdn.net/photo-media");
-                    var str = '<img alt="'+item.title+'" src="'+cdnImgUrl+'" style="position:absolute;width:1px;height:1px;" onload="d.onImgLoad(this);">';
+                    var str = '<img alt="'+escape(item.title)+'" src="'+cdnImgUrl+'" style="position:absolute;width:1px;height:1px;" onload="d.onImgLoad(this);">';
                     return str;
                 } else {
                     return '';
