@@ -18,12 +18,12 @@
             this.dataSource = dataSource;
             this.enableTransform = false;
             this.__initPaging(el);
-            this.__checkEnable3D();
+            this.enable3DTransform();
             this.__createSlide();
             this.__resize();
             this.__bindEvent(gestureTreshold);
         },
-        __checkEnable3D: function (uaString) {
+        enable3DTransform: function (uaString) {
             var ua = userAgent(uaString),
                 isOverGingerBread = ua.androidVersion.major > 2 ||
                                     (ua.androidVersion.major === 2 && ua.androidVersion.minor >= 3);

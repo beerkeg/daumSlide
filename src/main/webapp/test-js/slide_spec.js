@@ -32,14 +32,14 @@ describe('slide.js', function () {
         });
 
         it('should disable 3d transform by default', function () {
-            var enable3D = slide.Slide.prototype.__checkEnable3D,
+            var enable3D = slide.Slide.prototype.enable3DTransform,
                 mockSlide = {};
             enable3D.call(mockSlide, 'unknown UA');
             expect(mockSlide.enableTransform).toBeFalsy();
         });
 
         it('should enable 3d transform if over android gingerbread', function () {
-            var enable3D = slide.Slide.prototype.__checkEnable3D,
+            var enable3D = slide.Slide.prototype.enable3DTransform,
                 ANDROID_2_3_1 = 'Mozilla/5.0 (Linux; U; Android 2.3.1; ko-kr; SHW-M250S Build/GINGERBREAD) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1',
                 mockSlide = {};
             enable3D.call(mockSlide, ANDROID_2_3_1);
@@ -47,7 +47,7 @@ describe('slide.js', function () {
         });
 
         it('should disable 3d transform if under android gingerbread', function () {
-            var enable3D = slide.Slide.prototype.__checkEnable3D,
+            var enable3D = slide.Slide.prototype.enable3DTransform,
                 ANDROID_2_2_1 = 'Mozilla/5.0 (Linux; U; Android 2.2.1; ko-kr; SHW-M250S Build/GINGERBREAD) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1',
                 mockSlide = {};
             enable3D.call(mockSlide, ANDROID_2_2_1);
@@ -55,7 +55,7 @@ describe('slide.js', function () {
         });
 
         it('should enable 3d transform if it is non-android webkit', function () {
-            var enable3D = slide.Slide.prototype.__checkEnable3D,
+            var enable3D = slide.Slide.prototype.enable3DTransform,
                 IPHONE_5_1 = 'Mozilla/5.0 (iPhone; CPU iPhone OS 5_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9B179 Safari/7534.48.3',
                 mockSlide = {};
             enable3D.call(mockSlide, IPHONE_5_1);
