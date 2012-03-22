@@ -254,11 +254,8 @@ var d = (function(){
                 for(var k=0, len = imgs.length; k<len; k++) {
                     imgSize = resizeImg(imgs[k].naturalWidth, imgs[k].naturalHeight);
                     imgOffset = getImgOffset(imgSize.width, imgSize.height);
-                    imgs[k].style.width = ''+imgSize.width+'px';
-                    imgs[k].style.height = ''+imgSize.height+'px';
-                    imgs[k].style.position = 'absolute';
-                    imgs[k].style.left = ''+imgOffset.left+'px';
-                    imgs[k].style.top = ''+imgOffset.top+'px';
+                    
+                    imgs[k].style.cssText = 'width:'+imgSize.width+'px;height:'+imgSize.height+'px;top:'+imgOffset.top+'px;left:'+imgOffset.left+'px;position:absolute;';
                 }
             });
             function resizeImg(width, height) {
@@ -293,15 +290,15 @@ var d = (function(){
                 var imgSize = resizeImg(el.naturalWidth, el.naturalHeight);
                 var imgOffset = getImgOffset(imgSize.width, imgSize.height);
                 
-                el.style.width = ''+imgSize.width+'px';
-                el.style.height = ''+imgSize.height+'px';
-                el.style.top = ''+imgOffset.top+'px';
-                el.style.left = ''+imgOffset.left+'px';
+                el.style.cssText = 'width:'+imgSize.width+'px;height:'+imgSize.height+'px;top:'+imgOffset.top+'px;left:'+imgOffset.left+'px;position:absolute;';
+            };
+            d.onImgLoadError = function (el) {
+                el.parentNode.style.background = "none";
             };
             s.onSetDataItem(function(item){
                 if (item && item.type !== '') {
                 	var cdnImgUrl = item.image.replace("http://photo-media.daum-img.net","http://m1.daumcdn.net/photo-media");
-                    var str = '<img alt="'+escape(item.title)+'" src="'+cdnImgUrl+'" style="position:absolute;width:1px;height:1px;" onload="d.onImgLoad(this);">';
+                    var str = '<img alt="'+escape(item.title)+'" src="'+cdnImgUrl+'" style="position:absolute;width:1px;height:1px;" onload="d.onImgLoad(this);" onerror="d.onImgLoadError(this);" onabort="d.onImgLoadError(this);">';
                     return str;
                 } else {
                     return '';

@@ -232,11 +232,7 @@ var d = (function(){
                 for(var k=0, len = imgs.length; k<len; k++) {
                     imgSize = resizeImg(imgs[k].getAttribute("data-width"), imgs[k].getAttribute("data-height"));
                     imgOffset = getImgOffset(imgSize.width, imgSize.height);
-                    imgs[k].width = imgSize.width;
-                    imgs[k].height = imgSize.height;
-                    imgs[k].style.position = 'absolute';
-                    imgs[k].style.left = ''+imgOffset.left+'px';
-                    imgs[k].style.top = ''+imgOffset.top+'px';
+                    imgs[k].style.cssText = 'width:'+imgSize.width+'px;height:'+imgSize.height+'px;top:'+imgOffset.top+'px;left:'+imgOffset.left+'px;position:absolute;';
                 }
             });
             function resizeImg(width, height) {
@@ -266,11 +262,14 @@ var d = (function(){
                 imgOffset.top = parseInt((clientHeight+10-height)/2);
                 return imgOffset;
             }
+            d.onImgLoadError = function (el) {
+            	el.parentNode.style.background = "none";
+            };
             s.onSetDataItem(function(item){
                 if (item && item.type !== '') {
                     var imgSize = resizeImg(item.width, item.height);
                     var imgOffset = getImgOffset(imgSize.width, imgSize.height);
-                    var str = '<img alt="'+item.title+'" src="'+item.image+'" width="'+imgSize.width+'" height="'+imgSize.height+'" data-width="'+item.width+'" data-height="'+item.height+'"style=position:absolute;top:'+imgOffset.top+'px;left:'+imgOffset.left+'px;">';
+                    var str = '<img alt="'+item.title+'" src="'+item.image+'" width="'+imgSize.width+'" height="'+imgSize.height+'" data-width="'+item.width+'" data-height="'+item.height+'"style=position:absolute;top:'+imgOffset.top+'px;left:'+imgOffset.left+'px;" onerror="d.onImgLoadError(this);" onabort="d.onImgLoadError(this);">';
                     return str;
                 } else {
                     return '';
