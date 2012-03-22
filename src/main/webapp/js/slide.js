@@ -158,7 +158,7 @@
             return this.el.clientWidth * SLIDE_TRESHOLD < session.delta.x;
         },
         __next: function (duration) {
-        	if (this.translate) {
+            if (this.translate) {
 	            this.loadedData = this.dataSource.getNextData();
 	            if (this.loadedData.type === "invalid") {
 	                this.__cancel(duration);
@@ -172,10 +172,10 @@
 	                    this.__setData();
 	                }
 	            }
-        	}
+            }
         },
         __prev: function (duration) {
-        	if (this.translate) {
+            if (this.translate) {
 	            this.loadedData = this.dataSource.getPrevData();
 	            if (this.loadedData.type === "invalid") {
 	                this.__cancel(duration);
@@ -189,7 +189,7 @@
 	                    this.__setData();
 	                }
 	            }
-        	}
+            }
         },
         __onTransitionEnd: function () {
             this.__setData();
@@ -418,11 +418,11 @@
             if ( index < 0 ) {
                 do{
                     index = len + index;
-                } while (index < 0)
+                } while (index < 0);
             } else if (index >= len) {
                 do {
                     index = index - len;
-                } while (index >= len)
+                } while (index >= len);
             } 
             return index;
         },
@@ -433,7 +433,7 @@
             var dataInfo = this.getDataByIndex(this.getPrevIndex());
             
             if (dataInfo.type !== "invalid") {
-                this.currentIndex--;  
+                this.currentIndex -= 1;
                 if (this.checkPrevLoadingData()) {
                     this.requestData();
                 }
@@ -443,7 +443,7 @@
         getNextData: function () {
             var dataInfo = this.getDataByIndex(this.getNextIndex());
             if (dataInfo.type !== "invalid") {
-                this.currentIndex++;    
+                this.currentIndex += 1;
                 if (this.checkNextLoadingData()) {
                     this.requestData();
                 }
@@ -451,18 +451,10 @@
             return dataInfo;
         },
         checkNextLoadingData: function () {
-            if (this.nextLoadIndex !== 0 && this.nextLoadIndex === this.getDataListLength() - this.currentIndex) {
-                return true;
-            } else {
-                return false;
-            }
+            return this.nextLoadIndex !== 0 && this.nextLoadIndex === this.getDataListLength() - this.currentIndex;
         },
         checkPrevLoadingData: function () {
-            if (this.prevLoadIndex !== 0 && this.prevLoadIndex === this.currentIndex) {
-                return true;
-            } else {
-                return false;
-            }
+            return this.prevLoadIndex !== 0 && this.prevLoadIndex === this.currentIndex;
         },
         getPrevIndex: function () {
             return this.currentIndex - 2;
@@ -507,8 +499,8 @@
                 parseDataHandler : null,
                 requestDataHandler : null,
                 dataLoadEndHandler : null
-        };
-        var dataSource = new DataSource(dataHandlers, isIterating, nextLoadIndex, prevLoadIndex);
+            },
+            dataSource = new DataSource(dataHandlers, isIterating, nextLoadIndex, prevLoadIndex);
         
         return {
             addDataList: function (dataArr) {
@@ -542,7 +534,7 @@
                 dataSource.setDataTotalLength(len);
             },
             getDataTotalLength: function () {
-            	return dataSource.getDataTotalLength();
+                return dataSource.getDataTotalLength();
             },
             onParseData: function (fn) {
                 dataHandlers.parseDataHandler = fn;
@@ -562,7 +554,7 @@
             getCurrentIndex: function () {
                 return dataSource.__iterationIndexing(dataSource.currentIndex);
             }
-        }
+        };
     }
     
     exports.listener = dataSourceListener;
