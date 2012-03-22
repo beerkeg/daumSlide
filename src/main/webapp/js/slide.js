@@ -561,6 +561,10 @@
             },
             getCurrentIndex: function () {
                 return dataSource.__iterationIndexing(dataSource.currentIndex);
+            },
+            stopLoadData: function () {
+            	dataSource.nextLoadIndex = 0;
+            	dataSource.prevLoadIndex = 0;
             }
         }
     }
