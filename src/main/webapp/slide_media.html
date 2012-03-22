@@ -13,7 +13,7 @@ html, body {
     margin: 0;
     padding: 0;
     overflow:hidden;
-    background-color: #000;
+    background-color: #333;
 }
 ul, li {
     margin: 0;
@@ -24,7 +24,7 @@ ul, li {
     width: 100%;
     height:100%;
     overflow:hidden;
-    background-color: #000;
+    background-color: #333;
     position: relative;
 }
 .slide {
@@ -174,7 +174,7 @@ div.ps-caption {
 <div id="wrapper"></div>
 <div id="header">
     <div class="ps-caption" style="left: 0px; position: absolute; overflow-x: hidden; overflow-y: hidden; z-index: 1000; top: 0px; width: 1078px; opacity: 0.8; display: block; ">
-        <div class="ps-caption-content">스타들의 결혼<span class="count">(<em>2</em>/5364)</span></div>
+        <div class="ps-caption-content"><span class="ps-title">스타들의 결혼</span><span class="count">(<em>2</em>/5364)</span></div>
         <div id="close-button"><div class="ico"></div></div>
     </div>
 </div>
@@ -205,7 +205,8 @@ var d = (function(){
         headTag.appendChild(s);
     });
     var header = document.getElementById("header");
-    var desc = header.getElementsByClassName("ps-caption")[0];
+    var psTitle = header.getElementsByClassName("ps-title")[0];
+    var psCount = header.getElementsByClassName("count")[0];
     d.onParseData(function(jsonStr){
     	console.log(jsonStr);
         var list = jsonStr.list;
@@ -219,8 +220,8 @@ var d = (function(){
         headTag.removeChild(headTag.lastChild);
         d.setDataTotalLength(totalcount);
         
-        var headerStr = '<div class="ps-caption-content">'+jsonStr.title+'<span class="count">(<em>'+(d.getCurrentIndex()+1)+'</em>/'+totalcount+')</span></div><div id="close-button"><div class="ico"></div></div>';      
-        desc.innerHTML = headerStr;
+        psTitle.innerHTML = jsonStr.title;
+        psCount.innerHTML = '(<em>'+(d.getCurrentIndex()+1)+'</em>/'+totalcount+')';
         
         return arr;
     });
@@ -291,7 +292,6 @@ var d = (function(){
             d.onImgLoad = function (el) {
                 var imgSize = resizeImg(el.naturalWidth, el.naturalHeight);
                 var imgOffset = getImgOffset(imgSize.width, imgSize.height);
-                console.log(el.naturalWidth);
                 
                 el.style.width = ''+imgSize.width+'px';
                 el.style.height = ''+imgSize.height+'px';
@@ -303,7 +303,7 @@ var d = (function(){
                     var imgSize = resizeImg(item.width, item.height);
                     var imgOffset = getImgOffset(imgSize.width, imgSize.height);
                     
-                    var str = '<img alt="'+item.title+'" src="'+item.image.replace("http://photo-media.daum-img.net","http://m1.daumcdn.net/photo-media")+' "style=position:absolute;" onload="d.onImgLoad(this);">';
+                    var str = '<img alt="'+item.title+'" src="'+item.image.replace("http://photo-media.daum-img.net","http://m1.daumcdn.net/photo-media")+' "style=position:absolute;width:1px;height:1px;" onload="d.onImgLoad(this);">';
                     return str;
                 } else {
                     return '';
@@ -314,7 +314,6 @@ var d = (function(){
                 session.targetEvent.preventDefault();
             });
             var footer = document.getElementById("footer");
-            var em = header.getElementsByTagName("em")[0];
             function setCurrentDesc() {
                 var item = d.getCurrentData();
                 if (item) {
@@ -330,7 +329,7 @@ var d = (function(){
                 } else {
                     var footerStr = '';
                 }
-                em.innerHTML = ''+(d.getCurrentIndex()+1);
+                psCount.innerHTML = '(<em>'+(d.getCurrentIndex()+1)+'</em>/'+d.getDataTotalLength()+')';
                 footer.innerHTML = footerStr;
             }
             setCurrentDesc();
