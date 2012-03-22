@@ -32,8 +32,8 @@ ul, li {
 }
 .panel {
     position: relative;    
+    background: url(http://m1.daumcdn.net/img-section/enter/common/loading.gif) 50% 50% no-repeat;
 }
-
 .btn {
 	position: absolute;
     top: 45%;
@@ -174,7 +174,7 @@ div.ps-caption {
 <div id="wrapper"></div>
 <div id="header">
     <div class="ps-caption" style="left: 0px; position: absolute; overflow-x: hidden; overflow-y: hidden; z-index: 1000; top: 0px; width: 1078px; opacity: 0.8; display: block; ">
-        <div class="ps-caption-content"><span class="ps-title">스타들의 결혼</span><span class="count">(<em>2</em>/5364)</span></div>
+        <div class="ps-caption-content"><span class="ps-title"></span><span class="count"></span></div>
         <div id="close-button"><div class="ico"></div></div>
     </div>
 </div>
@@ -197,7 +197,7 @@ var d = (function(){
     var wrapper = document.getElementById("wrapper");
     d.onRequestData(function(){
         var callbackName = "d.responseData";
-        var url = 'http://media.daum.net/export/json/3165a129029c43ea8078217ae6ed99a2?photoId=2797&newsId=20120321155308240&page='+ pageNum()+'&countPerPage=100&callback='+ callbackName;
+        var url = 'http://media.daum.net/export/json/3165a129029c43ea8078217ae6ed99a2?photoId=2797&newsId=&page='+ pageNum()+'&countPerPage=100&callback='+ callbackName;
         var s = document.createElement("script");
         s.type = "text/javascript";
         s.src = url;
@@ -208,7 +208,6 @@ var d = (function(){
     var psTitle = header.getElementsByClassName("ps-title")[0];
     var psCount = header.getElementsByClassName("count")[0];
     d.onParseData(function(jsonStr){
-    	console.log(jsonStr);
         var list = jsonStr.list;
         var data = list.data;
         var totalcount = parseInt(jsonStr.count);
@@ -289,6 +288,7 @@ var d = (function(){
                 imgOffset.top = parseInt((clientHeight+10-height)/2);
                 return imgOffset;
             }
+            
             d.onImgLoad = function (el) {
                 var imgSize = resizeImg(el.naturalWidth, el.naturalHeight);
                 var imgOffset = getImgOffset(imgSize.width, imgSize.height);
@@ -300,10 +300,8 @@ var d = (function(){
             };
             s.onSetDataItem(function(item){
                 if (item && item.type !== '') {
-                    var imgSize = resizeImg(item.width, item.height);
-                    var imgOffset = getImgOffset(imgSize.width, imgSize.height);
-                    
-                    var str = '<img alt="'+item.title+'" src="'+item.image.replace("http://photo-media.daum-img.net","http://m1.daumcdn.net/photo-media")+' "style=position:absolute;width:1px;height:1px;" onload="d.onImgLoad(this);">';
+                	var cdnImgUrl = item.image.replace("http://photo-media.daum-img.net","http://m1.daumcdn.net/photo-media");
+                    var str = '<img alt="'+item.title+'" src="'+cdnImgUrl+'" style="position:absolute;width:1px;height:1px;" onload="d.onImgLoad(this);">';
                     return str;
                 } else {
                     return '';
