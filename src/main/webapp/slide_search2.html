@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<title>slide example</title>
+<style>
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow:hidden;
+    background-color: #333;
+}
+ul, li {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+#wrapper {
+    width: 100%;
+    height:100%;
+    overflow:hidden;
+    background-color: #333;
+    position: relative;
+}
+.slide {
+    height:100%;
+}
+.panel {
+    position: relative;  
+    background: url(http://m1.daumcdn.net/img-section/enter/common/loading.gif) 50% 50% no-repeat;  
+}
+.panel img {
+    position: absolute;
+    top: 0;
+}
+.prevBtn, .nextBtn {
+    position: absolute;
+    top: 45%;
+    z-index: 30;
+    width: 23px;
+    height: 45px;
+    background: url(http://m1.daumcdn.net/imgsrc.search/search_all/2009/mobile/safari/btn_view_nav.png) 0 0 no-repeat;
+    text-indent: -10000px;
+    border-size: 0px;
+    border-style: none;
+    font: inherit;
+    cursor: hand;
+    cursor: pointer;
+    padding: 0px;
+}
+.prevBtn {
+    left: 10px;
+    background-position: 0 0;
+}
+.nextBtn {
+    right: 10px;
+    background-position: 0 -50px;
+}
+#desc_field {
+z-index: 30;
+}
+
+.wrap_desc {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    z-index: 30;
+    width: 100%;
+    height: 82px;
+    padding-top: 12px;
+    border-top: 1px solid #434346;
+    background-color: black;
+    opacity: 0.7;
+    text-align: center;
+    line-height: 16px;
+}
+
+.wrap_desc .tit {
+    font-size: 15px;
+    color: #D2D6DD;
+    letter-spacing: -1px;
+    display: block;
+    text-decoration: none;
+    z-index: 30;
+}
+
+.wrap_desc .link_src {
+    margin-left: 17px;
+    font-size: 13px;
+    color: #7E93FF;
+    text-decoration: none;
+    z-index: 30;
+}
+
+.wrap_desc .info {
+    font-size: 12px;
+    color: #B8BDC3;
+    z-index: 30;
+}
+
+.wrap_desc .wrap_btn {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    height: 39px;
+    border-top: 1px solid #434346;
+    z-index: 30;
+}
+
+.wrap_desc .wrap_btn a {
+    display: block;
+    position: absolute;
+    top: 0px;
+    width: 50%;
+    height: 39px;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: -1px;
+    color: #B8BDC3;
+    text-decoration: none;
+    line-height: 39px;
+    z-index: 30;
+}
+
+.wrap_desc .wrap_btn a.left_wrap {
+    left: 0px;
+}
+.wrap_desc .wrap_btn a.right_wrap {
+    right: 0px;
+}
+.wrap_desc .wrap_btn a.right_wrap .bar {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 1px;
+    height: 39px;
+    border-left: 1px solid #434346;
+}
+.wrap_desc .wrap_btn .prev {
+    display: inline-block;
+    padding-left: 11px;
+    background: url(http://m1.daumcdn.net/imgsrc.search/search_all/2009/mobile/safari/btn_prev_search.png) 0 15px no-repeat;
+}
+
+#footer {
+    width: 100%;
+    z-index: 999;
+    position: absolute;
+    bottom:0;
+}
+
+</style>
+<script type="text/javascript" src="http://east.ftdev.daum.net/g/js/gesture.js"></script>
+<script type="text/javascript" src="js/slide.js"></script>
+
+</head>
+<body>
+<div id="searchBox">
+    <input type="text" id="query" value="이민정" />
+    <button id="searchbtn" type="button">검색</button>
+</div>
+
+<div id="wrapper"></div>
+<button type="button" class="prevBtn">prev</button>
+<button type="button" class="nextBtn">next</button>
+<div id="footer"></div>
+<script type="text/javascript">
+function getChildElements (el) {
+    var i = el.firstChild, a = [];
+    try{
+        do {
+            if (i.nodeType === 1){
+                a.push(i);
+            }
+        } while(i = i.nextSibling);
+    }catch(e){}
+    return a;
+}
+function getSameNameLength(node, name) {
+    var len = 0;
+    var cNodes = getChildElements(node);
+    for (var i=0,l=cNodes.length;i<l;i+=1){
+            if ( name === cNodes[i].nodeName ) {
+                len++;
+            }
+    }
+    return len;
+}
+function xmlToObject (xmlDocument) {
+    var root = xmlDocument.documentElement,
+    builder = function(node){
+        for (var obj = {}, cNodes = getChildElements(node), name, value, i=0,l=cNodes.length;i<l;i+=1){
+            name = cNodes[i].nodeName;
+            value = (getChildElements(cNodes[i]).length > 0) ? builder(cNodes[i]) : (cNodes[i].firstChild==null) ? '' : cNodes[i].firstChild.nodeValue;
+
+            if(obj[name] != undefined || getSameNameLength(node, name) > 1) {
+                if(obj[name] == undefined){
+                    obj[name] = [];
+                }
+                obj[name].push(value);
+            } else {
+                obj[name] = value;
+            }
+            for (var j=0;j<cNodes[i].attributes.length;j+=1) {
+                obj[name + '@' + cNodes[i].attributes[j].nodeName] = (cNodes[i].attributes[j].nodeValue||"").toString();
+            }
+        }
+        return obj; 
+    }
+    return builder(root);
+}
+var d = (function(){
+    var d = slideDataSource.listener(false, 5);
+    var s = null;
+    var pageNum = (function (){
+        var pagenum = 0;
+        return function(){
+            return pagenum+=9;
+        };
+    })();
+    
+    var headTag = document.getElementsByTagName("head")[0];
+    var wrapper = document.getElementById("wrapper");
+    var query = document.getElementById("query");
+    
+    d.onRequestData(function(){
+        var callbackName = "d.responseData";
+        var jsonUrl = 'http://imgv.m.search.daum.net/mviewer/search?w=xml&m=mimage&q=%C0%CC%B9%CE%C1%A4&sidx='+pageNum()+'&lpp=9&SortType=totalMobile&SimilarYN=Y';
+        var url = 'http://uie.daum.net:3000/?url='+jsonUrl+'&callback='+callbackName;
+
+        var s = document.createElement("script");
+        s.type = "text/javascript";
+        s.src = url;
+        s.charset = "utf-8";
+        headTag.appendChild(s);
+    });
+    d.onParseData(function(xmlStr){
+    	var doc = new DOMParser().parseFromString(xmlStr,'text/xml');
+    	var xml = xmlToObject(doc);
+    	console.log(xml);
+    	var item = xml.result;
+        var arr = [];
+        for (var i=0, len=item.length; i< len; i++) {
+            arr.push( item[i] );
+        }
+        
+        headTag.removeChild(headTag.lastChild);
+        d.setDataTotalLength(parseInt(xml.totalResultCount));
+        
+        return arr;
+    });
+    d.onDataLoadEnd(function(){
+        if (s === null) {
+            s = slide.slideListener(wrapper, d, 0);
+            s.setSlideTreshold(0.1);
+            var click = "ontouchstart" in window ? "touchstart" : "click";
+            var prevBtn = document.getElementsByClassName("prevBtn")[0];
+            var nextBtn = document.getElementsByClassName("nextBtn")[0];
+            prevBtn.addEventListener(click, function(){
+                s.prevSlide('500ms');
+            }, false);
+            nextBtn.addEventListener(click, function(){
+                s.nextSlide('500ms');
+            }, false);
+            
+            wrapper.style.display = "block";
+            var clientHeight = wrapper.clientHeight-10;
+            var clientWidth = wrapper.clientWidth-10;
+            s.onResize(function(){
+                clientHeight = wrapper.clientHeight-10;
+                clientWidth = wrapper.clientWidth-10;
+
+                var imgs = document.getElementsByTagName("img");
+                var imgSize = {};
+                var imgOffset = {};
+                for(var k=0, len = imgs.length; k<len; k++) {
+                    imgSize = resizeImg(imgs[k].getAttribute("data-width"), imgs[k].getAttribute("data-height"));
+                    imgOffset = getImgOffset(imgSize.width, imgSize.height);
+                    imgs[k].style.cssText = 'width:'+imgSize.width+'px;height:'+imgSize.height+'px;top:'+imgOffset.top+'px;left:'+imgOffset.left+'px;position:absolute;';
+                }
+            });
+            function resizeImg(width, height) {
+                var imgSize = {};
+                if (clientHeight > clientWidth) {
+                    if (clientWidth * height > clientHeight * width) {
+                        imgSize.height = clientHeight;
+                        imgSize.width = parseInt(clientHeight * width / height);
+                    } else {
+                        imgSize.width = clientWidth;
+                        imgSize.height = parseInt(clientWidth * height / width);
+                    }
+                } else {
+                    if (clientWidth * height < clientHeight * width) {
+                        imgSize.width = clientWidth;
+                        imgSize.height = parseInt(clientWidth * height / width);
+                    } else {
+                        imgSize.height = clientHeight;
+                        imgSize.width = parseInt(clientHeight * width / height);
+                    }
+                }
+                return imgSize;
+            }
+            function getImgOffset(width, height) {
+                var imgOffset = {};
+                imgOffset.left = parseInt((clientWidth+10-width)/2);
+                imgOffset.top = parseInt((clientHeight+10-height)/2);
+                return imgOffset;
+            }
+            d.onImgLoadError = function (el) {
+            	el.parentNode.style.background = "none";
+            };
+            s.onSetDataItem(function(item){
+                if (item) {
+                    var imgSize = resizeImg(parseInt(item.width), parseInt(item.height));
+                    var imgOffset = getImgOffset(imgSize.width, imgSize.height);
+                    var imgurl = "http://m1.daumcdn.net/thumb/T480x416/70/?fname="+ escape(item.org_img);
+                    var str = '<img alt="'+item.title+'" src="'+imgurl+'" width="'+imgSize.width+'" height="'+imgSize.height+'" data-width="'+item.width+'" data-height="'+item.height+'"style=position:absolute;top:'+imgOffset.top+'px;left:'+imgOffset.left+'px;" onerror="d.onImgLoadError(this);" onabort="d.onImgLoadError(this);">';
+                    return str;
+                } else {
+                    return '';
+                }
+            });
+            s.setInitData(0);
+            s.onSlideStart(function(session){
+                session.targetEvent.preventDefault();
+            });
+            function replaceAll(txt, replace, with_this) {
+                return txt.replace(new RegExp(replace, 'g'),with_this);
+            }
+            function changeText(text) {
+                text = replaceAll(text, "&lt;", "<");
+                text = replaceAll(text, "&gt;", ">");
+                text = replaceAll(text, "&nbsp; "," ");
+                text = replaceAll(text, "&amp;", "&");
+                text = replaceAll(text, "&quot;", "\"");
+                
+                return text;
+            }
+            function changeLinkText(link) {
+                if (link.length > 35) {
+                    return link.substring(0,33) + ".."
+                } else {
+                    return link;
+                }
+            }
+            var footer = document.getElementById("footer");
+            function setCurrentDesc() {
+                var item = d.getCurrentData();
+                if (item) {
+                    var data = item.data;
+                    var title = changeText(data.title);
+                    var linktext = changeLinkText(data.link);
+                    var str = '<div class="wrap_desc" style="opacity: 0.7;" id="desc_field">' +
+                                '<a href="'+data.link+'" class="tit" id="desc_title">'+ title +'</a>' +
+                                '<span class="info" id="desc_info">'+data.width+' x '+data.height+'</span><a href="'+data.link+'" id="desc_url" class="link_src">'+ linktext +'</a>' +
+                                '<div class="wrap_btn">' +
+                                    '<a href="" class="left_wrap"><span class="prev">검색결과로 돌아가기</span></a>' + 
+                                    '<a id="desc_link" href="'+data.org_img+'" target="_blank" class="right_wrap"><span class="bar"></span><span>원본 바로보기</span></a>' +
+                                '</div></div>';
+                } else {
+                    var str = '';
+                }
+                footer.innerHTML = str;
+            }
+            setCurrentDesc();
+            var viewState = "block";
+            s.onSlideEnd(function(session){
+                if (!session.isSwipe() && !session.isScroll()) {
+                    if (viewState === "none") {
+                        footer.style.display = "block";
+                        prevBtn.style.display = "block";
+                        nextBtn.style.display = "block";
+                        viewState = "block";
+                    } else {
+                        footer.style.display = "none";
+                        prevBtn.style.display = "none";
+                        nextBtn.style.display = "none";
+                        viewState = "none";
+                    }
+                }
+            });
+            s.onSlideNext(function(){setCurrentDesc();});
+            s.onSlidePrev(function(){setCurrentDesc();});
+        }
+    });
+    
+    document.getElementById("searchbtn").addEventListener("click",function(){
+        document.getElementById("searchBox").style.display = "none";
+        d.sendRequestData();
+    },false);
+    
+    window.addEventListener("keypress", function(e){
+        if (e.keyCode === 13) {
+            document.getElementById("searchBox").style.display = "none";
+            d.sendRequestData();
+        }
+    });
+    
+    return d;
+})();
+</script>
+
+</body>
+</html>
