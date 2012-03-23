@@ -120,7 +120,7 @@ describe('slide.js', function () {
                 obj.index = 0;
                 return obj;
             },
-            getCurrentSet: function (callback) {
+            queryCurrentSet: function (callback) {
                 var self = this;
                 this.queryPrev(function (prev) {
                     self.queryNext(function (next) {
@@ -134,9 +134,13 @@ describe('slide.js', function () {
             },
                 queryPrev: function (callback) {
                     if (this.index - 1 < 0) { // reaches at first
-                        this.willQueryFirstOfData(function (prev) {
-                            callback(prev);
-                        });
+                        if (typeof this.willQueryFirstOfDataDelegate === 'function') {
+                            this.willQueryFirstOfDataDelegate(function (prev) {
+                                callback(prev);
+                            });
+                        } else {
+                            callback(null);
+                        }
                     } else {
                         callback(this.data[this.index - 1]);
                     }
@@ -146,9 +150,13 @@ describe('slide.js', function () {
                 },
                 queryNext: function (callback) {
                     if (this.index + 1 >= this.data.length) { // reaches end
-                        this.willQueryEndOfData(function (next) {
-                            callback(next);
-                        });
+                        if (typeof this.willQueryEndOfDataDelegate === 'function') {
+                            this.willQueryEndOfDataDelegate(function (next) {
+                                callback(next);
+                            });
+                        } else {
+                            callback(null);
+                        }
                     } else {
                         callback(this.data[this.index + 1]);
                     }
@@ -159,12 +167,18 @@ describe('slide.js', function () {
             prev: function () {
                 this.index -= 1;
             },
-            willQueryEndOfData: function (callback) {
-                callback(null);
+            willQueryEndOfData: function (delegate) {
+                this.willQueryEndOfDataDelegate = delegate;
             },
-            willQueryFirstOfData: function (callback) {
-                callback(null);
+                willQueryEndOfDataDelegate: function (callback) {
+                    callback(null);
+                },
+            willQueryFirstOfData: function (delegate) {
+                this.willQueryFirstOfDataDelegate = delegate;
             },
+                willQueryFirstOfDataDelegate: function (callback) {
+                    callback(null);
+                },
             concatData: function (addends) {
                 this.data = this.data.concat(addends);
             }
@@ -173,7 +187,7 @@ describe('slide.js', function () {
         it('should serve current data set', function () {
             var ds = DataSource.init([1, 2, 3, 4, 5]),
                 currentSet;
-            ds.getCurrentSet(function (set) {
+            ds.queryCurrentSet(function (set) {
                 currentSet = set;
             });
             waitsFor(function () {
@@ -194,12 +208,12 @@ describe('slide.js', function () {
 
             ds.index = 4;
 
-            ds.willQueryEndOfData = function (callback) {
+            ds.willQueryEndOfData(function (callback) {
                 var newData = [6, 7, 8];
                 ds.concatData(newData);
                 callback(newData[0]);
-            };
-            ds.getCurrentSet(function (set) {
+            });
+            ds.queryCurrentSet(function (set) {
                 currentSet = set;
             });
 
@@ -221,11 +235,11 @@ describe('slide.js', function () {
 
             ds.index = 0;
 
-            ds.willQueryFirstOfData = function (callback) {
+            ds.willQueryFirstOfData(function (callback) {
                 var data = ds.data;
                 callback(data[data.length - 1]);
-            };
-            ds.getCurrentSet(function (set) {
+            });
+            ds.queryCurrentSet(function (set) {
                 currentSet = set;
             });
 
@@ -259,11 +273,11 @@ describe('slide.js', function () {
                         this.index -= 1;
                     }
                 },
-                willQueryFirstOfData: function (callback) {
+                willQueryFirstOfDataDelegate: function (callback) {
                     var data = this.data;
                     callback(data[data.length - 1]);
                 },
-                willQueryEndOfData: function (callback) {
+                willQueryEndOfDataDelegate: function (callback) {
                     var data = this.data;
                     callback(data[0]);
                 }
@@ -274,7 +288,7 @@ describe('slide.js', function () {
                     currentSet;
                 function queryCurrentSet() {
                     currentSet = null;
-                    ids.getCurrentSet(function (set) {
+                    ids.queryCurrentSet(function (set) {
                         currentSet = set;
                     });
                 }
