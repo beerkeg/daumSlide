@@ -243,13 +243,12 @@ var d = (function(){
     d.onParseData(function(xmlStr){
     	var doc = new DOMParser().parseFromString(xmlStr,'text/xml');
     	var xml = xmlToObject(doc);
-    	console.log(xml);
     	var item = xml.result;
         var arr = [];
         for (var i=0, len=item.length; i< len; i++) {
             arr.push( item[i] );
         }
-        
+
         headTag.removeChild(headTag.lastChild);
         d.setDataTotalLength(parseInt(xml.totalResultCount));
         
