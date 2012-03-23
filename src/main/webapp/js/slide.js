@@ -193,7 +193,6 @@
         },
         __onTransitionEnd: function () {
             this.__setData();
-            this.translate = true;
             this.__addExternalFunction(this.slideHandlers.onTransitionEnd);
         },
         __setData: function () {
@@ -203,6 +202,7 @@
                 this.__setPrevData();
             }
             this.dataDirect = "";
+            this.translate = true;
         },
         __setNextData: function () {
             this.el.removeChild(this.panels[0]);
