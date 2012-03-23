@@ -31,11 +31,13 @@
         queryCurrentSet: function (callback) {
             var self = this;
             this.queryPrev(function (prev) {
-                self.queryNext(function (next) {
-                    callback( {
-                        prev: prev,
-                        current: self.getCurrent(),
-                        next: next
+                self.queryCurrent(function (current) {
+                    self.queryNext(function (next) {
+                        callback({
+                            prev: prev,
+                            current: current,
+                            next: next
+                        });
                     });
                 });
             });
@@ -53,8 +55,8 @@
                 callback(this.data[this.index - 1]);
             }
         },
-        getCurrent: function () {
-            return this.data[this.index];
+        queryCurrent: function (callback) {
+            callback(this.data[this.index]);
         },
         queryNext: function (callback) {
             if (this.index + 1 >= this.data.length) { // reaches end
