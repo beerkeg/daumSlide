@@ -23,7 +23,7 @@
         __initPaging: function (slideHandlers, el, dataSource) {
             this.page = 0;
             this.offset = 0;
-            this.__initTarslateStateValue();
+            this.__initTransitionState();
             this.wrapper = (typeof(el) === "string")? document.getElementById(el) : el;
             this.slideHandlers = slideHandlers;
             this.dataSource = dataSource;
@@ -166,17 +166,14 @@
         __isPrevThreshold: function (session) {
             return this.el.clientWidth * SLIDE_TRESHOLD < session.delta.x;
         },
-        
         __next: function (duration) {
             if (!this.isTransitioning) {
 	            this.loadedData = this.dataSource.getNextData();
 	            if (this.loadedData.type === "invalid") {
 	                this.__cancel(duration);
 	            } else {
-	                this.__setTransitionDuration(duration);
+	                this.__setTransitionState(duration, "next");
 	                this.__plusPageOffset();
-	                this.dataDirect = "next";
-	                this.isTransitioning = true;
 	                this.__pos(-this.pageWidth);
 	                if (!this.enableTransform) {
 	                    this.__setData();
@@ -190,10 +187,8 @@
 	            if (this.loadedData.type === "invalid") {
 	                this.__cancel(duration);
 	            } else {
-	                this.__setTransitionDuration(duration);
+	            	this.__setTransitionState(duration, "prev");
 	                this.__minusPageOffset();
-	                this.dataDirect = "prev";
-	                this.isTransitioning = true;
 	                this.__pos(this.pageWidth);
 	                if (!this.enableTransform) {
 	                    this.__setData();
@@ -211,15 +206,19 @@
             } else if (this.dataDirect === "prev") {
                 this.__setPrevData();
             }
-            this.__initTarslateStateValue();
+            this.__initTransitionState();
             this.__pos(0);
         },
-        __initTarslateStateValue: function () {
+        __initTransitionState: function () {
         	this.dataDirect = "";
             this.isTransitioning = false;
             this.__setTransitionDuration('0ms');
         },
-        
+        __setTransitionState: function (duration, direct) {
+        	this.__setTransitionDuration(duration);
+            this.dataDirect = direct;
+            this.isTransitioning = true;
+        },
         __setNextData: function () {
             this.el.removeChild(this.panels[0]);
             this.el.appendChild(this.__setDataItem(this.loadedData.data));
@@ -253,9 +252,11 @@
             }
         },
         __cancel: function (duration) {
-            this.__setTransitionDuration(duration);
-            this.__pos(0);
-            this.__addExternalFunction(this.slideHandlers.onSlideCancel);
+        	if (!this.isTransitioning) {
+	            this.__setTransitionDuration(duration);
+	            this.__pos(0);
+	            this.__addExternalFunction(this.slideHandlers.onSlideCancel);
+        	}
         },
         __addExternalFunction: function (fn, info) {
             if (fn) {
