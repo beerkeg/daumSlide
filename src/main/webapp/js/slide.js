@@ -14,14 +14,19 @@
     
     Slide.prototype = {
         init: function (slideHandlers, el, dataSource, gestureTreshold) {
+            this.__initPaging(slideHandlers, el, dataSource);
+            this.enableTransform = false;
+            this.enable3DTransform();
+            this.__initSlide();
+            this.__bindEvent(gestureTreshold);
+        },
+        __initPaging: function (slideHandlers, el, dataSource) {
+            this.page = 0;
+            this.offset = 0;
+            this.__initTarslateStateValue();
+            this.wrapper = (typeof(el) === "string")? document.getElementById(el) : el;
             this.slideHandlers = slideHandlers;
             this.dataSource = dataSource;
-            this.enableTransform = false;
-            this.__initPaging(el);
-            this.enable3DTransform();
-            this.__createSlide();
-            this.__resizeElement();
-            this.__bindEvent(gestureTreshold);
         },
         enable3DTransform: function (uaString) {
             var ua = userAgent(uaString),
@@ -33,12 +38,6 @@
                 this.enableTransform = true;
             }
         },
-        __initPaging: function (el) {
-            this.page = 0;
-            this.offset = 0;
-            this.__initTarslateStateValue();
-            this.wrapper = (typeof(el) === "string")? document.getElementById(el) : el;
-        },
         __setInitData: function (num) {
             var loadedInitData = this.dataSource.getInitData(num),
                 data = '', i;
@@ -48,12 +47,17 @@
                 }
             }
         },
+        __initSlide: function () {
+        	 this.__setWrapperSize();
+             this.__createSlide();
+             this.__setPanelsSize();
+             this.__setSlideSizeAndOffset();
+        },
         __createPanelStyle: function () {
             var enableStr = this.enableTransform ? '-webkit-transform:translate3d(0,0,0);' : '';
             return 'height: 100%;overflow:hidden;display:inline-block;'+ enableStr + 'width:'+this.pageWidth +'px;';
         },
         __createSlide: function () {
-            this.pageWidth = this.wrapper.clientWidth;
             var panelString = '<div class="panel" style="' + this.__createPanelStyle() + '"></div>';
             this.wrapper.innerHTML = '<div class="slide" id="slide-'+__slideIndex+'" style="overflow:hidden;position:relative;top:0;transform:translate3d(0,0,0);' +
                                     'left:'+(-this.pageWidth)+'px;width:'+(this.pageWidth * 3)+'px;">' +
