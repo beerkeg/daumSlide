@@ -20,7 +20,7 @@
             this.__initPaging(el);
             this.enable3DTransform();
             this.__createSlide();
-            this.__resize();
+            this.__resizeElement();
             this.__bindEvent(gestureTreshold);
         },
         enable3DTransform: function (uaString) {
@@ -36,8 +36,7 @@
         __initPaging: function (el) {
             this.page = 0;
             this.offset = 0;
-            this.dataDirect = "";
-            this.translate = true;
+            this.__initTarslateStateValue();
             this.wrapper = (typeof(el) === "string")? document.getElementById(el) : el;
         },
         __setInitData: function (num) {
@@ -45,11 +44,7 @@
                 data = '', i;
             for (i=0; i< 3; i += 1) {
                 if (loadedInitData[i].type !== "invalid") {
-                    data = loadedInitData[i].data;
-                    if (this.slideHandlers.onSetDataItem) {
-                        data = this.slideHandlers.onSetDataItem(data);
-                    }
-                    this.panels[i].innerHTML = data;
+                	this.panels[i].innerHTML = this.__addExternalFunction(this.slideHandlers.onSetDataItem, loadedInitData[i].data);
                 }
             }
         },
@@ -89,23 +84,33 @@
             }
         },
         __resize: function () {
-            var i;
-            this.pageWidth = this.wrapper.clientWidth;
-            this.pageHeight = this.wrapper.clientHeight;
-            for (i=0;i<3;i += 1) {
-                this.panels[i].style.width = '' + this.pageWidth + 'px';
-            }
-            this.el.style.width = '' + (this.pageWidth*3) + 'px';
-            this.el.style.left = '' + (-this.pageWidth) + 'px';
+            this.__resizeElement();
             this.__addExternalFunction(this.slideHandlers.onResize);
         },
+        __resizeElement: function () {
+        	this.__setWrapperSize();
+            this.__setPanelsSize();
+            this.__setSlideSizeAndOffset();
+        },
+        __setWrapperSize: function () {
+        	this.pageWidth = this.wrapper.clientWidth;
+            this.pageHeight = this.wrapper.clientHeight;
+        },
+        __setPanelsSize: function () {
+        	for (var i=0;i<3;i += 1) {
+                this.panels[i].style.width = '' + this.pageWidth + 'px';
+            }
+        },
+        __setSlideSizeAndOffset: function () {
+        	this.el.style.width = '' + (this.pageWidth*3) + 'px';
+            this.el.style.left = '' + (-this.pageWidth) + 'px';
+        },
         __start: function (session) {
-            this.__setTransitionDuration('0ms');
             this.isScrolling = false;
             this.__addExternalFunction(this.slideHandlers.onSlideStart, session);
         },
         __move: function (session) {
-            if (this.translate) {
+            if (!this.isTransitioning) {
                 if (session.isSwipe() && !this.isScrolling) {
                     session.targetEvent.preventDefault();
                     this.__pos(session.delta.x/2);
@@ -157,8 +162,9 @@
         __isPrevThreshold: function (session) {
             return this.el.clientWidth * SLIDE_TRESHOLD < session.delta.x;
         },
+        
         __next: function (duration) {
-            if (this.translate) {
+            if (!this.isTransitioning) {
 	            this.loadedData = this.dataSource.getNextData();
 	            if (this.loadedData.type === "invalid") {
 	                this.__cancel(duration);
@@ -166,7 +172,7 @@
 	                this.__setTransitionDuration(duration);
 	                this.__plusPageOffset();
 	                this.dataDirect = "next";
-	                this.translate = false;
+	                this.isTransitioning = true;
 	                this.__pos(-this.pageWidth);
 	                if (!this.enableTransform) {
 	                    this.__setData();
@@ -175,7 +181,7 @@
             }
         },
         __prev: function (duration) {
-            if (this.translate) {
+            if (!this.isTransitioning) {
 	            this.loadedData = this.dataSource.getPrevData();
 	            if (this.loadedData.type === "invalid") {
 	                this.__cancel(duration);
@@ -183,7 +189,7 @@
 	                this.__setTransitionDuration(duration);
 	                this.__minusPageOffset();
 	                this.dataDirect = "prev";
-	                this.translate = false;
+	                this.isTransitioning = true;
 	                this.__pos(this.pageWidth);
 	                if (!this.enableTransform) {
 	                    this.__setData();
@@ -201,48 +207,45 @@
             } else if (this.dataDirect === "prev") {
                 this.__setPrevData();
             }
-            this.dataDirect = "";
-            this.translate = true;
+            this.__initTarslateStateValue();
+            this.__pos(0);
         },
+        __initTarslateStateValue: function () {
+        	this.dataDirect = "";
+            this.isTransitioning = false;
+            this.__setTransitionDuration('0ms');
+        },
+        
         __setNextData: function () {
             this.el.removeChild(this.panels[0]);
-            this.__setTransitionDuration(0);
-            this.__pos(0);
             this.el.appendChild(this.__setDataItem(this.loadedData.data));
             this.__addExternalFunction(this.slideHandlers.onSlideNext);
         },
         __setPrevData: function () {
             this.el.removeChild(this.panels[2]);
-            this.__setTransitionDuration(0);
-            this.__pos(0);
             this.el.insertBefore(this.__setDataItem(this.loadedData.data), this.panels[0]);
             this.__addExternalFunction(this.slideHandlers.onSlidePrev);
         },
         __setDataItem: function (loadedData) {
-            if (this.slideHandlers.onSetDataItem) {
-                loadedData = this.slideHandlers.onSetDataItem(loadedData);
-            }
             var panel = document.createElement("div");
             panel.className = "panel";
             panel.style.cssText = this.__createPanelStyle();
-            panel.innerHTML = loadedData;
+            panel.innerHTML = this.__addExternalFunction(this.slideHandlers.onSetDataItem, loadedData);
             
             return panel;
         },
         __plusPageOffset: function () {
             this.page += 1;
-            var len = this.panels.length;
             this.offset += 1;
-            if (this.offset > len - 1) {
+            if (this.offset > 2) {
                 this.offset = 0;
             }
         },
         __minusPageOffset: function () {
             this.page -= 1;
-            var len = this.panels.length;
             this.offset -= 1;
             if (this.offset < 0) {
-                this.offset = len - 1;
+                this.offset = 2;
             }
         },
         __cancel: function (duration) {
@@ -250,9 +253,11 @@
             this.__pos(0);
             this.__addExternalFunction(this.slideHandlers.onSlideCancel);
         },
-        __addExternalFunction: function (fn, session) {
+        __addExternalFunction: function (fn, info) {
             if (fn) {
-                fn(session);
+                return fn(info);
+            } else {
+            	return info;
             }
         }
     };
