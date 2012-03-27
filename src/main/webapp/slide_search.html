@@ -174,7 +174,6 @@ z-index: 30;
 
 var d = (function(){
     var d = slideDataSource.listener(false, 5);
-    var s = null;
     var pageNum = (function (){
         var pagenum = 1;
         return function(){
@@ -205,149 +204,157 @@ var d = (function(){
         
         return arr;
     });
-    d.onDataLoadEnd(function(){
-        if (s === null) {
-            s = slide.slideListener(wrapper, d, 0);
-            s.setSlideTreshold(0.1);
-            var click = "ontouchstart" in window ? "touchstart" : "click";
-            var prevBtn = document.getElementsByClassName("prevBtn")[0];
-            var nextBtn = document.getElementsByClassName("nextBtn")[0];
-            prevBtn.addEventListener(click, function(){
-                s.prevSlide('500ms');
-            }, false);
-            nextBtn.addEventListener(click, function(){
-                s.nextSlide('500ms');
-            }, false);
-            
-            wrapper.style.display = "block";
-            var clientHeight = wrapper.clientHeight-10;
-            var clientWidth = wrapper.clientWidth-10;
-            s.onResize(function(){
-                clientHeight = wrapper.clientHeight-10;
-                clientWidth = wrapper.clientWidth-10;
+    
+    function setInitSlide() {
+        var s = slide.slideListener(wrapper, d, 0);
+        s.setSlideTreshold(0.1);
+        var click = "ontouchstart" in window ? "touchstart" : "click";
+        var prevBtn = document.getElementsByClassName("prevBtn")[0];
+        var nextBtn = document.getElementsByClassName("nextBtn")[0];
+        prevBtn.addEventListener(click, function(){
+            s.prevSlide('500ms');
+        }, false);
+        nextBtn.addEventListener(click, function(){
+            s.nextSlide('500ms');
+        }, false);
+        
+        wrapper.style.display = "block";
+        var clientHeight = wrapper.clientHeight-10;
+        var clientWidth = wrapper.clientWidth-10;
+        s.onResize(function(){
+            clientHeight = wrapper.clientHeight-10;
+            clientWidth = wrapper.clientWidth-10;
 
-                var imgs = document.getElementsByTagName("img");
-                var imgSize = {};
-                var imgOffset = {};
-                for(var k=0, len = imgs.length; k<len; k++) {
-                    imgSize = resizeImg(imgs[k].getAttribute("data-width"), imgs[k].getAttribute("data-height"));
-                    imgOffset = getImgOffset(imgSize.width, imgSize.height);
-                    imgs[k].style.cssText = 'width:'+imgSize.width+'px;height:'+imgSize.height+'px;top:'+imgOffset.top+'px;left:'+imgOffset.left+'px;position:absolute;';
-                }
-            });
-            function resizeImg(width, height) {
-                var imgSize = {};
-                if (clientHeight > clientWidth) {
-                    if (clientWidth * height > clientHeight * width) {
-                        imgSize.height = clientHeight;
-                        imgSize.width = parseInt(clientHeight * width / height);
-                    } else {
-                        imgSize.width = clientWidth;
-                        imgSize.height = parseInt(clientWidth * height / width);
-                    }
+            var imgs = document.getElementsByTagName("img");
+            var imgSize = {};
+            var imgOffset = {};
+            for(var k=0, len = imgs.length; k<len; k++) {
+                imgSize = resizeImg(imgs[k].getAttribute("data-width"), imgs[k].getAttribute("data-height"));
+                imgOffset = getImgOffset(imgSize.width, imgSize.height);
+                imgs[k].style.cssText = 'width:'+imgSize.width+'px;height:'+imgSize.height+'px;top:'+imgOffset.top+'px;left:'+imgOffset.left+'px;position:absolute;';
+            }
+        });
+        function resizeImg(width, height) {
+            var imgSize = {};
+            if (clientHeight > clientWidth) {
+                if (clientWidth * height > clientHeight * width) {
+                    imgSize.height = clientHeight;
+                    imgSize.width = parseInt(clientHeight * width / height);
                 } else {
-                    if (clientWidth * height < clientHeight * width) {
-                        imgSize.width = clientWidth;
-                        imgSize.height = parseInt(clientWidth * height / width);
-                    } else {
-                        imgSize.height = clientHeight;
-                        imgSize.width = parseInt(clientHeight * width / height);
-                    }
+                    imgSize.width = clientWidth;
+                    imgSize.height = parseInt(clientWidth * height / width);
                 }
-                return imgSize;
-            }
-            function getImgOffset(width, height) {
-                var imgOffset = {};
-                imgOffset.left = parseInt((clientWidth+10-width)/2);
-                imgOffset.top = parseInt((clientHeight+10-height)/2);
-                return imgOffset;
-            }
-            d.onImgLoadError = function (el) {
-            	el.parentNode.style.background = "none";
-            };
-            s.onSetDataItem(function(item){
-                if (item && item.type !== '') {
-                    var imgSize = resizeImg(item.width, item.height);
-                    var imgOffset = getImgOffset(imgSize.width, imgSize.height);
-                    var str = '<img alt="'+item.title+'" src="'+item.image+'" width="'+imgSize.width+'" height="'+imgSize.height+'" data-width="'+item.width+'" data-height="'+item.height+'"style=position:absolute;top:'+imgOffset.top+'px;left:'+imgOffset.left+'px;" onerror="d.onImgLoadError(this);" onabort="d.onImgLoadError(this);">';
-                    return str;
+            } else {
+                if (clientWidth * height < clientHeight * width) {
+                    imgSize.width = clientWidth;
+                    imgSize.height = parseInt(clientWidth * height / width);
                 } else {
-                    return '';
-                }
-            });
-            s.setInitData(0);
-            s.onSlideStart(function(session){
-                session.targetEvent.preventDefault();
-            });
-            function replaceAll(txt, replace, with_this) {
-                return txt.replace(new RegExp(replace, 'g'),with_this);
-            }
-            function changeText(text) {
-                text = replaceAll(text, "&lt;", "<");
-                text = replaceAll(text, "&gt;", ">");
-                text = replaceAll(text, "&nbsp; "," ");
-                text = replaceAll(text, "&amp;", "&");
-                text = replaceAll(text, "&quot;", "\"");
-                
-                return text;
-            }
-            function changeLinkText(link) {
-                if (link.length > 37) {
-                    return link.substring(0,35) + ".."
-                } else {
-                    return link;
+                    imgSize.height = clientHeight;
+                    imgSize.width = parseInt(clientHeight * width / height);
                 }
             }
-            var footer = document.getElementById("footer");
-            function setCurrentDesc() {
-                var item = d.getCurrentData();
-                if (item) {
-                    var data = item.data;
-                    var title = changeText(data.title);
-                    var linktext = changeLinkText(data.link);
-                    var str = '<div class="wrap_desc" style="opacity: 0.7;" id="desc_field">' +
-                                '<a href="'+data.link+'" class="tit" id="desc_title">'+ title +'</a>' +
-                                '<span class="info" id="desc_info">'+data.width+' x '+data.height+'</span><a href="'+data.link+'" id="desc_url" class="link_src">'+ linktext +'</a>' +
-                                '<div class="wrap_btn">' +
-                                    '<a href="" class="left_wrap"><span class="prev">검색결과로 돌아가기</span></a>' + 
-                                    '<a id="desc_link" href="'+data.image+'" target="_blank" class="right_wrap"><span class="bar"></span><span>원본 바로보기</span></a>' +
-                                '</div></div>';
-                } else {
-                    var str = '';
-                }
-                footer.innerHTML = str;
-            }
-            setCurrentDesc();
-            var viewState = "block";
-            s.onSlideEnd(function(session){
-                if (!session.isSwipe() && !session.isScroll()) {
-                    if (viewState === "none") {
-                        footer.style.display = "block";
-                        prevBtn.style.display = "block";
-                        nextBtn.style.display = "block";
-                        viewState = "block";
-                    } else {
-                        footer.style.display = "none";
-                        prevBtn.style.display = "none";
-                        nextBtn.style.display = "none";
-                        viewState = "none";
-                    }
-                }
-            });
-            s.onSlideNext(function(){setCurrentDesc();});
-            s.onSlidePrev(function(){setCurrentDesc();});
+            return imgSize;
         }
-    });
+        function getImgOffset(width, height) {
+            var imgOffset = {};
+            imgOffset.left = parseInt((clientWidth+10-width)/2);
+            imgOffset.top = parseInt((clientHeight+10-height)/2);
+            return imgOffset;
+        }
+        d.onImgLoadError = function (el) {
+            el.parentNode.style.background = "none";
+        };
+        s.onSetDataItem(function(item){
+            if (item && item.type !== '') {
+                var imgSize = resizeImg(item.width, item.height);
+                var imgOffset = getImgOffset(imgSize.width, imgSize.height);
+                var str = '<img alt="'+item.title+'" src="'+item.image+'" width="'+imgSize.width+'" height="'+imgSize.height+'" data-width="'+item.width+'" data-height="'+item.height+'"style=position:absolute;top:'+imgOffset.top+'px;left:'+imgOffset.left+'px;" onerror="d.onImgLoadError(this);" onabort="d.onImgLoadError(this);">';
+                return str;
+            } else {
+                return '';
+            }
+        });
+        s.setInitData(0);
+        s.onSlideStart(function(session){
+            session.targetEvent.preventDefault();
+        });
+        function replaceAll(txt, replace, with_this) {
+            return txt.replace(new RegExp(replace, 'g'),with_this);
+        }
+        function changeText(text) {
+            text = replaceAll(text, "&lt;", "<");
+            text = replaceAll(text, "&gt;", ">");
+            text = replaceAll(text, "&nbsp; "," ");
+            text = replaceAll(text, "&amp;", "&");
+            text = replaceAll(text, "&quot;", "\"");
+            
+            return text;
+        }
+        function changeLinkText(link) {
+            if (link.length > 37) {
+                return link.substring(0,35) + ".."
+            } else {
+                return link;
+            }
+        }
+        var footer = document.getElementById("footer");
+        function setCurrentDesc() {
+            var item = d.getCurrentData();
+            if (item) {
+                var data = item.data;
+                var title = changeText(data.title);
+                var linktext = changeLinkText(data.link);
+                var str = '<div class="wrap_desc" style="opacity: 0.7;" id="desc_field">' +
+                            '<a href="'+data.link+'" class="tit" id="desc_title">'+ title +'</a>' +
+                            '<span class="info" id="desc_info">'+data.width+' x '+data.height+'</span><a href="'+data.link+'" id="desc_url" class="link_src">'+ linktext +'</a>' +
+                            '<div class="wrap_btn">' +
+                                '<a href="" class="left_wrap"><span class="prev">검색결과로 돌아가기</span></a>' + 
+                                '<a id="desc_link" href="'+data.image+'" target="_blank" class="right_wrap"><span class="bar"></span><span>원본 바로보기</span></a>' +
+                            '</div></div>';
+            } else {
+                var str = '';
+            }
+            footer.innerHTML = str;
+        }
+        setCurrentDesc();
+        var viewState = "block";
+        s.onSlideEnd(function(session){
+            if (!session.isSwipe() && !session.isScroll()) {
+                if (viewState === "none") {
+                    footer.style.display = "block";
+                    prevBtn.style.display = "block";
+                    nextBtn.style.display = "block";
+                    viewState = "block";
+                } else {
+                    footer.style.display = "none";
+                    prevBtn.style.display = "none";
+                    nextBtn.style.display = "none";
+                    viewState = "none";
+                }
+            }
+        });
+        s.onSlideNext(function(){setCurrentDesc();});
+        s.onSlidePrev(function(){setCurrentDesc();});
+    }
     
     document.getElementById("searchbtn").addEventListener("click",function(){
         document.getElementById("searchBox").style.display = "none";
-        d.sendRequestData();
+        d.setInitData(0, setInitSlide);
     },false);
     
     window.addEventListener("keypress", function(e){
         if (e.keyCode === 13) {
             document.getElementById("searchBox").style.display = "none";
-            d.sendRequestData();
+            d.setInitData(0, setInitSlide);
+        }
+    });
+    
+    window.addEventListener("load", function(e){
+        var qIndex = location.href.indexOf("q=");
+        if (qIndex > -1) {
+            query.value = location.href.substring(qIndex+2);
+            document.getElementById("searchBox").style.display = "none";
+            d.setInitData(0, setInitSlide);
         }
     });
     
