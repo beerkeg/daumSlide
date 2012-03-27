@@ -43,12 +43,12 @@
                 data = '', i;
             for (i=0; i< 3; i += 1) {
                 if (loadedInitData[i].type !== "invalid") {
-                	this.panels[i].innerHTML = this.__addExternalFunction(this.slideHandlers.onSetDataItem, loadedInitData[i].data);
+                    this.panels[i].innerHTML = this.__addExternalFunction(this.slideHandlers.onSetDataItem, loadedInitData[i].data);
                 }
             }
         },
         __initSlide: function () {
-        	 this.__setWrapperSize();
+             this.__setWrapperSize();
              this.__createSlide();
              this.__setPanelsSize();
              this.__setSlideSizeAndOffset();
@@ -92,21 +92,21 @@
             this.__addExternalFunction(this.slideHandlers.onResize);
         },
         __resizeElement: function () {
-        	this.__setWrapperSize();
+            this.__setWrapperSize();
             this.__setPanelsSize();
             this.__setSlideSizeAndOffset();
         },
         __setWrapperSize: function () {
-        	this.pageWidth = this.wrapper.clientWidth;
+            this.pageWidth = this.wrapper.clientWidth;
             this.pageHeight = this.wrapper.clientHeight;
         },
         __setPanelsSize: function () {
-        	for (var i=0;i<3;i += 1) {
+            for (var i=0;i<3;i += 1) {
                 this.panels[i].style.width = '' + this.pageWidth + 'px';
             }
         },
         __setSlideSizeAndOffset: function () {
-        	this.el.style.width = '' + (this.pageWidth*3) + 'px';
+            this.el.style.width = '' + (this.pageWidth*3) + 'px';
             this.el.style.left = '' + (-this.pageWidth) + 'px';
         },
         __start: function (session) {
@@ -168,32 +168,32 @@
         },
         __next: function (duration) {
             if (!this.isTransitioning) {
-	            this.loadedData = this.dataSource.getNextData();
-	            if (this.loadedData.type === "invalid") {
-	                this.__cancel(duration);
-	            } else {
-	                this.__setTransitionState(duration, "next");
-	                this.__plusPageOffset();
-	                this.__pos(-this.pageWidth);
-	                if (!this.enableTransform) {
-	                    this.__setData();
-	                }
-	            }
+                this.loadedData = this.dataSource.getNextData();
+                if (this.loadedData.type === "invalid") {
+                    this.__cancel(duration);
+                } else {
+                    this.__setTransitionState(duration, "next");
+                    this.__plusPageOffset();
+                    this.__pos(-this.pageWidth);
+                    if (!this.enableTransform) {
+                        this.__setData();
+                    }
+                }
             }
         },
         __prev: function (duration) {
             if (!this.isTransitioning) {
-	            this.loadedData = this.dataSource.getPrevData();
-	            if (this.loadedData.type === "invalid") {
-	                this.__cancel(duration);
-	            } else {
-	            	this.__setTransitionState(duration, "prev");
-	                this.__minusPageOffset();
-	                this.__pos(this.pageWidth);
-	                if (!this.enableTransform) {
-	                    this.__setData();
-	                }
-	            }
+                this.loadedData = this.dataSource.getPrevData();
+                if (this.loadedData.type === "invalid") {
+                    this.__cancel(duration);
+                } else {
+                    this.__setTransitionState(duration, "prev");
+                    this.__minusPageOffset();
+                    this.__pos(this.pageWidth);
+                    if (!this.enableTransform) {
+                        this.__setData();
+                    }
+                }
             }
         },
         __onTransitionEnd: function () {
@@ -210,12 +210,12 @@
             this.__pos(0);
         },
         __initTransitionState: function () {
-        	this.dataDirect = "";
+            this.dataDirect = "";
             this.isTransitioning = false;
             this.__setTransitionDuration('0ms');
         },
         __setTransitionState: function (duration, direct) {
-        	this.__setTransitionDuration(duration);
+            this.__setTransitionDuration(duration);
             this.dataDirect = direct;
             this.isTransitioning = true;
         },
@@ -252,17 +252,17 @@
             }
         },
         __cancel: function (duration) {
-        	if (!this.isTransitioning) {
-	            this.__setTransitionDuration(duration);
-	            this.__pos(0);
-	            this.__addExternalFunction(this.slideHandlers.onSlideCancel);
-        	}
+            if (!this.isTransitioning) {
+                this.__setTransitionDuration(duration);
+                this.__pos(0);
+                this.__addExternalFunction(this.slideHandlers.onSlideCancel);
+            }
         },
         __addExternalFunction: function (fn, info) {
             if (fn) {
                 return fn(info);
             } else {
-            	return info;
+                return info;
             }
         }
     };
@@ -372,6 +372,9 @@
             this.prevLoadIndex = prevLoadIndex || 0;
             this.dataList = [];
             this.currentIndex = 0;
+            this.loadPrevData = false;
+            this.loadNextData = false;
+            this.isInitLoadData = false;
         },
         addData: function (data) {
             this.dataList.push(data);
@@ -396,7 +399,6 @@
             if (this.isIterating) {
                 index = this.__iterationIndexing(index);
             }
-            
             return this.__checkData(index);
         },
         __checkData: function (index) {
@@ -444,8 +446,8 @@
             
             if (dataInfo.type !== "invalid") {
                 this.currentIndex -= 1;
-                if (this.checkPrevLoadingData()) {
-                    this.requestData();
+                if (this.checkPrevLoadingData(this.currentIndex)) {
+                    this.requestPrevData();
                 }
             } 
             return dataInfo;    
@@ -454,17 +456,17 @@
             var dataInfo = this.getDataByIndex(this.getNextIndex());
             if (dataInfo.type !== "invalid") {
                 this.currentIndex += 1;
-                if (this.checkNextLoadingData()) {
+                if (this.checkNextLoadingData(this.currentIndex)) {
                     this.requestData();
                 }
             } 
             return dataInfo;
         },
-        checkNextLoadingData: function () {
-            return this.nextLoadIndex !== 0 && this.nextLoadIndex === this.getDataListLength() - this.currentIndex;
+        checkNextLoadingData: function (index) {
+            return this.nextLoadIndex !== 0 && this.nextLoadIndex >= this.getDataListLength() - index;
         },
-        checkPrevLoadingData: function () {
-            return this.prevLoadIndex !== 0 && this.prevLoadIndex === this.currentIndex;
+        checkPrevLoadingData: function (index) {
+            return this.prevLoadIndex !== 0 && this.prevLoadIndex >= index;
         },
         getPrevIndex: function () {
             return this.currentIndex - 2;
@@ -472,12 +474,18 @@
         getNextIndex: function () {
             return this.currentIndex + 2;
         },
+        setInitData: function (index, options) {
+            this.currentIndex = index;
+            this.requestData(options);
+        },
         getInitData: function (index) {
             var dataArr = [];
-            this.currentIndex = index;
-            dataArr.push(this.getDataByIndex(index - 1));
-            dataArr.push(this.getDataByIndex(index));
-            dataArr.push(this.getDataByIndex(index + 1));
+            if (typeof index === "number") {
+                this.currentIndex = index;
+            }
+            dataArr.push(this.getDataByIndex(this.currentIndex - 1));
+            dataArr.push(this.getDataByIndex(this.currentIndex));
+            dataArr.push(this.getDataByIndex(this.currentIndex + 1));
             
             return dataArr;
         },
@@ -488,11 +496,58 @@
                 this.responseData(options.data);
             }
         },
+        requestPrevData: function (options) {
+            if (this.dataHandlers.requestDataHandler) {
+                this.dataHandlers.requestPrevDataHandler(options);
+            } else {
+                this.responsePrevData(options.data);
+            }
+        },
         responseData: function (data) {
             var dataList = this.parseData(data);
             this.addDataList(dataList);
-            if (this.dataHandlers.dataLoadEndHandler) {
-                this.dataHandlers.dataLoadEndHandler();
+            this.checkInitLoadData();
+        },
+        responsePrevData: function (data) {
+            var dataList = this.parseData(data);
+            this.addPrevDataList(dataList);
+            this.checkInitLoadData();
+        },
+        checkInitLoadData: function () {
+            if (this.isInitLoadData) {
+                this.addExternalFunction(this.dataHandlers.dataLoadEndHandler);
+            } else {
+                this.setInitLoadData();
+            }
+        },
+        setInitLoadData: function () {
+            this.setInitNextData();
+            this.setInitPrevData();
+            this.checkCompleteInitData();
+        },
+        setInitNextData: function () {
+            if (this.checkNextLoadingData(this.currentIndex)) {
+                this.requestData();
+            } else {
+                this.loadNextData = true;
+            }
+        },
+        setInitPrevData: function () {
+            if (this.checkPrevLoadingData(this.currentIndex)) {
+                this.requestPrevData();
+            } else {
+                this.loadPrevData = true;
+            }
+        },
+        checkCompleteInitData: function () {
+            if (this.loadPrevData && this.loadNextData) {
+                this.isInitLoadData = true;
+                this.addExternalFunction(this.dataHandlers.onInitDataLoadHandler);
+            }
+        },
+        addExternalFunction: function (fn) {
+            if (fn) {
+                fn();
             }
         },
         parseData: function (data) {
@@ -508,7 +563,9 @@
         var dataHandlers = {
                 parseDataHandler : null,
                 requestDataHandler : null,
-                dataLoadEndHandler : null
+                requestPrevDataHandler : null,
+                dataLoadEndHandler : null,
+                onInitDataLoadHandler : null
             },
             dataSource = new DataSource(dataHandlers, isIterating, nextLoadIndex, prevLoadIndex);
         
@@ -549,6 +606,9 @@
             onParseData: function (fn) {
                 dataHandlers.parseDataHandler = fn;
             },
+            onRequestPrevData: function (fn) {
+                dataHandlers.requestPrevDataHandler = fn;
+            },
             onRequestData: function (fn) {
                 dataHandlers.requestDataHandler = fn;
             },
@@ -561,12 +621,21 @@
             responseData: function (data) {
                 dataSource.responseData(data);
             },
+            responsePrevData: function (data) {
+                dataSource.responsePrevData(data);
+            },
             getCurrentIndex: function () {
                 return dataSource.__iterationIndexing(dataSource.currentIndex);
             },
             stopLoadData: function () {
-            	dataSource.nextLoadIndex = 0;
-            	dataSource.prevLoadIndex = 0;
+                dataSource.nextLoadIndex = 0;
+                dataSource.prevLoadIndex = 0;
+            },
+            setInitData: function (index, fn, options) {
+                if (fn) {
+                    dataHandlers.onInitDataLoadHandler = fn;
+                }
+                dataSource.setInitData(index, options);
             }
         };
     }
