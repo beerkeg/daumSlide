@@ -32,11 +32,14 @@ ul, li {
 }
 .panel {
     position: relative;
+    text-align: center;
 }
 
 .panel img {
+    position: relative;
     width:200px;
     height:200px;
+    top: 10%;
 }
 
 .prevBtn, .nextBtn {
@@ -110,33 +113,29 @@ var slides = [
         ];
         
 var d = slideDataSource.listener(true);
-var s = null;
-d.onDataLoadEnd(function(){
-    if (s === null) {
-        var wrapper = document.getElementById("wrapper");
-        s = slide.slideListener(wrapper, d, 0);
-        s.setSlideTreshold(0.2);
-        var click = "ontouchstart" in window ? "touchstart" : "click";
-        document.getElementsByClassName("prevBtn")[0].addEventListener(click, function(){
-            s.prevSlide('500ms');
-        }, false);
-        document.getElementsByClassName("nextBtn")[0].addEventListener(click, function(){
-            s.nextSlide('500ms');
-        }, false);
-        s.onSlideStart(function(session){
-            session.targetEvent.preventDefault();
-        });
-        s.setInitData(0);
-        
-        function getImgOffset(width, height) {
-            var imgOffset = {};
-            imgOffset.left = parseInt((clientWidth+10-width)/2);
-            imgOffset.top = parseInt((clientHeight+10-height)/2);
-            return imgOffset;
-        }
+d.setInitData(0, function(){
+    var wrapper = document.getElementById("wrapper");
+    var s = slide.slideListener(wrapper, d, 0);
+    s.setSlideTreshold(0.2);
+    var click = "ontouchstart" in window ? "touchstart" : "click";
+    document.getElementsByClassName("prevBtn")[0].addEventListener(click, function(){
+        s.prevSlide('500ms');
+    }, false);
+    document.getElementsByClassName("nextBtn")[0].addEventListener(click, function(){
+        s.nextSlide('500ms');
+    }, false);
+    s.onSlideStart(function(session){
+        session.targetEvent.preventDefault();
+    });
+    s.setInitData(0);
+    
+    function getImgOffset(width, height) {
+        var imgOffset = {};
+        imgOffset.left = parseInt((clientWidth+10-width)/2);
+        imgOffset.top = parseInt((clientHeight+10-height)/2);
+        return imgOffset;
     }
-});
-d.sendRequestData({data:slides});
+}, {data:slides});
 </script>
 
 </body>
