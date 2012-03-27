@@ -402,27 +402,35 @@
             return this.__checkData(index);
         },
         __checkData: function (index) {
-            var dataInfo = {};
-            if (index === 0) {
-                dataInfo.type = "start";
-                dataInfo.data = this.dataList[index];
-            } else if (index === this.getDataTotalLength() - 1) {
-                dataInfo.type = "end";
-                dataInfo.data = this.dataList[index];
-            } else if (index === -1) {
-                dataInfo.type = "startPrev";
-                dataInfo.data = "";
-            } else if (index === this.getDataTotalLength()) {
-                dataInfo.type = "endNext";
-                dataInfo.data = "";
-            } else if (index > 0 && index < this.getDataTotalLength() - 1){
-                dataInfo.type = "valid";
-                dataInfo.data = this.dataList[index];
+            if (index < -1 || index > this.getDataTotalLength()){
+                var type = "invalid";
             } else {
-                dataInfo.type = "invalid";
-                dataInfo.data = "";
+                var type = this.checkValidDataType(index);
             }
-            return dataInfo;
+            return this.setDataInfo(type, this.getData(index));
+        },
+        checkValidDataType: function (index) {
+            if (index === 0) {
+                return "start";
+            } else if (index === -1) {
+                return "startPrev";
+            } else if (index === this.getDataTotalLength() - 1) {
+                return "end";
+            } else if (index === this.getDataTotalLength()) {
+                return "endNext";
+            } else {
+                return "valid";
+            }
+        },
+        getData: function (index) {
+            if (index >= 0 && index < this.dataList.length) {
+                return this.dataList[index];
+            } else {
+                return '';
+            }
+        },
+        setDataInfo: function (type, data) {
+            return { type: type, data: data };
         },
         __iterationIndexing: function (index){
             var len = this.getDataTotalLength();
