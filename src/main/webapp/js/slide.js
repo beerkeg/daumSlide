@@ -14,16 +14,16 @@
     
     Slide.prototype = {
         init: function (slideHandlers, el, dataSource, gestureTreshold) {
-            this.__initPaging(slideHandlers, el, dataSource);
+            this.initPaging(slideHandlers, el, dataSource);
             this.enableTransform = false;
             this.enable3DTransform();
-            this.__initSlide();
-            this.__bindEvent(gestureTreshold);
+            this.initSlide();
+            this.bindEvent(gestureTreshold);
         },
-        __initPaging: function (slideHandlers, el, dataSource) {
+        initPaging: function (slideHandlers, el, dataSource) {
             this.page = 0;
             this.offset = 0;
-            this.__initTransitionState();
+            this.initTransitionState();
             this.wrapper = (typeof(el) === "string")? document.getElementById(el) : el;
             this.slideHandlers = slideHandlers;
             this.dataSource = dataSource;
@@ -38,103 +38,103 @@
                 this.enableTransform = true;
             }
         },
-        __setInitData: function (num) {
+        setInitData: function (num) {
             var loadedInitData = this.dataSource.getInitData(num),
                 data = '', i;
             for (i=0; i< 3; i += 1) {
                 if (loadedInitData[i].type !== "invalid") {
-                    this.panels[i].innerHTML = this.__addExternalFunction(this.slideHandlers.onSetDataItem, loadedInitData[i].data);
+                    this.panels[i].innerHTML = this.addExternalFunction(this.slideHandlers.onSetDataItem, loadedInitData[i].data);
                 }
             }
         },
-        __initSlide: function () {
-             this.__setWrapperSize();
-             this.__createSlide();
-             this.__setPanelsSize();
-             this.__setSlideSizeAndOffset();
+        initSlide: function () {
+             this.setWrapperSize();
+             this.createSlide();
+             this.setPanelsSize();
+             this.setSlideSizeAndOffset();
         },
-        __createPanelStyle: function () {
+        createPanelStyle: function () {
             var enableStr = this.enableTransform ? '-webkit-transform:translate3d(0,0,0);' : '';
             return 'height: 100%;overflow:hidden;display:inline-block;'+ enableStr + 'width:'+this.pageWidth +'px;';
         },
-        __createSlide: function () {
-            var panelString = '<div class="panel" style="' + this.__createPanelStyle() + '"></div>';
+        createSlide: function () {
+            var panelString = '<div class="panel" style="' + this.createPanelStyle() + '"></div>';
             this.wrapper.innerHTML = '<div class="slide" id="slide-'+__slideIndex+'" style="overflow:hidden;position:relative;top:0;transform:translate3d(0,0,0);' +
                                     'left:'+(-this.pageWidth)+'px;width:'+(this.pageWidth * 3)+'px;">' +
                                     panelString + panelString + panelString + '</div>';
             this.el = document.getElementById("slide-"+__slideIndex);
             this.panels = this.el.getElementsByClassName("panel");
         },
-        __bindEvent: function (gestureTreshold) {
+        bindEvent: function (gestureTreshold) {
             var resizeEvent = 'onorientationchange' in window ? 'orientationchange' : 'resize',
                 listener = gesture.GestureListener(this.el, gestureTreshold),
                 self = this;
     
-            listener.onGestureStart(function(session){return self.__start.call(self, session);});
-            listener.onGestureMove(function(session){return self.__move.call(self, session);});
-            listener.onGestureEnd(function(session){return self.__end.call(self, session);});
+            listener.onGestureStart(function(session){return self.start.call(self, session);});
+            listener.onGestureMove(function(session){return self.move.call(self, session);});
+            listener.onGestureEnd(function(session){return self.end.call(self, session);});
             
-            window.addEventListener(resizeEvent, function(){return self.__checkChangeValueByResize.call(self);});
+            window.addEventListener(resizeEvent, function(){return self.checkChangeValueByResize.call(self);});
             if (this.enableTransform) {
-                this.el.addEventListener("webkitTransitionEnd", function(){return self.__onTransitionEnd.call(self);});
+                this.el.addEventListener("webkitTransitionEnd", function(){return self.onTransitionEnd.call(self);});
             }
         },
-        __checkChangeValueByResize: function () {
+        checkChangeValueByResize: function () {
             if (this.pageWidth === this.wrapper.clientWidth && this.pageHeight === this.wrapper.clientHeight) {
                 var self = this;
-                window.setTimeout(function(){return self.__checkChangeValueByResize.call(self);}, 50);
+                window.setTimeout(function(){return self.checkChangeValueByResize.call(self);}, 50);
             } else {
-                this.__resize();
+                this.resize();
             }
         },
-        __resize: function () {
-            this.__resizeElement();
-            this.__addExternalFunction(this.slideHandlers.onResize);
+        resize: function () {
+            this.resizeElement();
+            this.addExternalFunction(this.slideHandlers.onResize);
         },
-        __resizeElement: function () {
-            this.__setWrapperSize();
-            this.__setPanelsSize();
-            this.__setSlideSizeAndOffset();
+        resizeElement: function () {
+            this.setWrapperSize();
+            this.setPanelsSize();
+            this.setSlideSizeAndOffset();
         },
-        __setWrapperSize: function () {
+        setWrapperSize: function () {
             this.pageWidth = this.wrapper.clientWidth;
             this.pageHeight = this.wrapper.clientHeight;
         },
-        __setPanelsSize: function () {
+        setPanelsSize: function () {
             for (var i=0;i<3;i += 1) {
                 this.panels[i].style.width = '' + this.pageWidth + 'px';
             }
         },
-        __setSlideSizeAndOffset: function () {
+        setSlideSizeAndOffset: function () {
             this.el.style.width = '' + (this.pageWidth*3) + 'px';
             this.el.style.left = '' + (-this.pageWidth) + 'px';
         },
-        __start: function (session) {
+        start: function (session) {
             this.isScrolling = false;
-            this.__addExternalFunction(this.slideHandlers.onSlideStart, session);
+            this.addExternalFunction(this.slideHandlers.onSlideStart, session);
         },
-        __move: function (session) {
+        move: function (session) {
             if (!this.isTransitioning) {
                 if (session.isSwipe() && !this.isScrolling) {
                     session.targetEvent.preventDefault();
-                    this.__pos(session.delta.x/2);
-                    this.__addExternalFunction(this.slideHandlers.onSlideMove, session);
+                    this.pos(session.delta.x/2);
+                    this.addExternalFunction(this.slideHandlers.onSlideMove, session);
                 } else if (session.isScroll()) {
                     this.isScrolling = true; 
                 }
             }
         },
-        __end: function (session) {
-            if (this.__isNextSwipe(session)) {
-                this.__next(this.__setDurationTime(session));
-            } else if (this.__isPrevSwipe(session)) {
-                this.__prev(this.__setDurationTime(session));
+        end: function (session) {
+            if (this.isNextSwipe(session)) {
+                this.next(this.setDurationTime(session));
+            } else if (this.isPrevSwipe(session)) {
+                this.prev(this.setDurationTime(session));
             } else {
-                this.__cancel('500ms');
+                this.cancel('500ms');
             }
-            this.__addExternalFunction(this.slideHandlers.onSlideEnd, session);
+            this.addExternalFunction(this.slideHandlers.onSlideEnd, session);
         },
-        __setDurationTime: function (session) {
+        setDurationTime: function (session) {
             var duration = Math.abs(parseInt(session.getTerm() * this.pageWidth / session.delta.x, 10));
             if (duration > 500) {
                 return '500ms';
@@ -142,123 +142,123 @@
                 return '' + duration + 'ms';
             }
         },
-        __pos: function (x) {
+        pos: function (x) {
             if (this.enableTransform) {
                 this.el.style.webkitTransform = 'translate3d('+ x +'px,0,0)';
             } else {
                 this.el.style.left = ''+ (x-this.pageWidth) +'px';
             }
         },
-        __setTransitionDuration: function (duration) {
+        setTransitionDuration: function (duration) {
             if (this.enableTransform) {
                 this.el.style.webkitTransitionDuration = duration;
             }
         },
-        __isNextSwipe: function (session) {
-            return session.isLeft() && (this.__isNextThreshold(session) || session.isFlick());
+        isNextSwipe: function (session) {
+            return session.isLeft() && (this.isNextThreshold(session) || session.isFlick());
         },
-        __isNextThreshold: function (session) {
+        isNextThreshold: function (session) {
             return this.el.clientWidth * -1 * SLIDE_TRESHOLD > session.delta.x;
         },
-        __isPrevSwipe: function (session) {
-            return session.isRight() && (this.__isPrevThreshold(session) || session.isFlick());
+        isPrevSwipe: function (session) {
+            return session.isRight() && (this.isPrevThreshold(session) || session.isFlick());
         },
-        __isPrevThreshold: function (session) {
+        isPrevThreshold: function (session) {
             return this.el.clientWidth * SLIDE_TRESHOLD < session.delta.x;
         },
-        __next: function (duration) {
+        next: function (duration) {
             if (!this.isTransitioning) {
                 this.loadedData = this.dataSource.getNextData();
                 if (this.loadedData.type === "invalid") {
-                    this.__cancel(duration);
+                    this.cancel(duration);
                 } else {
-                    this.__setTransitionState(duration, "next");
-                    this.__plusPageOffset();
-                    this.__pos(-this.pageWidth);
+                    this.setTransitionState(duration, "next");
+                    this.plusPageOffset();
+                    this.pos(-this.pageWidth);
                     if (!this.enableTransform) {
-                        this.__setData();
+                        this.setData();
                     }
                 }
             }
         },
-        __prev: function (duration) {
+        prev: function (duration) {
             if (!this.isTransitioning) {
                 this.loadedData = this.dataSource.getPrevData();
                 if (this.loadedData.type === "invalid") {
-                    this.__cancel(duration);
+                    this.cancel(duration);
                 } else {
-                    this.__setTransitionState(duration, "prev");
-                    this.__minusPageOffset();
-                    this.__pos(this.pageWidth);
+                    this.setTransitionState(duration, "prev");
+                    this.minusPageOffset();
+                    this.pos(this.pageWidth);
                     if (!this.enableTransform) {
-                        this.__setData();
+                        this.setData();
                     }
                 }
             }
         },
-        __onTransitionEnd: function () {
-            this.__setData();
-            this.__addExternalFunction(this.slideHandlers.onTransitionEnd);
+        onTransitionEnd: function () {
+            this.setData();
+            this.addExternalFunction(this.slideHandlers.onTransitionEnd);
         },
-        __setData: function () {
+        setData: function () {
             if (this.dataDirect === "next") {
-                this.__setNextData();
+                this.setNextData();
             } else if (this.dataDirect === "prev") {
-                this.__setPrevData();
+                this.setPrevData();
             }
-            this.__initTransitionState();
-            this.__pos(0);
+            this.initTransitionState();
+            this.pos(0);
         },
-        __initTransitionState: function () {
+        initTransitionState: function () {
             this.dataDirect = "";
             this.isTransitioning = false;
-            this.__setTransitionDuration('0ms');
+            this.setTransitionDuration('0ms');
         },
-        __setTransitionState: function (duration, direct) {
-            this.__setTransitionDuration(duration);
+        setTransitionState: function (duration, direct) {
+            this.setTransitionDuration(duration);
             this.dataDirect = direct;
             this.isTransitioning = true;
         },
-        __setNextData: function () {
+        setNextData: function () {
             this.el.removeChild(this.panels[0]);
-            this.el.appendChild(this.__setDataItem(this.loadedData.data));
-            this.__addExternalFunction(this.slideHandlers.onSlideNext);
+            this.el.appendChild(this.setDataItem(this.loadedData.data));
+            this.addExternalFunction(this.slideHandlers.onSlideNext);
         },
-        __setPrevData: function () {
+        setPrevData: function () {
             this.el.removeChild(this.panels[2]);
-            this.el.insertBefore(this.__setDataItem(this.loadedData.data), this.panels[0]);
-            this.__addExternalFunction(this.slideHandlers.onSlidePrev);
+            this.el.insertBefore(this.setDataItem(this.loadedData.data), this.panels[0]);
+            this.addExternalFunction(this.slideHandlers.onSlidePrev);
         },
-        __setDataItem: function (loadedData) {
+        setDataItem: function (loadedData) {
             var panel = document.createElement("div");
             panel.className = "panel";
-            panel.style.cssText = this.__createPanelStyle();
-            panel.innerHTML = this.__addExternalFunction(this.slideHandlers.onSetDataItem, loadedData);
+            panel.style.cssText = this.createPanelStyle();
+            panel.innerHTML = this.addExternalFunction(this.slideHandlers.onSetDataItem, loadedData);
             
             return panel;
         },
-        __plusPageOffset: function () {
+        plusPageOffset: function () {
             this.page += 1;
             this.offset += 1;
             if (this.offset > 2) {
                 this.offset = 0;
             }
         },
-        __minusPageOffset: function () {
+        minusPageOffset: function () {
             this.page -= 1;
             this.offset -= 1;
             if (this.offset < 0) {
                 this.offset = 2;
             }
         },
-        __cancel: function (duration) {
+        cancel: function (duration) {
             if (!this.isTransitioning) {
-                this.__setTransitionDuration(duration);
-                this.__pos(0);
-                this.__addExternalFunction(this.slideHandlers.onSlideCancel);
+                this.setTransitionDuration(duration);
+                this.pos(0);
+                this.addExternalFunction(this.slideHandlers.onSlideCancel);
             }
         },
-        __addExternalFunction: function (fn, info) {
+        addExternalFunction: function (fn, info) {
             if (fn) {
                 return fn(info);
             } else {
@@ -314,13 +314,13 @@
                 slideHandlers.onTransitionEnd = fn;
             },
             nextSlide: function (time) {
-                slide.__next(time);
+                slide.next(time);
             },
             prevSlide: function (time) {
-                slide.__prev(time);
+                slide.prev(time);
             },
             setInitData: function (num) {
-                slide.__setInitData(num);
+                slide.setInitData(num);
             }
         };
     }
@@ -397,11 +397,11 @@
         },
         getDataByIndex: function (index) {
             if (this.isIterating) {
-                index = this.__iterationIndexing(index);
+                index = this.iterationIndexing(index);
             }
-            return this.__checkData(index);
+            return this.checkData(index);
         },
-        __checkData: function (index) {
+        checkData: function (index) {
             if (index < -1 || index > this.getDataTotalLength()){
                 var type = "invalid";
             } else {
@@ -432,7 +432,7 @@
         setDataInfo: function (type, data) {
             return { type: type, data: data };
         },
-        __iterationIndexing: function (index){
+        iterationIndexing: function (index){
             var len = this.getDataTotalLength();
             
             if ( index < 0 ) {
@@ -633,7 +633,7 @@
                 dataSource.responsePrevData(data);
             },
             getCurrentIndex: function () {
-                return dataSource.__iterationIndexing(dataSource.currentIndex);
+                return dataSource.iterationIndexing(dataSource.currentIndex);
             },
             stopLoadData: function () {
                 dataSource.nextLoadIndex = 0;
