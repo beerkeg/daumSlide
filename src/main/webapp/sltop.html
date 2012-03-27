@@ -185,6 +185,8 @@ DMT.issue.coupon = [['<li class="shopImg first"><a href="http://m.social.daum.ne
 
 function parsing(jsonStr) {
     var data = jsonStr;
+    console.log(data);
+
       var temp = '';
       var dataArr = [];
       for (var item in data) {
@@ -208,25 +210,21 @@ function setItem(item) {
          
 function createSwipe(elStr, data) {
     var mediaDatasource = slideDataSource.listener(true);
-    var mediaSlide = null;
-    mediaDatasource.onDataLoadEnd(function(){
-        if (mediaSlide === null) {
-            var wrapper = document.getElementById(elStr);
-            mediaSlide = slide.slideListener(wrapper, mediaDatasource, 0);
-            mediaSlide.setSlideTreshold(0.1);
-          
-            mediaSlide.onSetDataItem(function(item){
-                return setItem(item);
-            });
-            mediaSlide.setInitData(0);
-        }
-    });
     mediaDatasource.onParseData(function(jsonStr){
         return parsing(jsonStr);
     });
-    mediaDatasource.sendRequestData(data);
+    mediaDatasource.setInitData(0, function(){
+        var wrapper = document.getElementById(elStr);
+        var mediaSlide = slide.slideListener(wrapper, mediaDatasource, 0);
+        mediaSlide.setSlideTreshold(0.1);
+      
+        mediaSlide.onSetDataItem(function(item){
+            return setItem(item);
+        });
+        mediaSlide.setInitData(0);
+    }, data);
 }
-  
+
 createSwipe("media", {data:DMT.media});
 createSwipe("content", {data:DMT.content});
 createSwipe("fun", {data:DMT.fun});
