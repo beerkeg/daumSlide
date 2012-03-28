@@ -173,17 +173,23 @@ z-index: 30;
 <script type="text/javascript">
 
 var d = (function(){
-    var d = slideDataSource.listener(false, 5);
-    var pageNum = (function (){
-        var pagenum = 1;
-        return function(){
-            return pagenum++;
-        };
-    })();
-    
-    var headTag = document.getElementsByTagName("head")[0];
-    var wrapper = document.getElementById("wrapper");
-    var query = document.getElementById("query");
+    var headTag = document.getElementsByTagName("head")[0],
+        wrapper = document.getElementById("wrapper"),
+        query = document.getElementById("query"),
+        click = "ontouchstart" in window ? "touchstart" : "click",
+        prevBtn = document.getElementsByClassName("prevBtn")[0],
+        nextBtn = document.getElementsByClassName("nextBtn")[0],
+        footer = document.getElementById("footer"),
+        clientHeight,
+        clientWidth,
+        viewState = "block",
+        d = slideDataSource.listener(false, 5),
+        pageNum = (function (){
+            var pagenum = 1;
+            return function(){
+                return pagenum++;
+            };
+        })();
     d.onRequestData(function(){
         var callbackName = "d.responseData";
         var url='http://apis.daum.net/search/image?apikey=080a78bc84cc6b814fb365591b1d7d7fc26575b3&output=json&callback='+ callbackName +'&q=' + query.value + '&pageno=' + pageNum();
@@ -204,137 +210,138 @@ var d = (function(){
         
         return arr;
     });
-    
+    d.onImgLoadError = function (el) {
+        el.parentNode.style.background = "none";
+    };
+    function resizeImg(width, height) {
+        var imgSize = {};
+        if (clientHeight > clientWidth) {
+            if (clientWidth * height > clientHeight * width) {
+                imgSize.height = clientHeight;
+                imgSize.width = parseInt(clientHeight * width / height);
+            } else {
+                imgSize.width = clientWidth;
+                imgSize.height = parseInt(clientWidth * height / width);
+            }
+        } else {
+            if (clientWidth * height < clientHeight * width) {
+                imgSize.width = clientWidth;
+                imgSize.height = parseInt(clientWidth * height / width);
+            } else {
+                imgSize.height = clientHeight;
+                imgSize.width = parseInt(clientHeight * width / height);
+            }
+        }
+        return imgSize;
+    }
+    function getImgOffset(width, height) {
+        var imgOffset = {};
+        imgOffset.left = parseInt((clientWidth+10-width)/2);
+        imgOffset.top = parseInt((clientHeight+10-height)/2);
+        return imgOffset;
+    }
+    function replaceAll(txt, replace, with_this) {
+        return txt.replace(new RegExp(replace, 'g'),with_this);
+    }
+    function changeText(text) {
+        text = replaceAll(text, "&lt;", "<");
+        text = replaceAll(text, "&gt;", ">");
+        text = replaceAll(text, "&nbsp;", " ");
+        text = replaceAll(text, "&amp;", "&");
+        text = replaceAll(text, "&quot;", "\"");
+        
+        return text;
+    }
+    function changeLinkText(link) {
+        if (link.length > 37) {
+            return link.substring(0,35) + ".."
+        } else {
+            return link;
+        }
+    }
+    function createDesc(data) {
+        var title = changeText(data.title),
+            linktext = changeLinkText(data.link);
+        return '<div class="wrap_desc" style="opacity: 0.7;" id="desc_field">' +
+                    '<a href="'+data.link+'" class="tit" id="desc_title">'+ title +'</a>' +
+                    '<span class="info" id="desc_info">'+data.width+' x '+data.height+'</span><a href="'+data.link+'" id="desc_url" class="link_src">'+ linktext +'</a>' +
+                    '<div class="wrap_btn">' +
+                        '<a href="" class="left_wrap"><span class="prev">검색결과로 돌아가기</span></a>' + 
+                        '<a id="desc_link" href="'+data.image+'" target="_blank" class="right_wrap"><span class="bar"></span><span>원본 바로보기</span></a>' +
+                    '</div></div>';
+    }
+    function setCurrentDesc() {
+        var item = d.getCurrentData(),
+            str = '';
+        if (item) {
+            str = createDesc(item.data);
+        }
+        footer.innerHTML = str;
+    }
     function setInitSlide() {
-        var s = slide.slideListener(wrapper, d, 0);
-        s.setSlideTreshold(0.1);
-        var click = "ontouchstart" in window ? "touchstart" : "click";
-        var prevBtn = document.getElementsByClassName("prevBtn")[0];
-        var nextBtn = document.getElementsByClassName("nextBtn")[0];
+        wrapper.style.display = "block";
+        clientHeight = wrapper.clientHeight-10;
+        clientWidth = wrapper.clientWidth-10;
+        var s = createSlide();
         prevBtn.addEventListener(click, function(){
             s.prevSlide('500ms');
         }, false);
         nextBtn.addEventListener(click, function(){
             s.nextSlide('500ms');
         }, false);
-        
-        wrapper.style.display = "block";
-        var clientHeight = wrapper.clientHeight-10;
-        var clientWidth = wrapper.clientWidth-10;
-        s.onResize(function(){
-            clientHeight = wrapper.clientHeight-10;
-            clientWidth = wrapper.clientWidth-10;
-
-            var imgs = document.getElementsByTagName("img");
-            var imgSize = {};
-            var imgOffset = {};
-            for(var k=0, len = imgs.length; k<len; k++) {
-                imgSize = resizeImg(imgs[k].getAttribute("data-width"), imgs[k].getAttribute("data-height"));
+        setCurrentDesc();
+    }
+    function setDisplay (state) {
+        footer.style.display = state;
+        prevBtn.style.display = state;
+        nextBtn.style.display = state;
+        viewState = state;
+    }
+    function onResize (){
+        clientHeight = wrapper.clientHeight-10;
+        clientWidth = wrapper.clientWidth-10;
+        var imgs = document.getElementsByTagName("img"),
+            imgSize = {},
+            imgOffset = {};
+        for(var k=0, len = imgs.length; k<len; k++) {
+            imgSize = resizeImg(imgs[k].getAttribute("data-width"), imgs[k].getAttribute("data-height"));
+            imgOffset = getImgOffset(imgSize.width, imgSize.height);
+            imgs[k].style.cssText = 'width:'+imgSize.width+'px;height:'+imgSize.height+'px;top:'+imgOffset.top+'px;left:'+imgOffset.left+'px;position:absolute;';
+        }
+    }
+    function onSetDataItem(item){
+        if (item && item.type !== '') {
+            var imgSize = resizeImg(item.width, item.height),
                 imgOffset = getImgOffset(imgSize.width, imgSize.height);
-                imgs[k].style.cssText = 'width:'+imgSize.width+'px;height:'+imgSize.height+'px;top:'+imgOffset.top+'px;left:'+imgOffset.left+'px;position:absolute;';
-            }
-        });
-        function resizeImg(width, height) {
-            var imgSize = {};
-            if (clientHeight > clientWidth) {
-                if (clientWidth * height > clientHeight * width) {
-                    imgSize.height = clientHeight;
-                    imgSize.width = parseInt(clientHeight * width / height);
-                } else {
-                    imgSize.width = clientWidth;
-                    imgSize.height = parseInt(clientWidth * height / width);
-                }
-            } else {
-                if (clientWidth * height < clientHeight * width) {
-                    imgSize.width = clientWidth;
-                    imgSize.height = parseInt(clientWidth * height / width);
-                } else {
-                    imgSize.height = clientHeight;
-                    imgSize.width = parseInt(clientHeight * width / height);
-                }
-            }
-            return imgSize;
+            return '<img alt="'+item.title+'" src="'+item.image+'" width="'+imgSize.width+'" height="'+imgSize.height+'" data-width="'+item.width+'" data-height="'+item.height+'"style=position:absolute;top:'+imgOffset.top+'px;left:'+imgOffset.left+'px;" onerror="d.onImgLoadError(this);" onabort="d.onImgLoadError(this);">';
+        } else {
+            return '';
         }
-        function getImgOffset(width, height) {
-            var imgOffset = {};
-            imgOffset.left = parseInt((clientWidth+10-width)/2);
-            imgOffset.top = parseInt((clientHeight+10-height)/2);
-            return imgOffset;
-        }
-        d.onImgLoadError = function (el) {
-            el.parentNode.style.background = "none";
-        };
-        s.onSetDataItem(function(item){
-            if (item && item.type !== '') {
-                var imgSize = resizeImg(item.width, item.height);
-                var imgOffset = getImgOffset(imgSize.width, imgSize.height);
-                var str = '<img alt="'+item.title+'" src="'+item.image+'" width="'+imgSize.width+'" height="'+imgSize.height+'" data-width="'+item.width+'" data-height="'+item.height+'"style=position:absolute;top:'+imgOffset.top+'px;left:'+imgOffset.left+'px;" onerror="d.onImgLoadError(this);" onabort="d.onImgLoadError(this);">';
-                return str;
-            } else {
-                return '';
-            }
-        });
+    }
+    function createSlide () {
+        var s = slide.slideListener(wrapper, d, 0);
+
+        s.setSlideTreshold(0.1);
+        s.onResize(onResize);
+        s.onSetDataItem(onSetDataItem);
         s.setInitData(0);
         s.onSlideStart(function(session){
             session.targetEvent.preventDefault();
         });
-        function replaceAll(txt, replace, with_this) {
-            return txt.replace(new RegExp(replace, 'g'),with_this);
-        }
-        function changeText(text) {
-            text = replaceAll(text, "&lt;", "<");
-            text = replaceAll(text, "&gt;", ">");
-            text = replaceAll(text, "&nbsp;", " ");
-            text = replaceAll(text, "&amp;", "&");
-            text = replaceAll(text, "&quot;", "\"");
-            
-            return text;
-        }
-        function changeLinkText(link) {
-            if (link.length > 37) {
-                return link.substring(0,35) + ".."
-            } else {
-                return link;
-            }
-        }
-        var footer = document.getElementById("footer");
-        function setCurrentDesc() {
-            var item = d.getCurrentData();
-            if (item) {
-                var data = item.data;
-                var title = changeText(data.title);
-                var linktext = changeLinkText(data.link);
-                var str = '<div class="wrap_desc" style="opacity: 0.7;" id="desc_field">' +
-                            '<a href="'+data.link+'" class="tit" id="desc_title">'+ title +'</a>' +
-                            '<span class="info" id="desc_info">'+data.width+' x '+data.height+'</span><a href="'+data.link+'" id="desc_url" class="link_src">'+ linktext +'</a>' +
-                            '<div class="wrap_btn">' +
-                                '<a href="" class="left_wrap"><span class="prev">검색결과로 돌아가기</span></a>' + 
-                                '<a id="desc_link" href="'+data.image+'" target="_blank" class="right_wrap"><span class="bar"></span><span>원본 바로보기</span></a>' +
-                            '</div></div>';
-            } else {
-                var str = '';
-            }
-            footer.innerHTML = str;
-        }
-        setCurrentDesc();
-        var viewState = "block";
+        
         s.onSlideEnd(function(session){
             if (!session.isSwipe() && !session.isScroll()) {
                 if (viewState === "none") {
-                    footer.style.display = "block";
-                    prevBtn.style.display = "block";
-                    nextBtn.style.display = "block";
-                    viewState = "block";
+                    setDisplay("block");
                 } else {
-                    footer.style.display = "none";
-                    prevBtn.style.display = "none";
-                    nextBtn.style.display = "none";
-                    viewState = "none";
+                    setDisplay("none");
                 }
             }
         });
         s.onSlideNext(function(){setCurrentDesc();});
         s.onSlidePrev(function(){setCurrentDesc();});
+        
+        return s;
     }
     
     document.getElementById("searchbtn").addEventListener("click",function(){
