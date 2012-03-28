@@ -74,7 +74,10 @@
             listener.onGestureMove(function(session){return self.move.call(self, session);});
             listener.onGestureEnd(function(session){return self.end.call(self, session);});
             
-            window.addEventListener(resizeEvent, function(){return self.checkChangeValueByResize.call(self);});
+            window.addEventListener(resizeEvent, function(){
+                self.timeoutState = 0;
+                return self.checkChangeValueByResize.call(self);
+            });
             if (this.enableTransform) {
                 this.el.addEventListener("webkitTransitionEnd", function(){return self.onTransitionEnd.call(self);});
             }
@@ -82,16 +85,13 @@
         checkChangeValueByResize: function () {
             if (this.isChangedDisplayValue()) {
                 var self = this;
-                if (this.resizeObserver) {
-                    window.clearTimeout(this.resizeObserver);
+                if (this.timeoutState < 20) {
+                    window.setTimeout(function(){return self.checkChangeValueByResize.call(self);}, 50);
+                    this.timeoutState++;
                 }
-                this.resizeObserver = window.setTimeout(function(){return self.checkChangeValueByResize.call(self);}, 50);
             } else {
                 this.resize();
             }
-        },
-        isResized: function () {
-            return !(this.pageWidth === this.prevWidth && this.pageHeight === this.prevHeight);
         },
         isChangedDisplayValue: function () {
             return (this.pageWidth === this.wrapper.clientWidth && this.pageHeight === this.wrapper.clientHeight);
