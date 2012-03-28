@@ -34,7 +34,7 @@
                                     (ua.androidVersion.major === 2 && ua.androidVersion.minor >= 3);
             if (ua.isAndroid() && isOverGingerBread) {
                 this.enableTransform = true;
-            } else if (!ua.isAndroid() && ua.isWebkit()) {
+            } else if (ua.isIOS()) {
                 this.enableTransform = true;
             }
         },
@@ -80,21 +80,35 @@
             }
         },
         checkChangeValueByResize: function () {
-            if (this.pageWidth === this.wrapper.clientWidth && this.pageHeight === this.wrapper.clientHeight) {
+            if (this.isChangedDisplayValue()) {
                 var self = this;
-                window.setTimeout(function(){return self.checkChangeValueByResize.call(self);}, 50);
+                if (this.resizeObserver) {
+                    window.clearTimeout(this.resizeObserver);
+                }
+                this.resizeObserver = window.setTimeout(function(){return self.checkChangeValueByResize.call(self);}, 50);
             } else {
                 this.resize();
             }
+        },
+        isResized: function () {
+            return !(this.pageWidth === this.prevWidth && this.pageHeight === this.prevHeight);
+        },
+        isChangedDisplayValue: function () {
+            return (this.pageWidth === this.wrapper.clientWidth && this.pageHeight === this.wrapper.clientHeight);
         },
         resize: function () {
             this.resizeElement();
             this.addExternalFunction(this.slideHandlers.onResize);
         },
         resizeElement: function () {
+            this.savePrevSize();
             this.setWrapperSize();
             this.setPanelsSize();
             this.setSlideSizeAndOffset();
+        },
+        savePrevSize: function () {
+            this.prevWidth = this.pageWidth;
+            this.prevHeight = this.pageHeight;
         },
         setWrapperSize: function () {
             this.pageWidth = this.wrapper.clientWidth;
@@ -332,8 +346,8 @@
             isAndroid: function () {
                 return ua.match(/android/i);
             },
-            isWebkit: function () {
-                return ua.match(/applewebkit/i);
+            isIOS: function () {
+                return ua.match(/like mac os x./i);
             },
             androidVersion: function() {
                 var major = 1, minor = 0, versions,
