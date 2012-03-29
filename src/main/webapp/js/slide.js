@@ -16,7 +16,7 @@
         init: function (slideHandlers, el, dataSource, gestureTreshold) {
             this.initPaging(slideHandlers, el, dataSource);
             this.enableTransform = false;
-            this.enable3DTransform();
+            this.setEnable3DTransform();
             this.initSlide();
             this.bindEvent(gestureTreshold);
         },
@@ -28,15 +28,11 @@
             this.slideHandlers = slideHandlers;
             this.dataSource = dataSource;
         },
-        enable3DTransform: function (uaString) {
+        setEnable3DTransform: function (uaString) {
             var ua = userAgent(uaString),
                 isOverGingerBread = ua.androidVersion.major > 2 ||
                                     (ua.androidVersion.major === 2 && ua.androidVersion.minor >= 3);
-            if (ua.isAndroid() && isOverGingerBread) {
-                this.enableTransform = true;
-            } else if (ua.isIOS()) {
-                this.enableTransform = true;
-            }
+            this.enableTransform = ((ua.isAndroid() && isOverGingerBread) || ua.isIOS() || ua.isSafari());
         },
         setInitData: function (num) {
             var loadedInitData = this.dataSource.getInitData(num),
@@ -130,13 +126,16 @@
         move: function (session) {
             if (!this.isTransitioning) {
                 if (session.isSwipe() && !this.isScrolling) {
-                    session.targetEvent.preventDefault();
-                    this.pos(session.delta.x/2);
-                    this.addExternalFunction(this.slideHandlers.onSlideMove, session);
+                    this.moveSlide(session);
                 } else if (session.isScroll()) {
                     this.isScrolling = true; 
                 }
             }
+        },
+        moveSlide: function (session) {
+            session.targetEvent.preventDefault();
+            this.pos(session.delta.x/2);
+            this.addExternalFunction(this.slideHandlers.onSlideMove, session);
         },
         end: function (session) {
             if (this.isNextSwipe(session)) {
@@ -183,43 +182,36 @@
         next: function (duration) {
             if (!this.isTransitioning) {
                 this.loadedData = this.dataSource.getNextData();
-                if (this.loadedData.type === "invalid") {
-                    this.cancel(duration);
-                } else {
-                    this.setTransitionState(duration, "next");
-                    this.plusPageOffset();
-                    this.pos(-this.pageWidth);
-                    if (!this.enableTransform) {
-                        this.setData();
-                    }
-                }
+                this.transitSlide(duration, "next");
             }
         },
         prev: function (duration) {
             if (!this.isTransitioning) {
                 this.loadedData = this.dataSource.getPrevData();
-                if (this.loadedData.type === "invalid") {
-                    this.cancel(duration);
-                } else {
-                    this.setTransitionState(duration, "prev");
-                    this.minusPageOffset();
-                    this.pos(this.pageWidth);
-                    if (!this.enableTransform) {
-                        this.setData();
-                    }
-                }
+                this.transitSlide(duration, "prev");
+            }
+        },
+        transitSlide: function (duration, type) {
+            if (this.loadedData.type === "invalid") {
+                this.cancel(duration);
+            } else {
+                this.StartTransition(duration, type);
+            }
+        },
+        StartTransition: function (duration, type) {
+            this.setTransitionState(duration, type);
+            this.setPageOffset(type);
+            this.pos(this.pageWidth * (type === "next" ? -1 : 1));
+            if (!this.enableTransform) {
+                this.setNewSlide(type);
             }
         },
         onTransitionEnd: function () {
-            this.setData();
+            this.setNewSlide(this.dataDirect);
             this.addExternalFunction(this.slideHandlers.onTransitionEnd);
         },
-        setData: function () {
-            if (this.dataDirect === "next") {
-                this.setNextData();
-            } else if (this.dataDirect === "prev") {
-                this.setPrevData();
-            }
+        setNewSlide: function (type) {
+            this.setData(type);
             this.initTransitionState();
             this.pos(0);
         },
@@ -232,6 +224,13 @@
             this.setTransitionDuration(duration);
             this.dataDirect = direct;
             this.isTransitioning = true;
+        },
+        setData: function (type) {
+            if (type === "next") {
+                this.setNextData();
+            } else if (type === "prev") {
+                this.setPrevData();
+            }
         },
         setNextData: function () {
             this.el.removeChild(this.panels[0]);
@@ -251,19 +250,20 @@
             
             return panel;
         },
+        setPageOffset: function (type) {
+            if (type === "next") {
+                this.plusPageOffset();
+            } else if (type === "prev") {
+                this.minusPageOffset();
+            }
+        },
         plusPageOffset: function () {
             this.page += 1;
-            this.offset += 1;
-            if (this.offset > 2) {
-                this.offset = 0;
-            }
+            this.offset = this.offset > 1 ? 0 : this.offset + 1;
         },
         minusPageOffset: function () {
             this.page -= 1;
-            this.offset -= 1;
-            if (this.offset < 0) {
-                this.offset = 2;
-            }
+            this.offset = this.offset < 1 ? 2 : this.offset - 1;
         },
         cancel: function (duration) {
             if (!this.isTransitioning) {
@@ -297,6 +297,15 @@
         __slideIndex += 1;
 
         return {
+            setSlideHandler: function (handlers) {
+                for (var handler in slideHandlers) {
+                    (function(slideHandlers, handlers, handler){
+                        if (handlers[handler]) {
+                            slideHandlers[handler] = function () { return handlers[handler].apply(handlers, arguments) };
+                        }
+                    })(slideHandlers, handlers, handler);
+                }
+            },
             setSlideTreshold: function (slideTreshold) {
                 SLIDE_TRESHOLD = slideTreshold;
             },
@@ -348,6 +357,9 @@
             },
             isIOS: function () {
                 return ua.match(/like mac os x./i);
+            },
+            isSafari: function () {
+                return !ua.match(/mobile/i) && ua.match(/safari/i);
             },
             androidVersion: function() {
                 var major = 1, minor = 0, versions,
