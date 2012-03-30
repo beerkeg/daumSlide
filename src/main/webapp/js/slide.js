@@ -79,7 +79,7 @@
             }
         },
         checkChangeValueByResize: function () {
-            if (this.isChangedDisplayValue()) {
+            if (this.isNotChangedDisplayValue()) {
                 var self = this;
                 if (this.timeoutState < 20) {
                     window.setTimeout(function(){return self.checkChangeValueByResize.call(self);}, 50);
@@ -89,7 +89,7 @@
                 this.resize();
             }
         },
-        isChangedDisplayValue: function () {
+        isNotChangedDisplayValue: function () {
             return (this.pageWidth === this.wrapper.clientWidth && this.pageHeight === this.wrapper.clientHeight);
         },
         resize: function () {
