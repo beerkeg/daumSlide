@@ -97,7 +97,7 @@ describe('slide.js', function () {
 
     describe('slide.DataSource', function () {
         it('should serve current data set', function () {
-            var ds = slide.DataSource.init([1, 2, 3, 4, 5]),
+            var ds = new slide.DataSource([1, 2, 3, 4, 5]),
                 currentSet;
             ds.queryCurrentSet(function (set) {
                 currentSet = set;
@@ -115,7 +115,7 @@ describe('slide.js', function () {
         });
 
         it('should call proper handler when reaching end of data', function () {
-            var ds = slide.DataSource.init([1, 2, 3, 4, 5]),
+            var ds = new slide.DataSource([1, 2, 3, 4, 5]),
                 currentSet;
 
             ds.index = 4;
@@ -142,7 +142,7 @@ describe('slide.js', function () {
         });
 
         it('should call proper handler when reaching first of data', function () {
-            var ds = slide.DataSource.init([1, 2, 3, 4, 5]),
+            var ds = new slide.DataSource([1, 2, 3, 4, 5]),
                 currentSet;
 
             ds.index = 0;
@@ -169,7 +169,7 @@ describe('slide.js', function () {
 
         describe('infinite datasource', function () {
             it('should loop infinitly', function () {
-                var ids = slide.InfiniteDataSource.init([1, 2, 3]),
+                var ids = new slide.InfiniteDataSource([1, 2, 3]),
                     currentSet;
                 function queryCurrentSet() {
                     currentSet = null;

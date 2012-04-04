@@ -1,39 +1,19 @@
-/*global slide:false
+/*global slide:true
  */
 (function (exports) {
     "use strict";
 
-    var DataSource, InfiniteDataSource;
-
-    if (typeof Object.create === 'undefined') {
-        Object.create = function (o) {
-            function F() {}
-            F.prototype = o;
-            return new F();
-        };
-    }
-    function extend(obj, props) {
-        var prop;
-        for (prop in props) {
-            if (props.hasOwnProperty(prop)) {
-                obj[prop] = props[prop];
-            }
-        }
-    }
-
     /**
      * slide 를 위한 데이터소스 delegate
      */
-    exports.DataSource = DataSource = {
+    var DataSource = exports.DataSource = Class.extend({
         /**
          * 새로운 DataSource를 생성/초기화한다.
          * @param data
          */
         init: function (data) {
-            var obj = Object.create(this);
-            obj.data = data;
-            obj.index = 0;
-            return obj;
+            this.data = data;
+            this.index = 0;
         },
         /**
          * 현재/이전/다음 데이터셋을 불러온다.
@@ -119,14 +99,16 @@
         concatData: function (addends) {
             this.data = this.data.concat(addends);
         }
-    };
+    });
 
     /**
      * slide 를 위한 데이터소스 delegate.
      * 무한 루프 형태의 DataSource 예시
      */
-    exports.InfiniteDataSource = InfiniteDataSource = Object.create(DataSource);
-    extend(InfiniteDataSource, {
+    exports.InfiniteDataSource = DataSource.extend({
+        init: function (data) {
+            this._super(data);
+        },
         next: function () {
             if (this.index + 1 >= this.data.length) {
                 this.index = 0;
