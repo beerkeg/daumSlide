@@ -41,7 +41,7 @@ ul, li {
     position: relative;
     width:200px;
     height:200px;
-    top: 10%;
+    /*top: 10%;*/
 }
 
 .prevBtn, .nextBtn {
@@ -105,20 +105,22 @@ ul, li {
         '<img alt="Piazza del Duomo, Florence, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic01.jpg" width="300" height="213">',
         '<img alt="Tuscan Landscape" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic02.jpg" width="300" height="164">',
         '<img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic03.jpg" width="300" height="213">',
-        '<img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic04.jpg" width="147" height="220">',
-        '<img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic05.jpg" width="300" height="213">',
-        '<img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic06.jpg" width="165" height="220">'
+//        '<img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic04.jpg" width="147" height="220">',
+//        '<img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic05.jpg" width="300" height="213">',
+//        '<img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic06.jpg" width="165" height="220">'
     ];
 
     var wrapper = document.getElementById("wrapper");
     var ds = new slide.InfiniteDataSource(slides);
+//    var ds = new slide.DataSource(slides);
     var sl = new slide.Slide(wrapper, ds);
 
 
-    document.getElementsByClassName("prevBtn")[0].addEventListener('click', function(){
+    var clickEventName = 'ontouchstart' in window ? 'touchstart' : 'click';
+    document.getElementsByClassName("prevBtn")[0].addEventListener(clickEventName, function(){
         sl.prev();
     }, false);
-    document.getElementsByClassName("nextBtn")[0].addEventListener('click', function(){
+    document.getElementsByClassName("nextBtn")[0].addEventListener(clickEventName, function(){
         sl.next();
     }, false);
 
