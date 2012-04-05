@@ -21,11 +21,13 @@ ul, li {
     list-style-type: none;
 }
 #wrapper {
-    width: 100%;
+    margin: 0 auto;
+    width: 300px;
     height:100%;
-    overflow:hidden;
+    /*overflow:hidden;*/
     background-color: #000;
     position: relative;
+    border: solid 1px #0f0;
 }
 .slide {
     height: 100%;
@@ -76,7 +78,7 @@ ul, li {
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
     background-image: none;
     -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
-    background-color: #a56504 9;
+    background-color: #a56504;
 }
 
 .prevBtn {
@@ -88,8 +90,10 @@ ul, li {
 
 
 </style>
-<script type="text/javascript" src="js/lib/gesture.js"></script>
-<script type="text/javascript" src="js/slide.js"></script>
+<script src="http://s1.daumcdn.net/svc/attach/U0301/cssjs/ejohn/class-0.1.0.min.js"></script>
+<script src="js/lib/gesture.js"></script>
+<script src="js/new_slide.js"></script>
+<script src="js/datasource.js"></script>
 
 </head>
 <body>
@@ -97,45 +101,36 @@ ul, li {
 <button type="button" class="prevBtn">prev</button>
 <button type="button" class="nextBtn">next</button>
 <script type="text/javascript">
-var slides = [
-              '<img alt="Piazza del Duomo, Florence, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic01.jpg" width="300" height="213">'
-              ,
-            '<img alt="Tuscan Landscape" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic02.jpg" width="300" height="164">'
-            ,
-            '<img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic03.jpg" width="300" height="213">'
-            ,
-            '<img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic04.jpg" width="147" height="220">'
-            ,
-            '<img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic05.jpg" width="300" height="213">'
-            ,
-            '<img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic06.jpg" width="165" height="220">'
-            
-        ];
-        
-var d = slideDataSource.listener(true);
-d.setInitData(0, function(){
+    var slides = [
+        '<img alt="Piazza del Duomo, Florence, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic01.jpg" width="300" height="213">',
+        '<img alt="Tuscan Landscape" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic02.jpg" width="300" height="164">',
+        '<img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic03.jpg" width="300" height="213">',
+        '<img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic04.jpg" width="147" height="220">',
+        '<img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic05.jpg" width="300" height="213">',
+        '<img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic06.jpg" width="165" height="220">'
+    ];
+
     var wrapper = document.getElementById("wrapper");
-    var s = slide.slideListener(wrapper, d, 0);
-    s.setSlideTreshold(0.2);
-    var click = "ontouchstart" in window ? "touchstart" : "click";
-    document.getElementsByClassName("prevBtn")[0].addEventListener(click, function(){
-        s.prevSlide('500ms');
+    var ds = new slide.InfiniteDataSource(slides);
+    var sl = new slide.Slide(wrapper, ds);
+
+
+    document.getElementsByClassName("prevBtn")[0].addEventListener('click', function(){
+        sl.prev();
     }, false);
-    document.getElementsByClassName("nextBtn")[0].addEventListener(click, function(){
-        s.nextSlide('500ms');
+    document.getElementsByClassName("nextBtn")[0].addEventListener('click', function(){
+        sl.next();
     }, false);
-    s.onSlideStart(function(session){
-        session.targetEvent.preventDefault();
-    });
-    s.setInitData(0);
-    
-    function getImgOffset(width, height) {
-        var imgOffset = {};
-        imgOffset.left = parseInt((clientWidth+10-width)/2);
-        imgOffset.top = parseInt((clientHeight+10-height)/2);
-        return imgOffset;
-    }
-}, {data:slides});
+
+//d.onDataLoadEnd(function(){
+//        s.setSlideTreshold(0.2);
+//        var click = "ontouchstart" in window ? "touchstart" : "click";
+//        s.onSlideStart(function(session){
+//            session.targetEvent.preventDefault();
+//        });
+//        s.setInitData(0);
+//});
+//d.sendRequestData({data:slides});
 </script>
 
 </body>
