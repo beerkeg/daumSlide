@@ -1,4 +1,4 @@
-/*jshint browser: true, devel: true, latedef: true
+/*jshint browser: true
 */
 /*global slide:true, Class: true, gesture: true*/
 (function (exports) {
