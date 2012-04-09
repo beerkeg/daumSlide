@@ -101,20 +101,26 @@ ul, li {
 <button type="button" class="prevBtn">prev</button>
 <button type="button" class="nextBtn">next</button>
 <script type="text/javascript">
+    function createSlide(html) {
+        return {
+            toHTML: function () {
+                return html;
+            }
+        };
+    }
+
     var slides = [
-        '<img alt="Piazza del Duomo, Florence, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic01.jpg" width="300" height="213">',
-        '<img alt="Tuscan Landscape" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic02.jpg" width="300" height="164">',
-        '<img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic03.jpg" width="300" height="213">',
-//        '<img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic04.jpg" width="147" height="220">',
-//        '<img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic05.jpg" width="300" height="213">',
-//        '<img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic06.jpg" width="165" height="220">'
+        createSlide('<img alt="Piazza del Duomo, Florence, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic01.jpg" width="300" height="213">'),
+        createSlide('<img alt="Tuscan Landscape" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic02.jpg" width="300" height="164">'),
+        createSlide('<img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic03.jpg" width="300" height="213">'),
+        createSlide('<img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic04.jpg" width="147" height="220">'),
+        createSlide('<img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic05.jpg" width="300" height="213">'),
+        createSlide('<img alt="Colosseo, Rome, Italy" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic06.jpg" width="165" height="220">')
     ];
 
     var wrapper = document.getElementById("wrapper");
     var ds = new slide.InfiniteDataSource(slides);
-//    var ds = new slide.DataSource(slides);
     var sl = new slide.Slide(wrapper, ds);
-
 
     var clickEventName = 'ontouchstart' in window ? 'touchstart' : 'click';
     document.getElementsByClassName("prevBtn")[0].addEventListener(clickEventName, function(){
@@ -124,15 +130,6 @@ ul, li {
         sl.next();
     }, false);
 
-//d.onDataLoadEnd(function(){
-//        s.setSlideTreshold(0.2);
-//        var click = "ontouchstart" in window ? "touchstart" : "click";
-//        s.onSlideStart(function(session){
-//            session.targetEvent.preventDefault();
-//        });
-//        s.setInitData(0);
-//});
-//d.sendRequestData({data:slides});
 </script>
 
 </body>

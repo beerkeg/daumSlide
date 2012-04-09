@@ -157,7 +157,9 @@ z-index: 30;
 
 </style>
 <script type="text/javascript" src="http://east.ftdev.daum.net/g/js/gesture.js"></script>
-<script type="text/javascript" src="js/slide.js"></script>
+    <script src="http://s1.daumcdn.net/svc/attach/U0301/cssjs/ejohn/class-0.1.0.min.js"></script>
+<script type="text/javascript" src="js/datasource.js"></script>
+<script type="text/javascript" src="js/new_slide.js"></script>
 
 </head>
 <body>
@@ -171,208 +173,242 @@ z-index: 30;
 <button type="button" class="nextBtn">next</button>
 <div id="footer"></div>
 <script type="text/javascript">
-
-var d = (function(){
-    var headTag = document.getElementsByTagName("head")[0],
+var headTag = document.getElementsByTagName("head")[0],
         wrapper = document.getElementById("wrapper"),
-        query = document.getElementById("query"),
+        queryEl = document.getElementById("query"),
         click = "ontouchstart" in window ? "touchstart" : "click",
         prevBtn = document.getElementsByClassName("prevBtn")[0],
         nextBtn = document.getElementsByClassName("nextBtn")[0],
         footer = document.getElementById("footer"),
-        d = slideDataSource.listener(false, 5),
-        pageNum = (function (){
-            var pagenum = 1;
-            return function(){
-                return pagenum++;
-            };
-        })();
-    d.onRequestData(function(){
-        var callbackName = "d.responseData";
-        var url='http://apis.daum.net/search/image?apikey=080a78bc84cc6b814fb365591b1d7d7fc26575b3&output=json&callback='+ callbackName +'&q=' + query.value + '&pageno=' + pageNum();
-        var s = document.createElement("script");
-        s.type = "text/javascript";
-        s.src = url;
-        s.charset = "utf-8";
-        headTag.appendChild(s);
+        pageNum = 1;
+
+var simpleSearchAPICallback = null;
+function simpleSearchAPIJsonp(callback) {
+    simpleSearchAPICallback = callback;
+    var url = 'http://apis.daum.net/search/image?apikey=080a78bc84cc6b814fb365591b1d7d7fc26575b3&output=json&callback=simpleJsonpCallback&q=' + queryEl.value + '&pageno=' + pageNum;
+    var s = document.createElement("script");
+    s.type = "text/javascript";
+    s.src = url;
+    s.charset = "utf-8";
+    headTag.appendChild(s);
+}
+function simpleJsonpCallback(data) {
+    headTag.removeChild(headTag.lastChild);
+    simpleSearchAPICallback(data);
+}
+
+
+
+function loadInitialData(callback) {
+    simpleSearchAPIJsonp(function (data) {
+        initSlide(data);
     });
-    d.onParseData(function(jsonStr){
-        var item = jsonStr.channel.item,
-            arr = [];
-        for (var i=0, len=item.length; i< len; i++) {
-            arr.push( item[i] );
-        }
-        headTag.removeChild(headTag.lastChild);
-        d.setDataTotalLength(parseInt(jsonStr.channel.totalCount));
-        
-        return arr;
+}
+function loadMoreData(callback) {
+    pageNum += 1;
+    simpleSearchAPIJsonp(function (data) {
+        callback(data);
     });
-    d.onImgLoad = function (el) {
-        el.parentNode.style.background = "none";
-    };
-    d.onImgLoadError = function (el) {
-        el.parentNode.style.background = "none";
-    };
-    var ImgManager = {
-        clientWidth: 0,
-        clientHeight: 0,
-        setClientSize: function (el) {
-            this.clientHeight = el.clientHeight-10;
-            this.clientWidth = el.clientWidth-10;
-        },
-        resizeImg: function (width, height) {
-            if (this.clientHeight > this.clientWidth) {
-                return this.potraitResizeImg(width, height);
-            } else {
-                return this.landscapeResizeImg(width, height);
-            }
-        },
-        potraitResizeImg: function (width, height) {
-            if (this.clientWidth * height > this.clientHeight * width) {
-                return this.resizeByHeight(width, height);
-            } else {
-                return this.resizeByWidth(width, height);
-            }
-        },
-        landscapeResizeImg: function (width, height) {
-            if (this.clientWidth * height < this.clientHeight * width) {
-                return this.resizeByWidth(width, height);
-            } else {
-                return this.resizeByHeight(width, height);
-            }
-        },
-        resizeByHeight: function (width, height) {
-            return {width: parseInt(this.clientHeight * width / height), height: this.clientHeight};
-        },
-        resizeByWidth: function (width, height) {
-            return {width: this.clientWidth, height: parseInt(this.clientWidth * height / width)};
-        },
-        getImgOffset: function (width, height) {
-            return {left: parseInt((this.clientWidth + 10 - width) / 2), top: parseInt((this.clientHeight + 10 - height) / 2)};
-        }
+}
+
+var ImageSearchDataSource = slide.DataSource.extend({
+    willQueryEndOfDataDelegate: function (callback) {
+        var self = this;
+        loadMoreData(function (data) {
+            var newSlides = buildSlides(data);
+            self.data = self.data.concat(newSlides);
+            callback(newSlides[0]);
+        });
     }
-    
-    var SlideManager = {
-        startIndex: 0,
-        viewState: "block",
-        onSetDataItem: function (item) {
-            if (item && item.type !== '') {
-                var imgSize = ImgManager.resizeImg(item.width, item.height),
-                    imgOffset = ImgManager.getImgOffset(imgSize.width, imgSize.height);
-                return '<img alt="'+item.title+'" src="'+item.image+'" width="'+imgSize.width+'" height="'+imgSize.height+'" data-width="'+item.width+'" data-height="'+item.height+'"style=position:absolute;top:'+imgOffset.top+'px;left:'+imgOffset.left+'px;" onload="d.onImgLoad(this);" onerror="d.onImgLoadError(this);" onabort="d.onImgLoadError(this);">';
-            } else {
-                return '';
-            }
-        },
-        onSlideStart: function (session) {
-            session.targetEvent.preventDefault();
-        },
-        onResize: function () {
-            ImgManager.setClientSize(wrapper);
-            var imgs = document.getElementsByTagName("img"),
-                imgSize = {},
-                imgOffset = {};
-            for(var k=0, len = imgs.length; k<len; k++) {
-                imgSize = ImgManager.resizeImg(imgs[k].getAttribute("data-width"), imgs[k].getAttribute("data-height"));
-                imgOffset = ImgManager.getImgOffset(imgSize.width, imgSize.height);
-                imgs[k].style.cssText = 'width:'+imgSize.width+'px;height:'+imgSize.height+'px;top:'+imgOffset.top+'px;left:'+imgOffset.left+'px;position:absolute;';
-            }
-        },
-        onSlideEnd: function (session) {
-            if (!session.isSwipe() && !session.isScroll()) {
-                if (this.viewState === "none") {
-                    this.setDisplay("block");
-                } else {
-                    this.setDisplay("none");
-                }
-            }
-        },
-        setDisplay: function (state) {
-            footer.style.display = state;
-            prevBtn.style.display = state;
-            nextBtn.style.display = state;
-            this.viewState = state;
-        },
-        onSlideNext: function () {
-            this.setCurrentDesc();
-        },
-        onSlidePrev: function () {
-            this.setCurrentDesc();
-        },
-        setCurrentDesc: function () {
-            var item = d.getCurrentData(),
-	            str = '';
-	        if (item) {
-	            str = this.createDesc(item.data);
-	        }
-	        footer.innerHTML = str;
-        },
-        createDesc: function (data) {
-            var title = this.unescapeHTML(data.title),
-                linktext = this.cutString(data.link, 37);
-            return '<div class="wrap_desc" style="opacity: 0.7;" id="desc_field">' +
-                        '<a href="'+data.link+'" class="tit" id="desc_title">'+ title +'</a>' +
-                        '<span class="info" id="desc_info">'+data.width+' x '+data.height+'</span><a href="'+data.link+'" id="desc_url" class="link_src">'+ linktext +'</a>' +
-                        '<div class="wrap_btn">' +
-                            '<a href="" class="left_wrap"><span class="prev">검색결과로 돌아가기</span></a>' + 
-                            '<a id="desc_link" href="'+data.image+'" target="_blank" class="right_wrap"><span class="bar"></span><span>원본 바로보기</span></a>' +
-                        '</div></div>';
-        },
-        unescapeHTML: function (text) {
-           return text.replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g," ").replace(/&amp;/g,"&").replace(/&quot;/g,"\"").replace(/&#39;/g,"'");
-        },
-        cutString: function (text, length) {
-            if (text.length > length) {
-                return text.substring(0,length-2) + ".."
-            } else {
-                return text;
-            }
-        }
-    }
-    function setInitSlide() {
-        wrapper.style.display = "block";
+});
+
+function initSlide(data) {
+    wrapper.style.display = "block";
+    ImgManager.setClientSize(wrapper);
+
+    var ds = new ImageSearchDataSource(buildSlides(data));
+    var sl = new slide.Slide(wrapper, ds);
+
+    prevBtn.addEventListener(click, function(){
+        sl.prev();
+    }, false);
+    nextBtn.addEventListener(click, function(){
+        sl.next();
+    }, false);
+
+    sl.onResized(function () {
         ImgManager.setClientSize(wrapper);
-        var s = createSlide();
-        prevBtn.addEventListener(click, function(){
-            s.prevSlide('500ms');
-        }, false);
-        nextBtn.addEventListener(click, function(){
-            s.nextSlide('500ms');
-        }, false);
-        SlideManager.setCurrentDesc();
+        sl.show();
+    });
+//        SlideManager.setCurrentDesc();
+}
+
+function buildSlides(data) {
+    var items = data.channel.item,
+            arr = [];
+    for (var i = 0, len = items.length; i < len; i++) {
+        var item = items[i];
+        arr.push({
+            image: item.image,
+            width: item.width,
+            height: item.height,
+            title: item.title,
+            toHTML: function () {
+                var imgSize = ImgManager.resizeImg(this.width, this.height),
+                    imgOffset = ImgManager.getImgOffset(imgSize.width, imgSize.height);
+                return '<img alt="' + this.title + '" src="' + this.image + '" width="' + imgSize.width + '" height="' + imgSize.height +
+                            '" data-width="' + item.width + '" data-height="' + item.height +
+                            '"style=position:absolute;top:' + imgOffset.top + 'px;left:' + imgOffset.left + 'px;" ' +
+                        '>';
+//                            'onload="d.onImgLoad(this);" ' +
+//                            'onerror="d.onImgLoadError(this);" ' +
+//                            'onabort="d.onImgLoadError(this);">';
+            }
+        });
     }
-    function createSlide () {
-        var s = slide.slideListener(wrapper, d, 0);
-        s.setSlideTreshold(0.1);
-        s.setSlideHandler(SlideManager);
-        s.setInitData(SlideManager.startIndex);
-        
-        return s;
-    }
-    
+//        d.setDataTotalLength(parseInt(jsonStr.channel.totalCount));
+    return arr;
+}
+
+(function main() {
     document.getElementById("searchbtn").addEventListener("click",function(){
         document.getElementById("searchBox").style.display = "none";
-        d.setInitData(0, setInitSlide);
+        loadInitialData();
     },false);
-    
     window.addEventListener("keypress", function(e){
         if (e.keyCode === 13) {
             document.getElementById("searchBox").style.display = "none";
-            d.setInitData(0, setInitSlide);
+            loadInitialData();
         }
     });
-    
     window.addEventListener("load", function(e){
         var qIndex = location.href.indexOf("q=");
         if (qIndex > -1) {
             query.value = location.href.substring(qIndex+2);
             document.getElementById("searchBox").style.display = "none";
-            d.setInitData(0, setInitSlide);
+            loadInitialData();
         }
     });
-    
-    return d;
 })();
+
+
+var d= {};
+d.onImgLoad = function (el) {
+    el.parentNode.style.background = "none";
+};
+d.onImgLoadError = function (el) {
+    el.parentNode.style.background = "none";
+};
+
+var ImgManager = {
+    clientWidth: 0,
+    clientHeight: 0,
+    setClientSize: function (el) {
+        this.clientHeight = el.clientHeight - 10;
+        this.clientWidth = el.clientWidth - 10;
+    },
+    resizeImg: function (width, height) {
+        if (this.clientHeight > this.clientWidth) {
+            return this.potraitResizeImg(width, height);
+        } else {
+            return this.landscapeResizeImg(width, height);
+        }
+    },
+    potraitResizeImg: function (width, height) {
+        if (this.clientWidth * height > this.clientHeight * width) {
+            return this.resizeByHeight(width, height);
+        } else {
+            return this.resizeByWidth(width, height);
+        }
+    },
+    landscapeResizeImg: function (width, height) {
+        if (this.clientWidth * height < this.clientHeight * width) {
+            return this.resizeByWidth(width, height);
+        } else {
+            return this.resizeByHeight(width, height);
+        }
+    },
+    resizeByHeight: function (width, height) {
+        return {width: parseInt(this.clientHeight * width / height), height: this.clientHeight};
+    },
+    resizeByWidth: function (width, height) {
+        return {width: this.clientWidth, height: parseInt(this.clientWidth * height / width)};
+    },
+    getImgOffset: function (width, height) {
+        return {left: parseInt((this.clientWidth + 10 - width) / 2), top: parseInt((this.clientHeight + 10 - height) / 2)};
+    }
+};
+
+
+var SlideManager = {
+    startIndex: 0,
+    viewState: "block",
+    onSlideStart: function (session) {
+        session.targetEvent.preventDefault();
+    },
+    onResize: function () {
+        ImgManager.setClientSize(wrapper);
+        var imgs = document.getElementsByTagName("img"),
+            imgSize = {},
+            imgOffset = {};
+        for(var k=0, len = imgs.length; k<len; k++) {
+            imgSize = ImgManager.resizeImg(imgs[k].getAttribute("data-width"), imgs[k].getAttribute("data-height"));
+            imgOffset = ImgManager.getImgOffset(imgSize.width, imgSize.height);
+            imgs[k].style.cssText = 'width:'+imgSize.width+'px;height:'+imgSize.height+'px;top:'+imgOffset.top+'px;left:'+imgOffset.left+'px;position:absolute;';
+        }
+    },
+    onSlideEnd: function (session) {
+        if (!session.isSwipe() && !session.isScroll()) {
+            if (this.viewState === "none") {
+                this.setDisplay("block");
+            } else {
+                this.setDisplay("none");
+            }
+        }
+    },
+    setDisplay: function (state) {
+        footer.style.display = state;
+        prevBtn.style.display = state;
+        nextBtn.style.display = state;
+        this.viewState = state;
+    },
+    onSlideNext: function () {
+        this.setCurrentDesc();
+    },
+    onSlidePrev: function () {
+        this.setCurrentDesc();
+    },
+    setCurrentDesc: function () {
+        var item = d.getCurrentData(),
+            str = '';
+        if (item) {
+            str = this.createDesc(item.data);
+        }
+        footer.innerHTML = str;
+    },
+    createDesc: function (data) {
+        var title = this.unescapeHTML(data.title),
+            linktext = this.cutString(data.link, 37);
+        return '<div class="wrap_desc" style="opacity: 0.7;" id="desc_field">' +
+                    '<a href="'+data.link+'" class="tit" id="desc_title">'+ title +'</a>' +
+                    '<span class="info" id="desc_info">'+data.width+' x '+data.height+'</span><a href="'+data.link+'" id="desc_url" class="link_src">'+ linktext +'</a>' +
+                    '<div class="wrap_btn">' +
+                        '<a href="" class="left_wrap"><span class="prev">검색결과로 돌아가기</span></a>' +
+                        '<a id="desc_link" href="'+data.image+'" target="_blank" class="right_wrap"><span class="bar"></span><span>원본 바로보기</span></a>' +
+                    '</div></div>';
+    },
+    unescapeHTML: function (text) {
+       return text.replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g," ").replace(/&amp;/g,"&").replace(/&quot;/g,"\"").replace(/&#39;/g,"'");
+    },
+    cutString: function (text, length) {
+        if (text.length > length) {
+            return text.substring(0,length-2) + ".."
+        } else {
+            return text;
+        }
+    }
+};
+
 </script>
 
 </body>

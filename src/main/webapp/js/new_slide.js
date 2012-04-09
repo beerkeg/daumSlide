@@ -1,19 +1,9 @@
-/*jshint browser: true, devel: true, latedef: true
+/*jshint browser: true
 */
 /*global slide:true, Class: true, gesture: true*/
 (function (exports) {
     'use strict';
 
-    // done panel 생성
-    // done 초기 데이터로 보여주기
-    // done next
-    // done prev
-    // done gpu acceleration off (no animation)
-    // done data 끝에 왔을 때 slide cancel
-    // done window resize
-    // done mouse gesture
-    // done mobile orientation change
-    // done mobile gesture
     // TODO rename 'el'
     // TODO panel DOM -> panel view
     // TODO external handler
@@ -79,7 +69,6 @@
                 isOverGingerBread = ua.androidVersion.major > 2 ||
                     (ua.androidVersion.major === 2 && ua.androidVersion.minor >= 3);
             this.enableTransform = ((ua.isAndroid() && isOverGingerBread) || ua.isIOS() || ua.isSafari());
-            console.log('GPU Acceleration : ' + (this.enableTransform ? 'on' : 'off'));
             return this.enableTransform;
         },
 
@@ -121,7 +110,6 @@
                 var cnt = 0;
                 setTimeout(function checkResize() {
                     if (self.isSizeChanged()) {
-                        console.log('window resize detected');
                         self.resize();
                     } else {
                         if (cnt++ < 20) {
@@ -138,9 +126,9 @@
         show: function () {
             var panels = this.panels;
             this.dataSource.queryCurrentSet(function (set) {
-                panels[0].innerHTML = set.prev || '&nbsp;';
-                panels[1].innerHTML = set.current || '&nbsp;';
-                panels[2].innerHTML = set.next || '&nbsp;';
+                panels[0].innerHTML = set.prev ? set.prev.toHTML() : '&nbsp;';
+                panels[1].innerHTML = set.current ? set.current.toHTML() : '&nbsp;';
+                panels[2].innerHTML = set.next ? set.next.toHTML() : '&nbsp;';
             });
         },
 
@@ -163,7 +151,7 @@
                             // TODO 묶을 필요가 있어 보인다.
                             self.dataSource.next();
                             self.dataSource.queryNext(function (next) {
-                                self.panels[2].innerHTML = next || '&nbsp;';
+                                self.panels[2].innerHTML = next ? next.toHTML() : '&nbsp;';
                             });
                         });
                     }
@@ -189,7 +177,7 @@
                             // TODO 묶을 필요가 있어 보인다.
                             self.dataSource.prev();
                             self.dataSource.queryPrev(function (prev) {
-                                self.panels[0].innerHTML = prev || '&nbsp;';
+                                self.panels[0].innerHTML = prev ? prev.toHTML() : '&nbsp;';
                             });
                         });
                     }
@@ -211,7 +199,6 @@
                 this.el.addEventListener('webkitTransitionEnd', function onTransitionEnd() {
                     self.el.removeEventListener('webkitTransitionEnd', onTransitionEnd);
                     self.disableTransition();
-                    console.log('slide.slide() : transition end');
                     if (callback) {
                         callback();
                     }
@@ -295,19 +282,27 @@
             this.setWrapperSize();
             this.setPanelsSize();
             this.setSlideSizeAndOffset();
+            if (this.onResizedDelegate) {
+                this.onResizedDelegate();
+            }
         },
             setWrapperSize: function () {
                 this.pageWidth = this.wrapper.clientWidth;
                 this.pageHeight = this.wrapper.clientHeight;
             },
             setPanelsSize: function () {
-                for (var i = 0; i < this.panels[i].length; i += 1) {
+                for (var i = 0; i < this.panels.length; i += 1) {
                     this.panels[i].style.width = this.pageWidth + 'px';
                 }
             },
             setSlideSizeAndOffset: function () {
                 this.el.style.width = (this.pageWidth * 3) + 'px';
                 this.el.style.left = (-this.pageWidth) + 'px';
+            },
+        onResized: function (delegate) {
+            this.onResizedDelegate = delegate;
+        },
+            onResizedDelegate: function () {
             }
     });
 
