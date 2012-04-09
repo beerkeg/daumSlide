@@ -159,6 +159,7 @@ z-index: 30;
 <script type="text/javascript" src="http://east.ftdev.daum.net/g/js/gesture.js"></script>
     <script src="http://s1.daumcdn.net/svc/attach/U0301/cssjs/ejohn/class-0.1.0.min.js"></script>
 <script type="text/javascript" src="js/datasource.js"></script>
+<script type="text/javascript" src="js/observable.js"></script>
 <script type="text/javascript" src="js/new_slide.js"></script>
 
 </head>
@@ -235,15 +236,14 @@ function initSlide(data) {
     nextBtn.addEventListener(click, function(){
         sl.next();
     }, false);
-
-    sl.onResized(function () {
+    sl.on("resize", function () {
         ImgManager.setClientSize(wrapper);
         sl.show();
     });
 
     setDesc();
-    sl.onSlideNext(setDesc);
-    sl.onSlidePrev(setDesc);
+    sl.on("next", setDesc);
+    sl.on("prev", setDesc);
         function setDesc () {
             ds.queryCurrent(function (data) {
                 footer.innerHTML = createDesc(data);
@@ -251,8 +251,7 @@ function initSlide(data) {
         }
 
     var viewState = "block";
-    wrapper.addEventListener("click", function() {
-        console.log("click");
+    sl.on("click", function() {
         if (viewState === "none") {
             setDisplay("block");
         } else {

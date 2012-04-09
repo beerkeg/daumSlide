@@ -8,7 +8,7 @@
     // TODO panel DOM -> panel view
     // TODO external handler
 
-    var SLIDE_TRESHOLD = 0.2; // 20%
+    var SLIDE_TRESHOLD = 0.1; // 20%
 
     var slideInstanceNum = 0;
 
@@ -42,7 +42,7 @@
     };
 
 
-    exports.Slide = Class.extend({
+    exports.Slide = slide.Observable.extend({
         init: function (wrapper, dataSource) {
             slideInstanceNum++;
 
@@ -153,9 +153,7 @@
                             self.dataSource.queryNext(function (next) {
                                 self.panels[2].innerHTML = next ? next.toHTML() : '&nbsp;';
                             });
-                            if (self.onSlideNextDelegate) {
-                                self.onSlideNextDelegate();
-                            }
+                            self.emit("next");
                         });
                     }
                 });
@@ -182,9 +180,7 @@
                             self.dataSource.queryPrev(function (prev) {
                                 self.panels[0].innerHTML = prev ? prev.toHTML() : '&nbsp;';
                             });
-                            if (self.onSlidePrevDelegate) {
-                                self.onSlidePrevDelegate();
-                            }
+                            self.emit("prev");
                         });
                     }
                 });
@@ -252,6 +248,7 @@
         },
         endDrag: function (session) {
             if (session.delta.x === 0) {
+                this.emit("click");
                 return;
             }
 
@@ -292,9 +289,7 @@
             this.setWrapperSize();
             this.setPanelsSize();
             this.setSlideSizeAndOffset();
-            if (this.onResizedDelegate) {
-                this.onResizedDelegate();
-            }
+            this.emit("resize");
         },
             setWrapperSize: function () {
                 this.pageWidth = this.wrapper.clientWidth;
@@ -308,21 +303,6 @@
             setSlideSizeAndOffset: function () {
                 this.el.style.width = (this.pageWidth * 3) + 'px';
                 this.el.style.left = (-this.pageWidth) + 'px';
-            },
-        onResized: function (delegate) {
-            this.onResizedDelegate = delegate;
-        },
-            onResizedDelegate: function () {
-            },
-        onSlideNext: function (delegate) {
-            this.onSlideNextDelegate = delegate;
-        },
-            onSlideNextDelegate: function () {
-            },
-        onSlidePrev: function (delegate) {
-            this.onSlidePrevDelegate = delegate;
-        },
-            onSlidePrevDelegate: function () {
             }
     });
 
