@@ -153,6 +153,9 @@
                             self.dataSource.queryNext(function (next) {
                                 self.panels[2].innerHTML = next ? next.toHTML() : '&nbsp;';
                             });
+                            if (self.onSlideNextDelegate) {
+                                self.onSlideNextDelegate();
+                            }
                         });
                     }
                 });
@@ -179,6 +182,9 @@
                             self.dataSource.queryPrev(function (prev) {
                                 self.panels[0].innerHTML = prev ? prev.toHTML() : '&nbsp;';
                             });
+                            if (self.onSlidePrevDelegate) {
+                                self.onSlidePrevDelegate();
+                            }
                         });
                     }
                 });
@@ -245,6 +251,10 @@
             }
         },
         endDrag: function (session) {
+            if (session.delta.x === 0) {
+                return;
+            }
+
             if (this.isNextSwipe(session)) {
                 this.next();
             } else if (this.isPrevSwipe(session)) {
@@ -303,6 +313,16 @@
             this.onResizedDelegate = delegate;
         },
             onResizedDelegate: function () {
+            },
+        onSlideNext: function (delegate) {
+            this.onSlideNextDelegate = delegate;
+        },
+            onSlideNextDelegate: function () {
+            },
+        onSlidePrev: function (delegate) {
+            this.onSlidePrevDelegate = delegate;
+        },
+            onSlidePrevDelegate: function () {
             }
     });
 
