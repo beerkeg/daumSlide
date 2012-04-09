@@ -234,7 +234,8 @@
             }
         },
 
-        startDrag: function () {
+        startDrag: function (session) {
+            this.emit("startDrag", session);
         },
         drag: function (session) {
             if (this.isInTransition) {

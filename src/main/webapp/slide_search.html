@@ -242,6 +242,9 @@ function initSlide(data) {
     });
 
     setDesc();
+    sl.on("startDrag", function (session) {
+        session.targetEvent.preventDefault();
+    });
     sl.on("next", setDesc);
     sl.on("prev", setDesc);
         function setDesc () {
