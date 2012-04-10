@@ -12,7 +12,7 @@
 
     var slideInstanceNum = 0;
 
-    var userAgent = function (ua) {
+    var userAgent = exports.userAgent = function (ua) {
         ua = (ua || window.navigator.userAgent).toString();
         return {
             ua: ua,

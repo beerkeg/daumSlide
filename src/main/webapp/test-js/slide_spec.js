@@ -66,7 +66,8 @@ describe('slide.js', function () {
 
     describe('slide.UserAgentDetector', function () {
         var dummyUAString = 'i am user agent string',
-            android_2_3_1 = 'Mozilla/5.0 (Linux; U; Android 2.3.1; ko-kr; SHW-M250S Build/GINGERBREAD) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1';
+            android_2_3_1 = 'Mozilla/5.0 (Linux; U; Android 2.3.1; ko-kr; SHW-M250S Build/GINGERBREAD) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1',
+            iphone_5 = 'Mozilla/5.0 (iPhone; CPU iPhone OS 5_0 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9A334 Safari/7534.48.3';
 
         it('should receive first parameter as UA string', function () {
             var detector = slide.userAgent(dummyUAString);
@@ -83,9 +84,9 @@ describe('slide.js', function () {
             expect(detector.isAndroid()).toBeTruthy();
         });
 
-        it('should detect webkit', function () {
-            var detector = slide.userAgent(android_2_3_1);
-            expect(detector.isWebkit()).toBeTruthy();
+        it('should detect iOS', function () {
+            var detector = slide.userAgent(iphone_5);
+            expect(detector.isIOS()).toBeTruthy();
         });
 
         it('should detect Android Versions', function () {
