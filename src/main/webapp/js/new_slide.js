@@ -134,57 +134,54 @@
 
         // TODO refactoring extract class
         next: function () {
-            var self = this;
-            if (!this.isInTransition) {
-                this.dataSource.queryNext(function (next) {
-                    if (next === null) {
-                        self.cancel();
-                    } else {
-                        self.isInTransition = true;
-
-                        var movingOffset = -1 * self.pageWidth;
-                        self.slide(movingOffset, function onMoveEnd() {
-                            self.isInTransition = false;
-                            var firstPanel = self.el.removeChild(self.panels[0]);
-                            self.move(0);
-                            self.el.appendChild(firstPanel);
-                            // TODO 묶을 필요가 있어 보인다.
-                            self.dataSource.next();
-                            self.dataSource.queryNext(function (next) {
-                                self.panels[2].innerHTML = next ? next.toHTML() : '&nbsp;';
-                            });
-                            self.emit("next");
-                        });
-                    }
-                });
-
+            if (this.isInTransition) {
+                return;
             }
+
+            var self = this;
+            this.dataSource.queryNext(function (next) {
+                if (next === null) {
+                    self.cancel();
+                } else {
+                    var movingOffset = -1 * self.pageWidth;
+                    self.slide(movingOffset, function onMoveNextEnd() {
+                        var firstPanel = self.el.removeChild(self.panels[0]);
+                        self.move(0);
+                        self.el.appendChild(firstPanel);
+                        // TODO 묶을 필요가 있어 보인다.
+                        self.dataSource.next();
+                        self.dataSource.queryNext(function (next) {
+                            self.panels[2].innerHTML = next ? next.toHTML() : '&nbsp;';
+                        });
+                        self.emit("next");
+                    });
+                }
+            });
         },
         prev: function () {
-            var self = this;
-            if (!this.isInTransition) {
-                this.dataSource.queryPrev(function (prev) {
-                    if (prev === null) {
-                        self.cancel();
-                    } else {
-                        self.isInTransition = true;
-
-                        var movingOffset = self.pageWidth;
-                        self.slide(movingOffset, function onMoveEnd() {
-                            self.isInTransition = false;
-                            var lastPanel = self.el.removeChild(self.panels[2]);
-                            self.move(0);
-                            self.el.insertBefore(lastPanel, self.panels[0]);
-                            // TODO 묶을 필요가 있어 보인다.
-                            self.dataSource.prev();
-                            self.dataSource.queryPrev(function (prev) {
-                                self.panels[0].innerHTML = prev ? prev.toHTML() : '&nbsp;';
-                            });
-                            self.emit("prev");
-                        });
-                    }
-                });
+            if (this.isInTransition) {
+                return;
             }
+
+            var self = this;
+            this.dataSource.queryPrev(function (prev) {
+                if (prev === null) {
+                    self.cancel();
+                } else {
+                    var movingOffset = self.pageWidth;
+                    self.slide(movingOffset, function onMovePrevEnd() {
+                        var lastPanel = self.el.removeChild(self.panels[2]);
+                        self.move(0);
+                        self.el.insertBefore(lastPanel, self.panels[0]);
+                        // TODO 묶을 필요가 있어 보인다.
+                        self.dataSource.prev();
+                        self.dataSource.queryPrev(function (prev) {
+                            self.panels[0].innerHTML = prev ? prev.toHTML() : '&nbsp;';
+                        });
+                        self.emit("prev");
+                    });
+                }
+            });
         },
 
         /**
@@ -197,10 +194,20 @@
             if (this.enableTransform) {
                 this.enableTransition();
                 this.el.style.webkitTransform = 'translate3d('+ offset +'px, 0, 0)';
+                
+                window.clearTimeout(this.transitionEndTimer);
+                this.transitionEndTimer = window.setTimeout(function () {
+                    self.disableTransition();
+                    self.transitionEndTimer = -1;
+                }, 1500);
+
                 var self = this;
                 this.el.addEventListener('webkitTransitionEnd', function onTransitionEnd() {
                     self.el.removeEventListener('webkitTransitionEnd', onTransitionEnd);
+                    window.clearTimeout(self.transitionEndTimer);
                     self.disableTransition();
+                    self.transitionEndTimer = -1;
+
                     if (callback) {
                         callback();
                     }
@@ -228,10 +235,14 @@
          * slide를 원위치 시킨다.
          */
         cancel: function () {
-            if (!this.isInTransition) {
-                this.enableTransition();
-                this.slide(0);
+            if (this.isInTransition) {
+                return;
             }
+
+            var self = this;
+            this.slide(0, function onCancelEnd(){
+                self.emit("cancel");
+            });
         },
 
         startDrag: function (session) {
@@ -260,6 +271,7 @@
             } else {
                 this.cancel();
             }
+            this.emit("endDrag", session);
         },
             isNextSwipe: function (session) {
                 return session.isLeft() && (this.isNextThreshold(session) || session.isFlick());
@@ -276,9 +288,11 @@
 
         enableTransition: function (duration) {
             this.setTransitionDuration(duration || 500);
+            this.isInTransition = true;
         },
         disableTransition: function () {
             this.setTransitionDuration(0);
+            this.isInTransition = false;
         },
             setTransitionDuration: function (duration) {
                 if (this.enableTransform) {
