@@ -20,6 +20,9 @@
          * 데이터가 없을 경우 해당 필드는 null 로 세팅된다.
          * @param callback
          */
+        setCurrentIndex: function (index) {
+            this.index = index;
+        },
         queryCurrentSet: function (callback) {
             var self = this;
             this.queryPrev(function (prev) {
