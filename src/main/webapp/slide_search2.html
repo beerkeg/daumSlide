@@ -214,13 +214,13 @@ function xmlToObject (xmlDocument) {
 }
 
 var headTag = document.getElementsByTagName("head")[0],
-        wrapper = document.getElementById("wrapper"),
-        queryEl = document.getElementById("query"),
-        click = "ontouchstart" in window ? "touchstart" : "click",
-        prevBtn = document.getElementsByClassName("prevBtn")[0],
-        nextBtn = document.getElementsByClassName("nextBtn")[0],
-        footer = document.getElementById("footer"),
-        pageNum = 1;
+    wrapper = document.getElementById("wrapper"),
+    queryEl = document.getElementById("query"),
+    click = "ontouchstart" in window ? "touchstart" : "click",
+    prevBtn = document.getElementsByClassName("prevBtn")[0],
+    nextBtn = document.getElementsByClassName("nextBtn")[0],
+    footer = document.getElementById("footer"),
+    pageNum = 1;
 
 var simpleSearchAPICallback = null;
 function simpleSearchAPIJsonp(callback) {
@@ -311,7 +311,6 @@ function initSlide(data) {
             nextBtn.style.display = state;
             viewState = state;
         }
-//        SlideManager.setCurrentDesc();
 }
 function buildSlides(data) {
     var doc = new DOMParser().parseFromString(data,'text/xml'),
