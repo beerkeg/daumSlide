@@ -300,8 +300,8 @@ function buildSlides(data) {
 
 
 function createDesc (data) {
-    var title = this.unescapeHTML(data.title),
-        linktext = this.cutString(data.link, 37);
+    var title = unescapeHTML(data.title),
+        linktext = cutString(data.link, 37);
     return '<div class="wrap_desc" style="opacity: 0.7;" id="desc_field">' +
                 '<a href="'+data.link+'" class="tit" id="desc_title">'+ title +'</a>' +
                 '<span class="info" id="desc_info">'+data.width+' x '+data.height+'</span><a href="'+data.link+'" id="desc_url" class="link_src">'+ linktext +'</a>' +
