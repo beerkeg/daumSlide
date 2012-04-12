@@ -249,7 +249,7 @@ function loadInitialData(callback) {
     });
 }
 function loadMoreData(callback) {
-    pageNum += 1;
+    pageNum += 9;
     simpleSearchAPIJsonp(function (data) {
         callback(data);
     });
@@ -262,6 +262,7 @@ var ImageSearchDataSource = slide.DataSource.extend({
             var newSlides = buildSlides(data);
             self.data = self.data.concat(newSlides);
             callback(newSlides[0]);
+            console.log(self.data);
         });
     }
 });
