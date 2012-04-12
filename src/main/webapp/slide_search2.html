@@ -163,11 +163,6 @@ z-index: 30;
 <script type="text/javascript" src="js/new_slide.js"></script>
 </head>
 <body>
-<div id="searchBox">
-    <input type="text" id="query" value="이민정" />
-    <button id="searchbtn" type="button">검색</button>
-</div>
-
 <div id="wrapper"></div>
 <button type="button" class="prevBtn">prev</button>
 <button type="button" class="nextBtn">next</button>
@@ -373,23 +368,8 @@ function cutString (text, length) {
 
 
 (function main() {
-    document.getElementById("searchbtn").addEventListener("click",function(){
-        document.getElementById("searchBox").style.display = "none";
-        loadInitialData();
-    },false);
-    window.addEventListener("keypress", function(e){
-        if (e.keyCode === 13) {
-            document.getElementById("searchBox").style.display = "none";
-            loadInitialData();
-        }
-    });
     window.addEventListener("load", function(e){
-        var qIndex = location.href.indexOf("q=");
-        if (qIndex > -1) {
-            query.value = location.href.substring(qIndex+2);
-            document.getElementById("searchBox").style.display = "none";
-            loadInitialData();
-        }
+        loadInitialData();
     });
 })();
 
