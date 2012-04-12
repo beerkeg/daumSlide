@@ -567,44 +567,7 @@ if(!DMT.isApp) {    // app이 아닌 경우
         TMPL_MOBILE_ITEM = '<li class="%s"><a href="%s" class="link"><span class="txt">%s</span></a></li>';
 })();
 
-function setSlidePanelss () {
-    var click = "ontouchstart" in window ? "touchstart" : "click";
-    function parsing(jsonStr) {
-        var data = jsonStr;
-        var temp = '';
-        var dataArr = [];
-        for (var item in data) {
-            for (var i=0, len=data[item].length; i< len; i++) {
-                temp = '<ul>' + data[item][i][0] + '</ul>';
-                dataArr.push( {type: item, data: temp} );
-            }
-        }
-        return dataArr;
-    }
-    
-    function setItem(item) {
-        if (item && item.type !== '') {
-            return item.data;
-        } else {
-            return '';
-        }
-    }
-    
-    function setPageNumber (el, d) {
-        el.innerHTML = ''+ (d.getCurrentIndex() + 1);
-    }
-    
-    function setCurrentTab (area, home, btn, d) {
-        var type = d.getCurrentData().data.type;
-        area.className = type;
-        home.href = btn[type].url;
-        home.innerHTML = btn[type].title;
-    }
-    
-    function createDummy () {
-        var el = document.createElement('DIV');
-        return el;
-    }
+function setSlidePanels () {
     var homeBtn = {};
     homeBtn.news = {
         news: {title:'뉴스홈', url:'http://m.media.daum.net/media/?t__nil_mnews=home'},
@@ -630,141 +593,126 @@ function setSlidePanelss () {
         Msale: {title:'쇼핑하우홈', url:'http://m.shopping.daum.net/?t__nil_shopping=Msale_home'},
         coupon: {title:'소셜쇼핑홈', url:'http://m.social.daum.net/?t__nil_shopping=coupon_home'}
     };
+
+    function setPageNumber (el, index) {
+        el.innerHTML = ''+ (index + 1);
+    }
     
-    function createSwipe(elStr, data, slideName, fn) {
-        var topDatasource = slideDataSource.listener(true);
-        topDatasource.onParseData(function(jsonStr){
-            return parsing(jsonStr);
-        });
-        topDatasource.setInitData(0, function(){
-            var wrapper = document.getElementById(elStr);
-            var topSlide = slide.slideListener(wrapper, topDatasource, 0);
-            topSlide.setSlideTreshold(0.1);                    
-            if (fn) {
-                fn(topSlide, topDatasource, wrapper);
-            }
-            var pagenum = document.getElementById(slideName+"Paging").getElementsByClassName("page_no")[0];
-            var area = document.getElementById(slideName+"Area");
-            var home = document.getElementById(slideName+"Home");
-            topSlide.onSetDataItem(function(item){
-                setPageNumber(pagenum, topDatasource);
-                setCurrentTab(area, home, homeBtn[slideName], topDatasource);
-                return setItem(item);
-            });
-            document.getElementById(slideName + "_prev").addEventListener("click", function(){
-                topSlide.prevSlide('500ms');
-            });
-            document.getElementById(slideName + "_next").addEventListener("click", function(){
-                topSlide.nextSlide('500ms');
-            });
-          
-            var ob = null;
-            topSlide.onSlideEnd(function(session){
-                if (session.isSwipe()) {
-                    ob = daum.addEvent(wrapper, 'click', function preventClick(e) {
-                        daum.Event.stopEvent(e);
-                        });
+    function setCurrentTab (area, home, btn, type) {
+        area.className = type;
+        home.href = btn[type].url;
+        home.innerHTML = btn[type].title;
+    }
+
+    function buildSlides (data) {
+        var arr = [];
+        for (var item in data) {
+            for (var i=0, len=data[item].length; i< len; i++) {
+                arr.push({
+                    type: item, 
+                    dataList: data[item][i][0],
+                    index: arr.length,
+                    toHTML: function () {
+                        return '<ul>' + this.dataList + '</ul>'
                     }
-            });
-            topSlide.onTransitionEnd(function(){daum.Event.stopObserving(ob);});
-            topSlide.setInitData(0);
-        }, data);
+                });
+            }
+        }
+        console.log(arr);
+        return arr;
     }
-    
-}
 
+    function createSwipe(elStr, data, slideName, tabs) {
+        var wrapper = document.getElementById(elStr);
+        var ds = new slide.InfiniteDataSource(buildSlides(data));
+        var sl = new slide.Slide(wrapper, ds);
+        var pagenum = document.getElementById(slideName+"Paging").getElementsByClassName("page_no")[0];
+        var area = document.getElementById(slideName+"Area");
+        var home = document.getElementById(slideName+"Home");
 
-
-function setSlidePanels(){
-
-function buildSlides (data) {
-    var arr = [];
-    for (var item in data) {
-        for (var i=0, len=data[item].length; i< len; i++) {
-            arr.push({
-                type: item, 
-                dataList: data[item][i][0], 
-                toHTML: function () {
-                    return '<ul>' + this.dataList + '</ul>'
-                }
+        function setPagingAndTap () {
+            ds.queryCurrent(function (data) {
+                setPageNumber(pagenum, data.index);
+                setCurrentTab(area, home, homeBtn[slideName], data.type);
             });
         }
-    }
-    return arr;
-}
-
-function createSwipe(elStr, data, slideName, fn) {
-    var wrapper = document.getElementById(elStr);
-    var ds = new slide.InfiniteDataSource(buildSlides(data));
-    var sl = new slide.Slide(wrapper, ds);
-
-
-    document.getElementById(slideName + "_prev").addEventListener("click", function(){
-        sl.prev();
-    });
-    document.getElementById(slideName + "_next").addEventListener("click", function(){
-        sl.next();
-    });
-
-    var ob = null;
-    sl.on("endDrag", function(session){
-        if (session.isSwipe()) {
-            ob = daum.addEvent(wrapper, 'click', function preventClick(e) {
-                daum.Event.stopEvent(e);
-            });
+        setPagingAndTap();
+        if (tabs && tabs.length > 0) {
+            for(var i=0,len = tabs.length;i<len;i++) { 
+                (function (id, index) {
+                    document.getElementById(id).addEventListener("click", function(e) { 
+                        ds.setCurrentIndex(index);
+                        sl.show();
+                        setPagingAndTap();
+                        daum.Event.stopEvent(e);
+                    });
+                })(tabs[i].id, tabs[i].index);
+            }
         }
-    });
-    sl.on("next",function(){daum.Event.stopObserving(ob);});
-    sl.on("prev",function(){daum.Event.stopObserving(ob);});
-    sl.on("cancel",function(){daum.Event.stopObserving(ob);});
-}
 
+        document.getElementById(slideName + "_prev").addEventListener("click", function(){
+            sl.prev();
+        });
+        document.getElementById(slideName + "_next").addEventListener("click", function(){
+            sl.next();
+        });
 
-var mediaData = {};
-mediaData.news = DMT.json.news;
-mediaData.sports = DMT.json.sports;
-mediaData.enter = DMT.json.enter;
-mediaData.vote = DMT.json.vote;
-createSwipe("newsContents", mediaData, "news", function(s, d, w){
-    document.getElementById("newsTitle").addEventListener(click, function(e) { s.setInitData(0); daum.Event.stopEvent(e);});
-    document.getElementById("sportsTitle").addEventListener(click, function(e) { s.setInitData(4); daum.Event.stopEvent(e);});
-    document.getElementById("enterTitle").addEventListener(click, function(e) { s.setInitData(5); daum.Event.stopEvent(e);});
-    document.getElementById("voteTitle").addEventListener(click, function(e) { s.setInitData(6); daum.Event.stopEvent(e);});
-    
-});
+        var ob = null;
+        sl.on("endDrag", function(session){
+            if (session.isSwipe()) {
+                ob = daum.addEvent(wrapper, 'click', function preventClick(e) {
+                    daum.Event.stopEvent(e);
+                });
+            }
+        });
+        sl.on("next",function(){setPagingAndTap();daum.Event.stopObserving(ob);});
+        sl.on("prev",function(){setPagingAndTap();daum.Event.stopObserving(ob);});
+        sl.on("cancel",function(){daum.Event.stopObserving(ob);});
+    }
 
-var contentData = {};
-contentData.story = DMT.json.story;
-contentData.agora = DMT.json.agora;
-contentData.miznet = DMT.json.miznet;
-contentData.view = DMT.json.view;
-createSwipe("contentsWrap", contentData, "contents", function(s, d, w){
-    document.getElementById('hotTitle').addEventListener(click, function(e) { s.setInitData(0); daum.Event.stopEvent(e);});
-    document.getElementById('agoraTitle').addEventListener(click, function(e) { s.setInitData(2); daum.Event.stopEvent(e);});
-    document.getElementById('miznetTitle').addEventListener(click, function(e) { s.setInitData(3); daum.Event.stopEvent(e);});
-    document.getElementById('viewTitle').addEventListener(click, function(e) { s.setInitData(4); daum.Event.stopEvent(e);});
-    
-});
+    var mediaData = {};
+    mediaData.news = DMT.json.news;
+    mediaData.sports = DMT.json.sports;
+    mediaData.enter = DMT.json.enter;
+    mediaData.vote = DMT.json.vote;
+    createSwipe("newsContents", mediaData, "news", [
+        {id:"newsTitle", index: 0},
+        {id:"sportsTitle", index: 4},
+        {id:"enterTitle", index: 5},
+        {id:"voteTitle", index: 6},
+    ]);
 
-var funData = {};
-funData.cartoon = DMT.json.cartoon;
-funData.movie = DMT.json.movie;
-funData.music = DMT.json.music;
-funData.tvpot = DMT.json.tvpot;
-funData.telzone = DMT.json.telzone;
-createSwipe("funContents", funData, "fun", function(s, d, w){
-    document.getElementById('comicTitle').addEventListener(click, function(e) { s.setInitData(0); daum.Event.stopEvent(e);});
-    document.getElementById('movieTitle').addEventListener(click, function(e) { s.setInitData(1); daum.Event.stopEvent(e);});
-    document.getElementById('musicTitle').addEventListener(click, function(e) { s.setInitData(2); daum.Event.stopEvent(e);});
-    document.getElementById('tvpotTitle').addEventListener(click, function(e) { s.setInitData(3); daum.Event.stopEvent(e);});
-    document.getElementById('telzoneTitle').addEventListener(click, function(e) { s.setInitData(4); daum.Event.stopEvent(e);});
-});
+    var contentData = {};
+    contentData.story = DMT.json.story;
+    contentData.agora = DMT.json.agora;
+    contentData.miznet = DMT.json.miznet;
+    contentData.view = DMT.json.view;
+    createSwipe("contentsWrap", contentData, "contents", [
+        {id:"hotTitle", index: 0},
+        {id:"agoraTitle", index: 2},
+        {id:"miznetTitle", index: 3},
+        {id:"viewTitle", index: 4},
+    ]);
 
-var issueData = {};
-issueData.Msale = DMT.json.Msale;
-issueData.coupon = DMT.json.coupon;
-createSwipe("issueContents", issueData, "issue", function(s, d, w){
-    document.getElementById('saleTitle').addEventListener(click, function(e) { s.setInitData(0); daum.Event.stopEvent(e);});
-    document.getElementById('shopTitle').addEventListener(click, function(e) { s.setInitData(2); daum.Event.stopEvent(e);});
-});
+    var funData = {};
+    funData.cartoon = DMT.json.cartoon;
+    funData.movie = DMT.json.movie;
+    funData.music = DMT.json.music;
+    funData.tvpot = DMT.json.tvpot;
+    funData.telzone = DMT.json.telzone;
+    createSwipe("funContents", funData, "fun", [
+        {id:"comicTitle", index: 0},
+        {id:"movieTitle", index: 1},
+        {id:"musicTitle", index: 2},
+        {id:"tvpotTitle", index: 3},
+        {id:"telzoneTitle", index: 4}
+    ]);
+
+    var issueData = {};
+    issueData.Msale = DMT.json.Msale;
+    issueData.coupon = DMT.json.coupon;
+    createSwipe("issueContents", issueData, "issue", [
+        {id:"saleTitle", index: 0},
+        {id:"shopTitle", index: 2}
+    ]);
 }
