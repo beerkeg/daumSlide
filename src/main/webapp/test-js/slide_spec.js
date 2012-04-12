@@ -97,6 +97,12 @@ describe('slide.js', function () {
     });
 
     describe('slide.DataSource', function () {
+        it('should set current data index', function () {
+            var ds = new slide.DataSource([1, 2, 3, 4, 5]);
+            ds.setCurrentIndex(3);
+            expect(ds.index).toBe(3);
+        });
+
         it('should serve current data set', function () {
             var ds = new slide.DataSource([1, 2, 3, 4, 5]),
                 currentSet;
