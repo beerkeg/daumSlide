@@ -338,14 +338,12 @@ function buildSlides(data) {
                             '" width="' + imgSize.width + '" height="' + imgSize.height +
                             '" data-width="' + item.width + '" data-height="' + item.height +
                             '"style=position:absolute;top:' + imgOffset.top + 'px;left:' +imgOffset.left + 'px;" ' +
-                        '>';
-//                            'onload="d.onImgLoad(this);" ' +
-//                            'onerror="d.onImgLoadError(this);" ' +
-//                            'onabort="d.onImgLoadError(this);">';
+                           'onload="onImgLoad(this);" ' +
+                           'onerror="onImgLoadError(this);" ' +
+                           'onabort="onImgLoadError(this);">';
             }
         });
     }
-//        d.setDataTotalLength(parseInt(jsonStr.channel.totalCount));
     return arr;
 }
 
@@ -395,14 +393,12 @@ function cutString (text, length) {
     });
 })();
 
-
-var d= {};
-d.onImgLoad = function (el) {
+function onImgLoad (el) {
     el.parentNode.style.background = "none";
-};
-d.onImgLoadError = function (el) {
+}
+function onImgLoadError (el) {
     el.parentNode.style.background = "none";
-};
+}
 
 var ImgManager = {
     clientWidth: 0,
