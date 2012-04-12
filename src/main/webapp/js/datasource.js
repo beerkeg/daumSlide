@@ -1,5 +1,4 @@
-/*global slide:true
- */
+/*global Class: true, slide: true */
 (function (exports) {
     "use strict";
 
@@ -15,14 +14,14 @@
             this.data = data;
             this.index = 0;
         },
+        setCurrentIndex: function (index) {
+            this.index = index;
+        },
         /**
          * 현재/이전/다음 데이터셋을 불러온다.
          * 데이터가 없을 경우 해당 필드는 null 로 세팅된다.
          * @param callback
          */
-        setCurrentIndex: function (index) {
-            this.index = index;
-        },
         queryCurrentSet: function (callback) {
             var self = this;
             this.queryPrev(function (prev) {
