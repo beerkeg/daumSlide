@@ -43,6 +43,11 @@
 
 
     exports.Slide = slide.Observable.extend({
+        /**
+         * 새로운 Slide를 초기화 또는 생성한다.
+         * @param wrapper {DOM element}
+         * @param dataSource {Slide.DataSource}
+         */
         init: function (wrapper, dataSource) {
             slideInstanceNum++;
 
@@ -63,7 +68,10 @@
             this.show();
             this.bindEvents();
         },
-
+        /**
+         * 3d gpu 가속 여부를 사용할수 있는지 판단한다.
+         * @param uaString {String}
+         */
         enable3DTransform: function (uaString) {
             var ua = userAgent(uaString),
                 isOverGingerBread = ua.androidVersion.major > 2 ||
@@ -71,7 +79,9 @@
             this.enableTransform = ((ua.isAndroid() && isOverGingerBread) || ua.isIOS() || ua.isSafari());
             return this.enableTransform;
         },
-
+        /**
+         * wrapper 내부에 들어갈 mark up 구조를 설정한다.
+         */
         initPanels: function () {
             var panelString = this.buildPanelHTML();
             this.wrapper.innerHTML =
@@ -84,11 +94,16 @@
             // this.panels = Array.prototype.slice.call(this.el.getElementsByClassName("panel"));
             this.panels = this.el.getElementsByClassName("panel");
         },
+            /**
+             * panel 내부에 들어갈 mark up 구조를 설정한다.
+             */
             buildPanelHTML: function () {
                 var hardwareAccelStyle = this.enableTransform ? '-webkit-transform:translate3d(0,0,0);' : '';
                 return '<div class="panel" style="height: 100%;overflow:hidden;display:inline-block;' + hardwareAccelStyle + 'width:' + this.pageWidth + 'px;"></div>';
             },
-
+        /**
+         * slide 에 필요한 event를 bind 시킨다.
+         */
         bindEvents: function () {
             var resizeEvent = 'onorientationchange' in window ? 'orientationchange' : 'resize',
                 GESTURE_THRESHOLD = 0,
@@ -119,10 +134,15 @@
                 }, 50);
             });
         },
+            /**
+             * 화면사이즈의 값이 바뀌었는지 확인.
+             */
             isSizeChanged: function () {
                 return !(this.pageWidth === this.wrapper.clientWidth && this.pageHeight === this.wrapper.clientHeight);
             },
-
+        /**
+         * 데이터 소스로부터 데이터를 받아서 슬라이드에 보여준다.
+         */
         show: function () {
             var panels = this.panels;
             this.dataSource.queryCurrentSet(function (set) {
@@ -133,6 +153,9 @@
         },
 
         // TODO refactoring extract class
+        /**
+         * slide를 좌로 이동시킨다. (다음 슬라이드를 보여준다.)
+         */
         next: function () {
             if (this.isInTransition) {
                 return;
@@ -158,6 +181,9 @@
                 }
             });
         },
+        /**
+         * slide를 우로 이동시킨다. (이전 슬라이드를 보여준다.)
+         */
         prev: function () {
             if (this.isInTransition) {
                 return;
@@ -244,10 +270,17 @@
                 self.emit("cancel");
             });
         },
-
+        /**
+         * mousedown or touchstart 이벤트 발생시 동작하는 함수
+         * @param session {Object GestureSession} 제스쳐 정보를 담은 객체
+         */
         startDrag: function (session) {
             this.emit("startDrag", session);
         },
+        /**
+         * mousemove or touchmove 이벤트 발생시 동작하는 함수
+         * @param session {Object GestureSession} 제스쳐 정보를 담은 객체
+         */
         drag: function (session) {
             if (this.isInTransition) {
                 return ;
@@ -258,6 +291,10 @@
                 this.move(session.delta.x / 2);
             }
         },
+        /**
+         * mouseup or touchend 이벤트 발생시 동작하는 함수
+         * @param session {Object GestureSession} 제스쳐 정보를 담은 객체
+         */
         endDrag: function (session) {
             if (session.delta.x === 0) {
                 this.emit("click");
@@ -273,48 +310,85 @@
             }
             this.emit("endDrag", session);
         },
+            /**
+             * 제스처가 왼쪽으로 일정 거리이상 혹은 빠르게 움직였을 경우에 true
+             * @param session {Object GestureSession} 제스쳐 정보를 담은 객체
+             */
             isNextSwipe: function (session) {
                 return session.isLeft() && (this.isNextThreshold(session) || session.isFlick());
             },
+            /**
+             * 제스처가 왼쪽으로 일정 거리이상 움직였을 경우에 true
+             * @param session {Object GestureSession} 제스쳐 정보를 담은 객체
+             */
             isNextThreshold: function (session) {
                 return this.el.clientWidth * -1 * SLIDE_TRESHOLD > session.delta.x;
             },
+            /**
+             * 제스처가 오른쪽으로 일정 거리이상 혹은 빠르게 움직였을 경우에 true
+             * @param session {Object GestureSession} 제스쳐 정보를 담은 객체
+             */
             isPrevSwipe: function (session) {
                 return session.isRight() && (this.isPrevThreshold(session) || session.isFlick());
             },
+            /**
+             * 제스처가 오른쪽으로 일정 거리이상 움직였을 경우에 true
+             * @param session {Object GestureSession} 제스쳐 정보를 담은 객체
+             */
             isPrevThreshold: function (session) {
                 return this.el.clientWidth * SLIDE_TRESHOLD < session.delta.x;
             },
-
+        /**
+         * Transition을 on한다.
+         * @param duration {Integer} Transition Duration Value
+         */
         enableTransition: function (duration) {
             this.setTransitionDuration(duration || 500);
             this.isInTransition = true;
         },
+        /**
+         * Transition을 off한다.
+         */
         disableTransition: function () {
             this.setTransitionDuration(0);
             this.isInTransition = false;
         },
+            /**
+             * Transition 시 걸릴 시간을 설정한다.
+             * @param duration {Integer} Transition Duration Value
+             */
             setTransitionDuration: function (duration) {
                 if (this.enableTransform) {
                     this.el.style.webkitTransitionDuration = duration + 'ms';
                 }
             },
-
+        /**
+         * 변경된 wrapper, slide, panels의 size 와 offset을 다시 설정한다.
+         */
         resize: function () {
             this.setWrapperSize();
             this.setPanelsSize();
             this.setSlideSizeAndOffset();
             this.emit("resize");
         },
+            /**
+             * 변경된 wrapper 사이즈를 확인/저장 한다.
+             */   
             setWrapperSize: function () {
                 this.pageWidth = this.wrapper.clientWidth;
                 this.pageHeight = this.wrapper.clientHeight;
             },
+            /**
+             * 변경된 panel들의 사이즈를 다시 설정한다.
+             */
             setPanelsSize: function () {
                 for (var i = 0; i < this.panels.length; i += 1) {
                     this.panels[i].style.width = this.pageWidth + 'px';
                 }
             },
+            /**
+             * 변경된 slide size 와 offset 을 다시 설정한다.
+             */
             setSlideSizeAndOffset: function () {
                 this.el.style.width = (this.pageWidth * 3) + 'px';
                 this.el.style.left = (-this.pageWidth) + 'px';
