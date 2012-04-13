@@ -92,14 +92,35 @@
         willQueryEndOfDataDelegate: function (callback) {
             callback(null);
         },
+        /**
+         * 데이터 시작에 도달하였을 때 호출될 delegate를 설정한다.
+         * @param delegate
+         */
         willQueryFirstOfData: function (delegate) {
             this.willQueryFirstOfDataDelegate = delegate;
         },
+        /**
+         * 현재 데이터 시작에 도달하였을 때 호출될 기본 delegate.
+         * callback에 그 다음 데이터를 넘겨 호출하여 준다.
+         * @param callback {Function}
+         */
         willQueryFirstOfDataDelegate: function (callback) {
             callback(null);
         },
-        concatData: function (addends) {
+        /**
+         * 기존의 데이터 뒤에 새로운 데이터를 추가한다.
+         * @param addends {Array}
+         */
+        addNextData: function (addends) {
             this.data = this.data.concat(addends);
+        },
+        /**
+         * 기존의 데이터 앞에 새로운 데이터를 추가한다.
+         * @param addends {Array}
+         */
+        addBeforeData: function (addends) {
+            this.setCurrentIndex(addends.length + this.index);
+            this.data = addends.concat(this.data);
         }
     });
 
