@@ -59,7 +59,6 @@ var ImageSearchDataSource = slide.DataSource.extend({
                 self.addBeforeData(newSlides);
                 callback(newSlides[newSlides.length-1]);
                 pageInfo.prevPage--;
-                console.log(self.data);
             });
         } else {
             callback(null);
