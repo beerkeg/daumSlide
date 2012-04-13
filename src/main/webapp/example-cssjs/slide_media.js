@@ -43,7 +43,7 @@ var ImageSearchDataSource = slide.DataSource.extend({
         if (totalCount/pageInfo.numPerPage + 1 > pageInfo.nextPage) {
             loadMoreData(pageInfo.nextPage, function (data) {
                 var newSlides = buildSlides(data);
-                self.data = self.data.concat(newSlides);
+                self.addNextData(newSlides);
                 callback(newSlides[0]);
                 pageInfo.nextPage++;
             });
@@ -56,10 +56,10 @@ var ImageSearchDataSource = slide.DataSource.extend({
         if (pageInfo.prevPage > 0) {
             loadMoreData(pageInfo.prevPage, function (data) {
                 var newSlides = buildSlides(data);
-                self.setCurrentIndex(newSlides.length + self.index);
-                self.data = newSlides.concat(self.data);
-                callback(newSlides[0]);
+                self.addBeforeData(newSlides);
+                callback(newSlides[newSlides.length-1]);
                 pageInfo.prevPage--;
+                console.log(self.data);
             });
         } else {
             callback(null);
