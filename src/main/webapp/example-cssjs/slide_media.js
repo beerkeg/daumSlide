@@ -120,10 +120,10 @@ function onImgLoad (el) {
     var imgOffset = ImgManager.getImgOffset(imgSize.width, imgSize.height);
     
     el.style.cssText = 'width:'+imgSize.width+'px;height:'+imgSize.height+'px;top:'+imgOffset.top+'px;left:'+imgOffset.left+'px;position:absolute;';
-};
+}
 function onImgLoadError (el) {
     el.parentNode.style.background = "none";
-};
+}
 
 function buildSlides(data) {
     totalCount = data.count;
