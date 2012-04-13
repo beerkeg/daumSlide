@@ -166,21 +166,41 @@
                 if (next === null) {
                     self.cancel();
                 } else {
-                    var movingOffset = -1 * self.pageWidth;
-                    self.slide(movingOffset, function onMoveNextEnd() {
-                        var firstPanel = self.el.removeChild(self.panels[0]);
-                        self.move(0);
-                        self.el.appendChild(firstPanel);
-                        // TODO 묶을 필요가 있어 보인다.
-                        self.dataSource.next();
-                        self.dataSource.queryNext(function (next) {
-                            self.panels[2].innerHTML = next ? next.toHTML() : '&nbsp;';
-                        });
-                        self.emit("next");
-                    });
+                    self.nextSlide();
                 }
             });
         },
+        /**
+         * 다음 슬라이드를 보여주고, 다음 데이터를 datasource 로부터 받아온다.
+         */
+        nextSlide: function () {
+            var self = this,
+                movingOffset = -1 * this.pageWidth;
+
+            this.slide(movingOffset, function onMoveNextEnd() {
+                self.moveFirstPanelToLast();
+                self.setNextQueryInLast();                       
+                self.emit("next");
+            });
+        },
+            /**
+             * 첫번째 패널을 마지막으로 옮긴다.
+             */
+            moveFirstPanelToLast: function () {
+                var firstPanel = this.el.removeChild(this.panels[0]);
+                this.move(0);
+                this.el.appendChild(firstPanel);
+            },
+            /**
+             * 마지막 패널에 다음 데이터를 넣는다.
+             */
+            setNextQueryInLast: function () {
+                var self = this;
+                this.dataSource.next();
+                this.dataSource.queryNext(function (next) {
+                    self.panels[2].innerHTML = next ? next.toHTML() : '&nbsp;';
+                });
+            },
         /**
          * slide를 우로 이동시킨다. (이전 슬라이드를 보여준다.)
          */
@@ -194,21 +214,40 @@
                 if (prev === null) {
                     self.cancel();
                 } else {
-                    var movingOffset = self.pageWidth;
-                    self.slide(movingOffset, function onMovePrevEnd() {
-                        var lastPanel = self.el.removeChild(self.panels[2]);
-                        self.move(0);
-                        self.el.insertBefore(lastPanel, self.panels[0]);
-                        // TODO 묶을 필요가 있어 보인다.
-                        self.dataSource.prev();
-                        self.dataSource.queryPrev(function (prev) {
-                            self.panels[0].innerHTML = prev ? prev.toHTML() : '&nbsp;';
-                        });
-                        self.emit("prev");
-                    });
+                    self.prevSlide();
                 }
             });
         },
+        /**
+         * 이전 슬라이드를 보여주고, 이전 데이터를 datasource 로부터 받아온다.
+         */
+        prevSlide: function () {
+            var self = this,
+                movingOffset = this.pageWidth;
+            this.slide(movingOffset, function onMovePrevEnd() {
+                self.moveLastPanelToFirst();
+                self.setPrevQueryInFirst();
+                self.emit("prev");
+            });
+        },
+            /**
+             * 마지막 패널을 첫번째로 옮긴다.
+             */
+            moveLastPanelToFirst: function () {
+                var lastPanel = this.el.removeChild(this.panels[2]);
+                this.move(0);
+                this.el.insertBefore(lastPanel, this.panels[0]);
+            },
+            /**
+             * 첫번째 패널에 이전 데이터를 넣는다.
+             */
+            setPrevQueryInFirst: function () {
+                var self = this;
+                this.dataSource.prev();
+                this.dataSource.queryPrev(function (prev) {
+                    self.panels[0].innerHTML = prev ? prev.toHTML() : '&nbsp;';
+                });
+            },
 
         /**
          * 주어진 offset 만큼 slide를 좌우 이동 시킨다.
@@ -221,18 +260,13 @@
                 this.enableTransition();
                 this.el.style.webkitTransform = 'translate3d('+ offset +'px, 0, 0)';
                 
-                window.clearTimeout(this.transitionEndTimer);
-                this.transitionEndTimer = window.setTimeout(function () {
-                    self.disableTransition();
-                    self.transitionEndTimer = -1;
-                }, 1500);
+                this.onTransitionEndTimer();
 
                 var self = this;
                 this.el.addEventListener('webkitTransitionEnd', function onTransitionEnd() {
                     self.el.removeEventListener('webkitTransitionEnd', onTransitionEnd);
-                    window.clearTimeout(self.transitionEndTimer);
+                    self.offTransitionEndTimer();
                     self.disableTransition();
-                    self.transitionEndTimer = -1;
 
                     if (callback) {
                         callback();
@@ -245,6 +279,24 @@
                 }
             }
         },
+            /**
+             * transitionEndTimer를 동작시킨다.
+             */
+            onTransitionEndTimer: function () {
+                var self = this;
+                window.clearTimeout(this.transitionEndTimer);
+                this.transitionEndTimer = window.setTimeout(function () {
+                    self.disableTransition();
+                    self.transitionEndTimer = -1;
+                }, 1500);
+            },
+            /**
+             * transitionEndTimer를 멈춘다.
+             */
+            offTransitionEndTimer: function () {
+                window.clearTimeout(this.transitionEndTimer);
+                this.transitionEndTimer = -1;
+            },
         /**
          * 주어진 offset 만큼 slide를 좌우 이동 시킨다.
          * css transition animation 없이 단순 이동
