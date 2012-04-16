@@ -41,6 +41,36 @@
         };
     };
 
+    /**
+     * resize, orientation change 이벤트가 발생하여도 coordniation 값이 바로 바뀌지 경우가 있어 (android)
+     * 이를 보정하기 위하여 실제 coordination 값이 바뀌었을 때 resize 를 호출하여준다.
+     * @param el
+     * @param callback
+     */
+    function onResized(el, callback) {
+        var resizeEvent = 'onorientationchange' in window ? 'orientationchange' : 'resize',
+            width = el.clientWidth, height = el.clientHeight;
+
+        function isSizeReallyChanged () {
+            return !(width === el.clientWidth && height === el.clientHeight);
+        }
+
+        window.addEventListener(resizeEvent, function () {
+            var cnt = 0;
+            setTimeout(function checkResize() {
+                if (isSizeReallyChanged()) {
+                    width = el.clientWidth;
+                    height = el.clientHeight;
+                    callback(width, height);
+                } else {
+                    if (cnt++ < 20) {
+                        setTimeout(checkResize, 50);
+                    }
+                }
+            }, 50);
+        });
+    }
+
 
     exports.Slide = slide.Observable.extend({
         /**
@@ -105,8 +135,7 @@
          * slide 에 필요한 event를 bind 시킨다.
          */
         bindEvents: function () {
-            var resizeEvent = 'onorientationchange' in window ? 'orientationchange' : 'resize',
-                GESTURE_THRESHOLD = 0,
+            var GESTURE_THRESHOLD = 0,
                 listener = gesture.GestureListener(this.el, GESTURE_THRESHOLD),
                 self = this;
 
@@ -120,26 +149,10 @@
                 return self.endDrag(session);
             });
 
-            // TODO 1초 동안 x 번 확인해서 값이 정말 바뀌었을 때 resize 를 호출
-            window.addEventListener(resizeEvent, function () {
-                var cnt = 0;
-                setTimeout(function checkResize() {
-                    if (self.isSizeChanged()) {
-                        self.resize();
-                    } else {
-                        if (cnt++ < 20) {
-                            setTimeout(checkResize, 50);
-                        }
-                    }
-                }, 50);
+            onResized(this.wrapper, function () {
+                self.resize();
             });
         },
-            /**
-             * 화면사이즈의 값이 바뀌었는지 확인.
-             */
-            isSizeChanged: function () {
-                return !(this.pageWidth === this.wrapper.clientWidth && this.pageHeight === this.wrapper.clientHeight);
-            },
         /**
          * 데이터 소스로부터 데이터를 받아서 슬라이드에 보여준다.
          */
