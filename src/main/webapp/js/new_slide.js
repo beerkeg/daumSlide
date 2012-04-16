@@ -71,6 +71,77 @@
         });
     }
 
+    var PanelManager = Class.extend({
+        init: function (parent, panelWidth, enableTransform) {
+            this.el = document.createElement("div");
+            this.panels = [];
+            this.enableTransform = enableTransform;
+            this.setSlide(panelWidth, enableTransform);
+            this.createPanels(panelWidth, enableTransform);
+            parent.appendChild(this.el);
+        },
+        createPanel: function (width, enableTransform) {
+            var panel = document.createElement("div"),
+                hardwareAccelStyle = enableTransform ? '-webkit-transform:translate3d(0,0,0);' : '';
+
+            panel.className = "panel";
+            panel.style.cssText = 'height:100%;overflow:hidden;display:inline-block;' + hardwareAccelStyle + 'width:' + width + 'px;';
+            return panel;
+        },
+        setSlide: function (panelWidth, enableTransform) {
+            var hardwareAccelStyle = enableTransform ? '-webkit-transform:translate3d(0,0,0);' : '';
+            this.el.className = "slide";
+            this.el.id = "slide-" + slideInstanceNum;
+            slideInstanceNum += 1;
+            this.el.style.cssText = 'overflow:hidden;position:relative;top:0;left:' + (-panelWidth) + 'px;width:' + (panelWidth * 3) + 'px;' + hardwareAccelStyle;
+        },
+        createPanels: function (panelWidth, enableTransform) {
+            for(var i=0; i<3; i++) {
+                this.panels.push(this.createPanel(panelWidth, enableTransform));
+                this.el.appendChild(this.panels[i]);
+            }
+        },
+        setPanelsData: function (set) {
+            this.setPanelByIndex(0, set.prev);
+            this.setPanelByIndex(1, set.current);
+            this.setPanelByIndex(2, set.next);
+        },
+        setPanelByIndex: function (index, data) {
+            this.panels[index].innerHTML = data ? data.toHTML() : '&nbsp;';
+        },
+        moveLastPanelTofirst: function () {
+            var panel = this.panels.pop();
+            this.panels.unshift(panel);
+        },
+        movefirstPanelToLast: function () {
+            var panel = this.panels.shift();
+            this.panels.push(panel);
+        },
+        removeFirstPanel: function () {
+            return this.el.removeChild(this.panels[0]);
+        },
+        removeLastPanel: function () {
+            return this.el.removeChild(this.panels[2]);
+        },
+        pushPanel: function (panel) {
+            this.el.appendChild(panel);
+        },
+        unshiftPanel: function (panel) {
+            this.el.insertBefore(panel, this.panels[0]);
+        },
+        setPanelsWidth: function (width) {
+            for(var i=0; i<3; i++) {
+                this.panels[i].style.width = width + 'px';
+            }
+        },
+        setWidth: function (width) {
+            this.el.style.width = (width * 3) + 'px';
+        },
+        setLeft: function (width) {
+            this.el.style.left = (-width) + 'px';
+        }
+    });
+
 
     exports.Slide = slide.Observable.extend({
         /**
@@ -82,9 +153,6 @@
             slideInstanceNum++;
 
             this.wrapper = wrapper;
-            this.el = null;
-            this.panels = [];
-
             this.dataSource = dataSource;
 
             this.enableTransform = false;
@@ -94,7 +162,8 @@
             this.pageHeight = this.wrapper.clientHeight;
 
             this.enable3DTransform();
-            this.initPanels();
+            this.panelManager = new PanelManager(this.wrapper, this.pageWidth, this.enableTransform);
+            this.el = this.panelManager.el;
             this.show();
             this.bindEvents();
         },
@@ -109,28 +178,6 @@
             this.enableTransform = ((ua.isAndroid() && isOverGingerBread) || ua.isIOS() || ua.isSafari());
             return this.enableTransform;
         },
-        /**
-         * wrapper 내부에 들어갈 mark up 구조를 설정한다.
-         */
-        initPanels: function () {
-            var panelString = this.buildPanelHTML();
-            this.wrapper.innerHTML =
-                '<div class="slide" id="slide-' + slideInstanceNum + '" style="overflow:hidden;position:relative;top:0;transform:translate3d(0,0,0);' +
-                    'left:' + (-this.pageWidth) + 'px;width:' + (this.pageWidth * 3) + 'px;">' +
-                    panelString + panelString + panelString + '</div>';
-            this.el = document.getElementById("slide-" + slideInstanceNum);
-
-            // TODO should avoid HTMLCollection!
-            // this.panels = Array.prototype.slice.call(this.el.getElementsByClassName("panel"));
-            this.panels = this.el.getElementsByClassName("panel");
-        },
-            /**
-             * panel 내부에 들어갈 mark up 구조를 설정한다.
-             */
-            buildPanelHTML: function () {
-                var hardwareAccelStyle = this.enableTransform ? '-webkit-transform:translate3d(0,0,0);' : '';
-                return '<div class="panel" style="height: 100%;overflow:hidden;display:inline-block;' + hardwareAccelStyle + 'width:' + this.pageWidth + 'px;"></div>';
-            },
         /**
          * slide 에 필요한 event를 bind 시킨다.
          */
@@ -157,11 +204,9 @@
          * 데이터 소스로부터 데이터를 받아서 슬라이드에 보여준다.
          */
         show: function () {
-            var panels = this.panels;
+            var panelManager = this.panelManager;
             this.dataSource.queryCurrentSet(function (set) {
-                panels[0].innerHTML = set.prev ? set.prev.toHTML() : '&nbsp;';
-                panels[1].innerHTML = set.current ? set.current.toHTML() : '&nbsp;';
-                panels[2].innerHTML = set.next ? set.next.toHTML() : '&nbsp;';
+                panelManager.setPanelsData(set);
             });
         },
 
@@ -201,18 +246,20 @@
              * 첫번째 패널을 마지막으로 옮긴다.
              */
             rearrangePanelsAfterNext: function () {
-                var firstPanel = this.el.removeChild(this.panels[0]);
+                var panelManager = this.panelManager,
+                    firstPanel = panelManager.removeFirstPanel();
                 this.move(0);
-                this.el.appendChild(firstPanel);
+                panelManager.pushPanel(firstPanel);
+                panelManager.movefirstPanelToLast();
             },
             /**
              * 마지막 패널에 다음 데이터를 넣는다.
              */
             preloadNextData: function () {
-                var self = this;
+                var self = this.panelManager;
                 this.dataSource.next();
                 this.dataSource.queryNext(function (next) {
-                    self.panels[2].innerHTML = next ? next.toHTML() : '&nbsp;';
+                    self.setPanelByIndex(2, next);
                 });
             },
         /**
@@ -250,18 +297,20 @@
              * 마지막 패널을 첫번째로 옮긴다.
              */
             rearrangePanelsAfterPrev: function () {
-                var lastPanel = this.el.removeChild(this.panels[2]);
+                var panelManager = this.panelManager,
+                    lastPanel = panelManager.removeLastPanel();
                 this.move(0);
-                this.el.insertBefore(lastPanel, this.panels[0]);
+                panelManager.unshiftPanel(lastPanel);
+                panelManager.moveLastPanelTofirst();
             },
             /**
              * 첫번째 패널에 이전 데이터를 넣는다.
              */
             preloadPrevData: function () {
-                var self = this;
+                var self = this.panelManager;
                 this.dataSource.prev();
                 this.dataSource.queryPrev(function (prev) {
-                    self.panels[0].innerHTML = prev ? prev.toHTML() : '&nbsp;';
+                    self.setPanelByIndex(0, prev);
                 });
             },
 
@@ -451,16 +500,16 @@
              * 변경된 panel들의 사이즈를 다시 설정한다.
              */
             setPanelsSize: function () {
-                for (var i = 0; i < this.panels.length; i += 1) {
-                    this.panels[i].style.width = this.pageWidth + 'px';
+                for (var i = 0; i < 3; i += 1) {
+                    this.panelManager.setPanelsWidth(this.pageWidth);
                 }
             },
             /**
              * 변경된 slide size 와 offset 을 다시 설정한다.
              */
             setSlideSizeAndOffset: function () {
-                this.el.style.width = (this.pageWidth * 3) + 'px';
-                this.el.style.left = (-this.pageWidth) + 'px';
+                this.panelManager.setWidth(this.pageWidth);
+                this.panelManager.setLeft(this.pageWidth);
             }
     });
 
