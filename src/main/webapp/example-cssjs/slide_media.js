@@ -1,4 +1,4 @@
-/*jshint browser: true, newcap: true, curly: true
+/*jshint browser: true, loopfunc: true
 */
 /*global pageInfo: true, slide: true, escape: true*/
 (function () {
