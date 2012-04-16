@@ -1,7 +1,7 @@
 /*jshint browser: true, loopfunc: true
 */
 /*global pageInfo: true, slide: true, escape: true*/
-(function () {
+(function (mediaSlide) {
     'use strict';
     var headTag = document.getElementsByTagName("head")[0],
         wrapper = document.getElementById("wrapper"),
@@ -18,17 +18,17 @@
     var simpleSearchAPICallback = null;
     function simpleSearchAPIJsonp (page, callback) {
         simpleSearchAPICallback = callback;
-        var url = pageInfo.getApiUrl(page, "simpleSearchAPICallback");
+        var url = pageInfo.getApiUrl(page, "mediaSlide.simpleJsonpCallback");
         var s = document.createElement("script");
         s.type = "text/javascript";
         s.src = url;
         s.charset = "utf-8";
         headTag.appendChild(s);
     }
-    function simpleJsonpCallback (data) {
+    mediaSlide.simpleJsonpCallback = function (data) {
         headTag.removeChild(headTag.lastChild);
         simpleSearchAPICallback(data);
-    }
+    };
 
     function loadInitialData (callback) {
         simpleSearchAPIJsonp(pageInfo.initPage, function (data) {
@@ -120,15 +120,15 @@
             }
     }
 
-    function onImgLoad (el) {
+    mediaSlide.onImgLoad = function (el) {
         var imgSize = ImgManager.resizeImg(el.naturalWidth, el.naturalHeight);
         var imgOffset = ImgManager.getImgOffset(imgSize.width, imgSize.height);
         
         el.style.cssText = 'width:'+imgSize.width+'px;height:'+imgSize.height+'px;top:'+imgOffset.top+'px;left:'+imgOffset.left+'px;position:absolute;';
-    }
-    function onImgLoadError (el) {
+    };
+    mediaSlide.onImgLoadError = function (el) {
         el.parentNode.style.background = "none";
-    }
+    };
 
     function buildSlides (data) {
         totalCount = data.count;
@@ -143,7 +143,7 @@
                 title: item.title,
                 toHTML: function () {
                     var cdnImgUrl = this.image.replace("http://photo-media.daum-img.net","http://m1.daumcdn.net/photo-media");
-                    return '<img alt="'+escape(this.title)+'" src="'+cdnImgUrl+'" style="position:absolute;width:1px;height:1px;" onload="onImgLoad(this);" onerror="onImgLoadError(this);" onabort="onImgLoadError(this);">';
+                    return '<img alt="'+escape(this.title)+'" src="'+cdnImgUrl+'" style="position:absolute;width:1px;height:1px;" onload="mediaSlide.onImgLoad(this);" onerror="mediaSlide.onImgLoadError(this);" onabort="mediaSlide.onImgLoadError(this);">';
                 }
             });
         }
@@ -209,4 +209,4 @@
             return {left: parseInt((this.clientWidth + 10 - width) / 2, 10), top: parseInt((this.clientHeight + 10 - height) / 2, 10)};
         }
     };
-})();
+})(window.mediaSlide = (typeof mediaSlide === 'undefined') ? {} : mediaSlide);
