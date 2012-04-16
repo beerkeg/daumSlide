@@ -96,12 +96,12 @@
         });
         sl.on("next", setDesc);
         sl.on("prev", setDesc);
-            function setDesc () {
-                ds.queryCurrent(function (data) {
-                    psCount.innerHTML = '(<em>'+((pageInfo.prevPage*pageInfo.numPerPage)+ds.index+1)+'</em>/'+totalCount+')';
-                    footer.innerHTML = createDesc(data);
-                });
-            }
+        function setDesc () {
+            ds.queryCurrent(function (data) {
+                psCount.innerHTML = '(<em>'+((pageInfo.prevPage*pageInfo.numPerPage)+ds.index+1)+'</em>/'+totalCount+')';
+                footer.innerHTML = createDesc(data);
+            });
+        }
 
         var viewState = "block";
         sl.on("click", function() {
@@ -111,13 +111,13 @@
                 setDisplay("none");
             }
         });
-            function setDisplay (state) {
-                header.style.display = state;
-                footer.style.display = state;
-                prevBtn.style.display = state;
-                nextBtn.style.display = state;
-                viewState = state;
-            }
+        function setDisplay (state) {
+            header.style.display = state;
+            footer.style.display = state;
+            prevBtn.style.display = state;
+            nextBtn.style.display = state;
+            viewState = state;
+        }
     }
 
     mediaSlide.onImgLoad = function (el) {
@@ -136,7 +136,12 @@
             arr = [];
         for (var i = 0, len = items.length; i < len; i++) {
             var item = items[i];
-            arr.push({
+            arr.push(createDataByItem(item));
+        }
+        return arr;
+    }
+    function createDataByItem (item) {
+        return {
                 id : item.id,
                 image: item.image,
                 summary: item.summary,
@@ -145,11 +150,8 @@
                     var cdnImgUrl = this.image.replace("http://photo-media.daum-img.net","http://m1.daumcdn.net/photo-media");
                     return '<img alt="'+escape(this.title)+'" src="'+cdnImgUrl+'" style="position:absolute;width:1px;height:1px;" onload="mediaSlide.onImgLoad(this);" onerror="mediaSlide.onImgLoadError(this);" onabort="mediaSlide.onImgLoadError(this);">';
                 }
-            });
-        }
-        return arr;
+            };
     }
-
 
     function createDesc (data) {
         return '<div id="title-wrap" style="opacity: 0.8; display: block;">' +
