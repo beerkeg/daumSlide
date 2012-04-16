@@ -45,8 +45,8 @@
     exports.Slide = slide.Observable.extend({
         /**
          * 새로운 Slide를 초기화 또는 생성한다.
-         * @param wrapper {DOM element}
-         * @param dataSource {Slide.DataSource}
+         * @param wrapper {HTMLElement}
+         * @param dataSource {Object} slide.DataSource 객체
          */
         init: function (wrapper, dataSource) {
             slideInstanceNum++;
@@ -152,9 +152,9 @@
             });
         },
 
-        // TODO refactoring extract class
         /**
-         * slide를 좌로 이동시킨다. (다음 슬라이드를 보여준다.)
+         * 슬라이드를 좌로 이동시킨다. 다음(next) 슬라이드를 보여준다.
+         * 만약, 다음 슬라이드에 내용이 없을 경우 이동 시키지 않는다.
          */
         next: function () {
             if (this.isInTransition) {
@@ -171,22 +171,23 @@
             });
         },
         /**
-         * 다음 슬라이드를 보여주고, 다음 데이터를 datasource 로부터 받아온다.
+         * 슬라이드 좌로 이동시킨 후 panel들을 재정렬 + 그 다음 데이터를 미리 로딩해둔다.
          */
         nextSlide: function () {
             var self = this,
                 movingOffset = -1 * this.pageWidth;
 
             this.slide(movingOffset, function onMoveNextEnd() {
-                self.moveFirstPanelToLast();
-                self.setNextQueryInLast();
+                self.rearrangePanelsAfterNext();
+                self.preloadNextData();
                 self.emit("next");
             });
         },
             /**
+             * next 이후 패널들을 재정렬한다.
              * 첫번째 패널을 마지막으로 옮긴다.
              */
-            moveFirstPanelToLast: function () {
+            rearrangePanelsAfterNext: function () {
                 var firstPanel = this.el.removeChild(this.panels[0]);
                 this.move(0);
                 this.el.appendChild(firstPanel);
@@ -194,7 +195,7 @@
             /**
              * 마지막 패널에 다음 데이터를 넣는다.
              */
-            setNextQueryInLast: function () {
+            preloadNextData: function () {
                 var self = this;
                 this.dataSource.next();
                 this.dataSource.queryNext(function (next) {
@@ -202,7 +203,8 @@
                 });
             },
         /**
-         * slide를 우로 이동시킨다. (이전 슬라이드를 보여준다.)
+         * 슬라이드를 우로 이동시킨다. 이전(prev) 슬라이드를 보여준다.
+         * 만약, 이전 슬라이드에 내용이 없을 경우 이동 시키지 않는다.
          */
         prev: function () {
             if (this.isInTransition) {
@@ -219,21 +221,22 @@
             });
         },
         /**
-         * 이전 슬라이드를 보여주고, 이전 데이터를 datasource 로부터 받아온다.
+         * 슬라이드 우로 이동시킨 후 panel들을 재정렬 + 그 이전 데이터를 미리 로딩해둔다.
          */
         prevSlide: function () {
             var self = this,
                 movingOffset = this.pageWidth;
             this.slide(movingOffset, function onMovePrevEnd() {
-                self.moveLastPanelToFirst();
-                self.setPrevQueryInFirst();
+                self.rearrangePanelsAfterPrev();
+                self.preloadPrevData();
                 self.emit("prev");
             });
         },
             /**
+             * prev 이후 패널들을 재정렬한다.
              * 마지막 패널을 첫번째로 옮긴다.
              */
-            moveLastPanelToFirst: function () {
+            rearrangePanelsAfterPrev: function () {
                 var lastPanel = this.el.removeChild(this.panels[2]);
                 this.move(0);
                 this.el.insertBefore(lastPanel, this.panels[0]);
@@ -241,7 +244,7 @@
             /**
              * 첫번째 패널에 이전 데이터를 넣는다.
              */
-            setPrevQueryInFirst: function () {
+            preloadPrevData: function () {
                 var self = this;
                 this.dataSource.prev();
                 this.dataSource.queryPrev(function (prev) {
@@ -258,14 +261,14 @@
         slide: function (offset, callback) {
             if (this.enableTransform) {
                 this.enableTransition();
-                this.el.style.webkitTransform = 'translate3d('+ offset +'px, 0, 0)';
-                
-                this.onTransitionEndTimer();
+                this.el.style.webkitTransform = 'translate3d(' + offset + 'px, 0, 0)';
+
+                this.startTransitionEndTimer();
 
                 var self = this;
                 this.el.addEventListener('webkitTransitionEnd', function onTransitionEnd() {
                     self.el.removeEventListener('webkitTransitionEnd', onTransitionEnd);
-                    self.offTransitionEndTimer();
+                    self.stopTransitionEndTimer();
                     self.disableTransition();
 
                     if (callback) {
@@ -281,8 +284,9 @@
         },
             /**
              * transitionEndTimer를 동작시킨다.
+             * transition end event 가 정상적으로 발생되지 않는 경우를 위한 보조 수단
              */
-            onTransitionEndTimer: function () {
+            startTransitionEndTimer: function () {
                 var self = this;
                 window.clearTimeout(this.transitionEndTimer);
                 this.transitionEndTimer = window.setTimeout(function () {
@@ -293,7 +297,7 @@
             /**
              * transitionEndTimer를 멈춘다.
              */
-            offTransitionEndTimer: function () {
+            stopTransitionEndTimer: function () {
                 window.clearTimeout(this.transitionEndTimer);
                 this.transitionEndTimer = -1;
             },
@@ -324,14 +328,14 @@
         },
         /**
          * mousedown or touchstart 이벤트 발생시 동작하는 함수
-         * @param session {Object GestureSession} 제스쳐 정보를 담은 객체
+         * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
          */
         startDrag: function (session) {
             this.emit("startDrag", session);
         },
         /**
          * mousemove or touchmove 이벤트 발생시 동작하는 함수
-         * @param session {Object GestureSession} 제스쳐 정보를 담은 객체
+         * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
          */
         drag: function (session) {
             if (this.isInTransition) {
@@ -345,7 +349,7 @@
         },
         /**
          * mouseup or touchend 이벤트 발생시 동작하는 함수
-         * @param session {Object GestureSession} 제스쳐 정보를 담은 객체
+         * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
          */
         endDrag: function (session) {
             if (session.delta.x === 0) {
@@ -364,28 +368,28 @@
         },
             /**
              * 제스처가 왼쪽으로 일정 거리이상 혹은 빠르게 움직였을 경우에 true
-             * @param session {Object GestureSession} 제스쳐 정보를 담은 객체
+             * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
              */
             isNextSwipe: function (session) {
                 return session.isLeft() && (this.isNextThreshold(session) || session.isFlick());
             },
             /**
              * 제스처가 왼쪽으로 일정 거리이상 움직였을 경우에 true
-             * @param session {Object GestureSession} 제스쳐 정보를 담은 객체
+             * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
              */
             isNextThreshold: function (session) {
                 return this.el.clientWidth * -1 * SLIDE_TRESHOLD > session.delta.x;
             },
             /**
              * 제스처가 오른쪽으로 일정 거리이상 혹은 빠르게 움직였을 경우에 true
-             * @param session {Object GestureSession} 제스쳐 정보를 담은 객체
+             * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
              */
             isPrevSwipe: function (session) {
                 return session.isRight() && (this.isPrevThreshold(session) || session.isFlick());
             },
             /**
              * 제스처가 오른쪽으로 일정 거리이상 움직였을 경우에 true
-             * @param session {Object GestureSession} 제스쳐 정보를 담은 객체
+             * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
              */
             isPrevThreshold: function (session) {
                 return this.el.clientWidth * SLIDE_TRESHOLD < session.delta.x;
