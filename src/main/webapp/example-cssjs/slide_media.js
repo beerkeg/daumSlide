@@ -11,7 +11,7 @@ var headTag = document.getElementsByTagName("head")[0],
     totalCount = 0;
 
 var simpleSearchAPICallback = null;
-function simpleSearchAPIJsonp(page, callback) {
+function simpleSearchAPIJsonp (page, callback) {
     simpleSearchAPICallback = callback;
     var url = pageInfo.getApiUrl(page, "simpleSearchAPICallback");
     var s = document.createElement("script");
@@ -20,18 +20,18 @@ function simpleSearchAPIJsonp(page, callback) {
     s.charset = "utf-8";
     headTag.appendChild(s);
 }
-function simpleJsonpCallback(data) {
+function simpleJsonpCallback (data) {
     headTag.removeChild(headTag.lastChild);
     simpleSearchAPICallback(data);
 }
 
-function loadInitialData(callback) {
+function loadInitialData (callback) {
     simpleSearchAPIJsonp(pageInfo.initPage, function (data) {
         psTitle.innerHTML = data.title;
         initSlide(data);
     });
 }
-function loadMoreData(page, callback) {
+function loadMoreData (page, callback) {
     simpleSearchAPIJsonp(page, function (data) {
         callback(data);
     });
@@ -66,7 +66,7 @@ var ImageSearchDataSource = slide.DataSource.extend({
     }
 });
 
-function initSlide(data) {
+function initSlide (data) {
     wrapper.style.display = "block";
     ImgManager.setClientSize(wrapper);
 
@@ -125,7 +125,7 @@ function onImgLoadError (el) {
     el.parentNode.style.background = "none";
 }
 
-function buildSlides(data) {
+function buildSlides (data) {
     totalCount = data.count;
     var items = data.list.data,
         arr = [];
@@ -147,17 +147,17 @@ function buildSlides(data) {
 
 
 function createDesc (data) {
-    return '<div id="title-wrap" style="opacity: 0.8; display: block;">'
-            + '<div class="inner">'
-                + '<a href="http://newslink.media.daum.net/mobile/'+data.id+'" class="title">'+data.title+'</a>'
-                + '<span class="bar">|</span>'
-                + '<a href="http://newslink.media.daum.net/mobile/'+data.id+'" class="link">기사보기</a>'
-                + '<span class="ico"><span></span></span>'
-            + '</div>'
-          + '</div>';
+    return '<div id="title-wrap" style="opacity: 0.8; display: block;">' +
+             '<div class="inner">' +
+                '<a href="http://newslink.media.daum.net/mobile/'+data.id+'" class="title">'+data.title+'</a>' +
+                '<span class="bar">|</span>' +
+                '<a href="http://newslink.media.daum.net/mobile/'+data.id+'" class="link">기사보기</a>' +
+                '<span class="ico"><span></span></span>' +
+             '</div>' +
+            '</div>';
 }
 
-(function main() {
+(function main () {
     window.addEventListener("load", function(e){
         loadInitialData();
         closeBtn.addEventListener("click", function () {
@@ -195,12 +195,12 @@ var ImgManager = {
         }
     },
     resizeByHeight: function (width, height) {
-        return {width: parseInt(this.clientHeight * width / height), height: this.clientHeight};
+        return {width: parseInt(this.clientHeight * width / height, 10), height: this.clientHeight};
     },
     resizeByWidth: function (width, height) {
-        return {width: this.clientWidth, height: parseInt(this.clientWidth * height / width)};
+        return {width: this.clientWidth, height: parseInt(this.clientWidth * height / width, 10)};
     },
     getImgOffset: function (width, height) {
-        return {left: parseInt((this.clientWidth + 10 - width) / 2), top: parseInt((this.clientHeight + 10 - height) / 2)};
+        return {left: parseInt((this.clientWidth + 10 - width) / 2, 10), top: parseInt((this.clientHeight + 10 - height) / 2, 10)};
     }
 };

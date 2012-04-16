@@ -179,7 +179,7 @@
 
             this.slide(movingOffset, function onMoveNextEnd() {
                 self.moveFirstPanelToLast();
-                self.setNextQueryInLast();                       
+                self.setNextQueryInLast();
                 self.emit("next");
             });
         },
@@ -425,7 +425,7 @@
         },
             /**
              * 변경된 wrapper 사이즈를 확인/저장 한다.
-             */   
+             */
             setWrapperSize: function () {
                 this.pageWidth = this.wrapper.clientWidth;
                 this.pageHeight = this.wrapper.clientHeight;
