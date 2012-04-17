@@ -70,7 +70,45 @@
             }, 50);
         });
     }
+    var Panel = Class.extend({
+        init: function (width, enableTransform) {
+            this.el = createPanel(width, enableTransform);
+        },
+        createPanel: function (width, enableTransform) {
+            var panel = document.createElement("div"),
+                hardwareAccelStyle = enableTransform ? '-webkit-transform:translate3d(0,0,0);' : '';
 
+            panel.className = "panel";
+            panel.style.cssText = 'height:100%;overflow:hidden;display:inline-block;' + hardwareAccelStyle + 'width:' + width + 'px;';
+            return panel;
+        },
+        setWidth: function (width) {
+            this.el.style.width = width + 'px';
+        },
+        setData: function (data) {
+            this.el.innerHTML = data ? data.toHTML() : '&nbsp;';
+        },
+        leavePanelList: function () {
+            var parent = this.el.parentNode;
+            if (parent) {
+                parent.removeChild(this.el);
+            }
+        },
+        enterLastOfPanelList: function (parent) {
+            parent.appendChild(this.el);
+        },
+        enterFirstOfPanelList: function (parent, firstEl) {
+            parent.insertBefore(this.el, firstEl);
+        },
+        moveLastPanelTofirst: function () {
+            var panel = this.panels.pop();
+            this.panels.unshift(panel);
+        },
+        movefirstPanelToLast: function () {
+            var panel = this.panels.shift();
+            this.panels.push(panel);
+        }
+    });
 
     exports.Slide = slide.Observable.extend({
         /**
