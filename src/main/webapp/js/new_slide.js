@@ -70,16 +70,18 @@
             }, 50);
         });
     }
+
     var Panel = Class.extend({
         init: function (width, enableTransform) {
-            this.el = createPanel(width, enableTransform);
+            this.el = this.createPanel(width, enableTransform);
         },
         createPanel: function (width, enableTransform) {
             var panel = document.createElement("div"),
                 hardwareAccelStyle = enableTransform ? '-webkit-transform:translate3d(0,0,0);' : '';
 
             panel.className = "panel";
-            panel.style.cssText = 'height:100%;overflow:hidden;display:inline-block;' + hardwareAccelStyle + 'width:' + width + 'px;';
+            panel.style.cssText = 'height:100%;overflow:hidden;display:inline-block;' + 
+                                    hardwareAccelStyle + 'width:' + width + 'px;';
             return panel;
         },
         setWidth: function (width) {
@@ -99,14 +101,6 @@
         },
         enterFirstOfPanelList: function (parent, firstEl) {
             parent.insertBefore(this.el, firstEl);
-        },
-        moveLastPanelTofirst: function () {
-            var panel = this.panels.pop();
-            this.panels.unshift(panel);
-        },
-        movefirstPanelToLast: function () {
-            var panel = this.panels.shift();
-            this.panels.push(panel);
         }
     });
 
@@ -151,16 +145,17 @@
          * wrapper 내부에 들어갈 mark up 구조를 설정한다.
          */
         initPanels: function () {
-            var panelString = this.buildPanelHTML();
             this.wrapper.innerHTML =
                 '<div class="slide" id="slide-' + slideInstanceNum + '" style="overflow:hidden;position:relative;top:0;transform:translate3d(0,0,0);' +
-                    'left:' + (-this.pageWidth) + 'px;width:' + (this.pageWidth * 3) + 'px;">' +
-                    panelString + panelString + panelString + '</div>';
+                    'left:' + (-this.pageWidth) + 'px;width:' + (this.pageWidth * 3) + 'px;"></div>';
             this.el = document.getElementById("slide-" + slideInstanceNum);
 
             // TODO should avoid HTMLCollection!
             // this.panels = Array.prototype.slice.call(this.el.getElementsByClassName("panel"));
-            this.panels = this.el.getElementsByClassName("panel");
+            for (var i=0; i< 3; i++) {
+                this.panels.push(new Panel(this.pageWidth, this.enableTransform));
+                this.el.appendChild(this.panels[i].el);
+            }
         },
             /**
              * panel 내부에 들어갈 mark up 구조를 설정한다.
@@ -197,9 +192,9 @@
         show: function () {
             var panels = this.panels;
             this.dataSource.queryCurrentSet(function (set) {
-                panels[0].innerHTML = set.prev ? set.prev.toHTML() : '&nbsp;';
-                panels[1].innerHTML = set.current ? set.current.toHTML() : '&nbsp;';
-                panels[2].innerHTML = set.next ? set.next.toHTML() : '&nbsp;';
+                panels[0].setData(set.prev);
+                panels[1].setData(set.current);
+                panels[2].setData(set.next);
             });
         },
 
@@ -239,9 +234,12 @@
              * 첫번째 패널을 마지막으로 옮긴다.
              */
             rearrangePanelsAfterNext: function () {
-                var firstPanel = this.el.removeChild(this.panels[0]);
+                var panel = this.panels.shift(),
+                    firstPanelEl = panel.el;
+                this.el.removeChild(firstPanelEl);
                 this.move(0);
-                this.el.appendChild(firstPanel);
+                this.el.appendChild(firstPanelEl);
+                this.panels.push(panel);
             },
             /**
              * 마지막 패널에 다음 데이터를 넣는다.
@@ -250,7 +248,7 @@
                 var self = this;
                 this.dataSource.next();
                 this.dataSource.queryNext(function (next) {
-                    self.panels[2].innerHTML = next ? next.toHTML() : '&nbsp;';
+                    self.panels[2].setData(next);
                 });
             },
         /**
@@ -288,9 +286,13 @@
              * 마지막 패널을 첫번째로 옮긴다.
              */
             rearrangePanelsAfterPrev: function () {
-                var lastPanel = this.el.removeChild(this.panels[2]);
+                var panel = this.panels.pop(),
+                    lastPanelEl = panel.el,
+                    firstPanelEl = this.panels[0].el;
+                this.el.removeChild(lastPanelEl);
                 this.move(0);
-                this.el.insertBefore(lastPanel, this.panels[0]);
+                this.el.insertBefore(lastPanelEl, firstPanelEl);
+                this.panels.unshift(panel);
             },
             /**
              * 첫번째 패널에 이전 데이터를 넣는다.
@@ -299,7 +301,7 @@
                 var self = this;
                 this.dataSource.prev();
                 this.dataSource.queryPrev(function (prev) {
-                    self.panels[0].innerHTML = prev ? prev.toHTML() : '&nbsp;';
+                    self.panels[0].setData(prev);
                 });
             },
 
@@ -489,8 +491,8 @@
              * 변경된 panel들의 사이즈를 다시 설정한다.
              */
             setPanelsSize: function () {
-                for (var i = 0; i < this.panels.length; i += 1) {
-                    this.panels[i].style.width = this.pageWidth + 'px';
+                for (var i = 0, len = this.panels.length; i < len; i += 1) {
+                    this.panels[i].setWidth(this.pageWidth);
                 }
             },
             /**
