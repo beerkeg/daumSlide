@@ -4,9 +4,13 @@
 (function (exports) {
     'use strict';
 
-    // TODO rename 'el'
-    // TODO panel DOM -> panel view
-    // TODO external handler
+    // TODO remove `slide.js`
+    // TODO rename`new_slide.js` to `slide.js`
+    // TODO rename `wrapper` to `frame`
+    // TODO rename `el` to `slider`
+    // TODO introduce `panel` class
+    // TODO introduce `frame` class
+
 
     var SLIDE_TRESHOLD = 0.1; // 20%
 
