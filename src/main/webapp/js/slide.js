@@ -51,7 +51,6 @@
     })();
     var hardwareAccelStyle = isTransformEnabled ? '-webkit-transform:translate3d(0,0,0);' : '';
 
-
     /**
      * resize, orientation change 이벤트가 발생하여도 coordniation 값이 바로 바뀌지 경우가 있어 (android)
      * 이를 보정하기 위하여 실제 coordination 값이 바뀌었을 때 resize 를 호출하여준다.
@@ -84,6 +83,10 @@
 
     var PANEL_PREV = 0, PANEL_CURRENT = 1, PANEL_NEXT = 2;
     var Panel = Class.extend({
+        /**
+         * 새로운 Panel을 생성/초기화 한다.
+         * @param slide {Slide Class}
+         */
         init: function (slide) {
             this.slide = slide;
             this.el = this.createPanel(slide.pageWidth);
@@ -93,6 +96,10 @@
                 self.setWidth(width);
             });
         },
+        /**
+         * panel Element를 생성/초기화 한다.
+         * @param width {Number}
+         */
         createPanel: function (width) {
             var panel = document.createElement("div");
 
@@ -101,15 +108,27 @@
                                     hardwareAccelStyle + 'width:' + width + 'px;';
             return panel;
         },
+        /**
+         * panel Element의 넓이를 바꾼다.
+         * @param width {Number}
+         */
         setWidth: function (width) {
             this.el.style.width = width + 'px';
         },
+        /**
+         * panel Element에 data를 넣는다.
+         * @param data {HTMLElement}
+         */
         setData: function (data) {
             this.el.innerHTML = data ? data.toHTML() : '&nbsp;';
         }
     });
 
     var Container = Class.extend({
+        /**
+         * 새로운 Container를 생성/초기화 한다.
+         * @param slide {Slide Class}
+         */
         init: function (slide) {
             slideInstanceNum+=1;
             this.slide = slide;
@@ -120,6 +139,9 @@
             this.initPanels();
             this.bindEvents();
         },
+        /**
+         * slide(container Element)를 생성 한다.
+         */
         createContainer: function (width, enableTransform) {
             var container = document.createElement("div");
 
@@ -129,17 +151,26 @@
                                         "left:" + (-width) + "px;width:" + (width * 3) + "px;";
             return container;
         },
+        /**
+         * slide내에 존재하는 패널들을 생성/초기화 한다.
+         */
         initPanels: function () {
             this.initPanel(PANEL_PREV);
             this.initPanel(PANEL_CURRENT);
             this.initPanel(PANEL_NEXT);
         },
+            /**
+             * panel 생성/초기화 한다.
+             */
             initPanel: function (index) {
                 var panel = new Panel(this.slide);
                 this.panels[index] = panel;
                 this.el.appendChild(panel.el);
             },
-
+        /**
+         * slide에 있는 패널들에 현재 인덱스 기준의 데이터 셋을 넣는다.
+         * @param set {Object} HTMLElement 데이터 셋
+         */
         bindEvents: function () {
             var GESTURE_THRESHOLD = 0,
                 listener = gesture.GestureListener(this.el, GESTURE_THRESHOLD),
@@ -159,15 +190,27 @@
                 self.setSlideSizeAndOffset(width);
             });
         },
+        /**
+         * slide에 있는 패널들에 현재 인덱스 기준의 데이터 셋을 넣는다.
+         * @param set {Object} HTMLElement 데이터 셋
+         */
         setData: function (set) {
             var panels = this.panels;
             panels[PANEL_PREV].setData(set.prev);
             panels[PANEL_CURRENT].setData(set.current);
             panels[PANEL_NEXT].setData(set.next);
         },
+        /**
+         * 마지막 패널에 next 데이터를 넣는다.
+         * @param next {HTMLElement} 다음 데이터
+         */
         setNextData: function (next) {
             this.panels[PANEL_NEXT].setData(next);
         },
+        /**
+         * 첫번째 패널에 prev 데이터를 넣는다.
+         * @param prev {HTMLElement} 이전 데이터
+         */
         setPrevData: function (prev) {
             this.panels[PANEL_PREV].setData(prev);
         },
@@ -198,46 +241,49 @@
         },
         /**
          * 주어진 offset 만큼 slide를 좌우 이동 시킨다.
-         * css transition animation 없이 단순 이동
          * @param offset {Number} 이동시킬 거리 값
          */
         move: function (offset) {
-            if (isTransformEnabled) {
-                this.moveByTranslate3d(offset);
-            } else {
-                this.moveByLeft(offset);
-            }
-        },
-        moveByTranslate3d: function (offset) {
             this.el.style.webkitTransform = 'translate3d(' + offset + 'px, 0, 0)';
         },
-        moveByLeft: function (offset) {
-            this.el.style.left = (offset - slide.pageWidth) + 'px';
-        },
+        /**
+         * 해당 slide(컨테이너 Element) 의 transitionDuration을 설정한다.
+         * @param duration {Number}
+         */
         setTransitionDuration: function (duration) {
-            if (isTransformEnabled) {
-                this.el.style.webkitTransitionDuration = duration + 'ms';
-            }
+            this.el.style.webkitTransitionDuration = duration + 'ms';
         },
         /**
          * 변경된 slide size 와 offset 을 다시 설정한다.
+         * @param width {Number}
          */
         setSlideSizeAndOffset: function (width) {
             this.el.style.width = (width * 3) + 'px';
             this.el.style.left = (-width) + 'px';
         },
+        /**
+         * 해당 slide(컨테이너 Element) 의 실제 크기를 반환한다.
+         */
         getWidth : function () {
             return this.el.clientWidth;
         },
+        /**
+         * 해당 콜백을 onwebkitTransitionEnd 에 등록한다.
+         * @param callback {function}
+         */
         onTransitionEnd: function (callback) {
             this.el.addEventListener('webkitTransitionEnd', callback);
         },
+        /**
+         * 해당 콜백을 onwebkitTransitionEnd 에서 제거한다.
+         * @param callback {function}
+         */
         offTransitionEnd: function (callback) {
             this.el.removeEventListener('webkitTransitionEnd', callback);
         }
     });
-
-    exports.Slide = slide.Observable.extend({
+    
+    var slide3d = slide.Observable.extend({
         /**
          * 새로운 Slide를 초기화 또는 생성한다.
          * @param frameEl {HTMLElement}
@@ -261,6 +307,7 @@
          */
         initContainer: function () {
             this.container = new Container(this);
+            this.frameEl.innerHTML = '';
             this.frameEl.appendChild(this.container.el);
         },
         /**
@@ -371,29 +418,22 @@
          * @param callback {Function} transition animation 이 끝난 이후 호출되는 callback 함수
          */
         slide: function (offset, callback) {
-            if (isTransformEnabled) {
-                var container = this.container;
-                this.enableTransition();
-                container.move(offset);
+            var container = this.container;
+            this.enableTransition();
+            container.move(offset);
 
-                this.startTransitionEndTimer();
+            this.startTransitionEndTimer();
 
-                var self = this;
-                container.onTransitionEnd(function onTransitionEnd() {
-                    container.offTransitionEnd(onTransitionEnd);
-                    self.stopTransitionEndTimer();
-                    self.disableTransition();
+            var self = this;
+            container.onTransitionEnd(function onTransitionEnd() {
+                container.offTransitionEnd(onTransitionEnd);
+                self.stopTransitionEndTimer();
+                self.disableTransition();
 
-                    if (callback) {
-                        callback();
-                    }
-                });
-            } else {
-                this.container.move(offset);
                 if (callback) {
                     callback();
                 }
-            }
+            });
         },
             /**
              * transitionEndTimer를 동작시킨다.
@@ -525,5 +565,30 @@
             }
     });
 
+    var Container2d = Container.extend({
+        /**
+         * 주어진 offset 만큼 slide를 좌우 이동 시킨다.
+         * css transition animation 없이 단순 이동
+         * @param offset {Number} 이동시킬 거리 값
+         */
+        move: function (offset) {
+            this.el.style.left = (offset - this.slide.pageWidth) + 'px';
+        }
+    });
+    var slide2d = slide3d.extend({
+        initContainer: function () {
+            this.container = new Container2d(this);
+            this.frameEl.innerHTML = '';
+            this.frameEl.appendChild(this.container.el);
+        },
+        slide: function (offset, callback) {
+            this.container.move(offset);
+            if (callback) {
+                callback();
+            }
+        }
+    });
+
+    exports.Slide = isTransformEnabled ? slide3d : slide2d;
 })(window.slide = (typeof slide === 'undefined') ? {} : slide);
 
