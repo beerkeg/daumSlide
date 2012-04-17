@@ -4,8 +4,6 @@
 (function (exports) {
     'use strict';
 
-    // TODO remove `slide.js`
-    // TODO rename`new_slide.js` to `slide.js`
     // TODO rename `wrapper` to `frame`
     // TODO rename `el` to `slider`
     // TODO introduce `panel` class
