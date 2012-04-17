@@ -4,8 +4,7 @@
 (function (exports) {
     'use strict';
 
-    // TODO rename `el` to `slider`
-    // TODO introduce `frame` class
+    // TODO introduce `container` class
 
     var SLIDE_TRESHOLD = 0.1; // 20%
 
