@@ -72,8 +72,14 @@
 
     var PANEL_PREV = 0, PANEL_CURRENT = 1, PANEL_NEXT = 2;
     var Panel = Class.extend({
-        init: function (width, enableTransform) {
-            this.el = this.createPanel(width, enableTransform);
+        init: function (slide) {
+            this.slide = slide;
+            this.el = this.createPanel(slide.pageWidth, slide.isTransformEnabled);
+
+            var self = this;
+            this.slide.on('resize', function (width) {
+                self.setWidth(width);
+            });
         },
         createPanel: function (width, enableTransform) {
             var panel = document.createElement("div"),
@@ -102,12 +108,12 @@
             slideInstanceNum++;
 
             this.frameEl = frameEl;
-            this.el = null;
+            this.sliderEl = null;
             this.panels = [];
 
             this.dataSource = dataSource;
 
-            this.enableTransform = false;
+            this.isTransformEnabled = false;
             this.isInTransition = false;
 
             this.pageWidth = this.frameEl.clientWidth;
@@ -122,12 +128,13 @@
          * 3d gpu 가속 여부를 사용할수 있는지 판단한다.
          * @param uaString {String}
          */
+            // TODO scope 내 variable 로 이동
         enable3DTransform: function (uaString) {
             var ua = userAgent(uaString),
                 isOverGingerBread = ua.androidVersion.major > 2 ||
                     (ua.androidVersion.major === 2 && ua.androidVersion.minor >= 3);
-            this.enableTransform = ((ua.isAndroid() && isOverGingerBread) || ua.isIOS() || ua.isSafari());
-            return this.enableTransform;
+            this.isTransformEnabled = ((ua.isAndroid() && isOverGingerBread) || ua.isIOS() || ua.isSafari());
+            return this.isTransformEnabled;
         },
         /**
          * wrapper 내부에 들어갈 mark up 구조를 설정한다.
@@ -136,7 +143,7 @@
             this.frameEl.innerHTML =
                 '<div class="slide" id="slide-' + slideInstanceNum + '" style="overflow:hidden;position:relative;top:0;transform:translate3d(0,0,0);' +
                     'left:' + (-this.pageWidth) + 'px;width:' + (this.pageWidth * 3) + 'px;"></div>';
-            this.el = document.getElementById("slide-" + slideInstanceNum);
+            this.sliderEl = document.getElementById("slide-" + slideInstanceNum);
         },
         initPanels: function () {
             this.initPanel(PANEL_PREV);
@@ -144,15 +151,16 @@
             this.initPanel(PANEL_NEXT);
         },
             initPanel: function (index) {
-                this.panels.push(new Panel(this.pageWidth, this.enableTransform));
-                this.el.appendChild(this.panels[index].el);
+                var panel = new Panel(this);
+                this.panels[index] = panel;
+                this.sliderEl.appendChild(panel.el);
             },
         /**
          * slide 에 필요한 event를 bind 시킨다.
          */
         bindEvents: function () {
             var GESTURE_THRESHOLD = 0,
-                listener = gesture.GestureListener(this.el, GESTURE_THRESHOLD),
+                listener = gesture.GestureListener(this.sliderEl, GESTURE_THRESHOLD),
                 self = this;
 
             listener.onGestureStart(function (session) {
@@ -165,8 +173,8 @@
                 return self.endDrag(session);
             });
 
-            onResized(this.frameEl, function () {
-                self.resize();
+            onResized(this.frameEl, function (width, height) {
+                self.resize(width, height);
             });
         },
         /**
@@ -219,9 +227,9 @@
             rearrangePanelsAfterNext: function () {
                 var panel = this.panels.shift(),
                     firstPanelEl = panel.el;
-                this.el.removeChild(firstPanelEl);
+                this.sliderEl.removeChild(firstPanelEl);
                 this.move(0);
-                this.el.appendChild(firstPanelEl);
+                this.sliderEl.appendChild(firstPanelEl);
                 this.panels.push(panel);
             },
             /**
@@ -272,9 +280,9 @@
                 var panel = this.panels.pop(),
                     lastPanelEl = panel.el,
                     firstPanelEl = this.panels[0].el;
-                this.el.removeChild(lastPanelEl);
+                this.sliderEl.removeChild(lastPanelEl);
                 this.move(0);
-                this.el.insertBefore(lastPanelEl, firstPanelEl);
+                this.sliderEl.insertBefore(lastPanelEl, firstPanelEl);
                 this.panels.unshift(panel);
             },
             /**
@@ -295,15 +303,15 @@
          * @param callback {Function} transition animation 이 끝난 이후 호출되는 callback 함수
          */
         slide: function (offset, callback) {
-            if (this.enableTransform) {
+            if (this.isTransformEnabled) {
                 this.enableTransition();
-                this.el.style.webkitTransform = 'translate3d(' + offset + 'px, 0, 0)';
+                this.sliderEl.style.webkitTransform = 'translate3d(' + offset + 'px, 0, 0)';
 
                 this.startTransitionEndTimer();
 
                 var self = this;
-                this.el.addEventListener('webkitTransitionEnd', function onTransitionEnd() {
-                    self.el.removeEventListener('webkitTransitionEnd', onTransitionEnd);
+                this.sliderEl.addEventListener('webkitTransitionEnd', function onTransitionEnd() {
+                    self.sliderEl.removeEventListener('webkitTransitionEnd', onTransitionEnd);
                     self.stopTransitionEndTimer();
                     self.disableTransition();
 
@@ -312,7 +320,7 @@
                     }
                 });
             } else {
-                this.el.style.left = (offset - this.pageWidth) +'px';
+                this.sliderEl.style.left = (offset - this.pageWidth) +'px';
                 if (callback) {
                     callback();
                 }
@@ -343,10 +351,10 @@
          * @param offset {Number} 이동시킬 거리 값
          */
         move: function (offset) {
-            if (this.enableTransform) {
-                this.el.style.webkitTransform = 'translate3d(' + offset + 'px, 0, 0)';
+            if (this.isTransformEnabled) {
+                this.sliderEl.style.webkitTransform = 'translate3d(' + offset + 'px, 0, 0)';
             } else {
-                this.el.style.left = (offset - this.pageWidth) + 'px';
+                this.sliderEl.style.left = (offset - this.pageWidth) + 'px';
             }
         },
         /**
@@ -414,7 +422,7 @@
              * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
              */
             isNextThreshold: function (session) {
-                return this.el.clientWidth * -1 * SLIDE_TRESHOLD > session.delta.x;
+                return this.sliderEl.clientWidth * -1 * SLIDE_TRESHOLD > session.delta.x;
             },
             /**
              * 제스처가 오른쪽으로 일정 거리이상 혹은 빠르게 움직였을 경우에 true
@@ -428,7 +436,7 @@
              * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
              */
             isPrevThreshold: function (session) {
-                return this.el.clientWidth * SLIDE_TRESHOLD < session.delta.x;
+                return this.sliderEl.clientWidth * SLIDE_TRESHOLD < session.delta.x;
             },
         /**
          * Transition을 on한다.
@@ -450,39 +458,30 @@
              * @param duration {Integer} Transition Duration Value
              */
             setTransitionDuration: function (duration) {
-                if (this.enableTransform) {
-                    this.el.style.webkitTransitionDuration = duration + 'ms';
+                if (this.isTransformEnabled) {
+                    this.sliderEl.style.webkitTransitionDuration = duration + 'ms';
                 }
             },
         /**
          * 변경된 wrapper, slide, panels의 size 와 offset을 다시 설정한다.
          */
-        resize: function () {
-            this.setWrapperSize();
-            this.setPanelsSize();
-            this.setSlideSizeAndOffset();
-            this.emit("resize");
+        resize: function (width, height) {
+            this.setWrapperSize(width, height);
+            this.setSlideSizeAndOffset(width, height);
+            this.emit("resize", width, height);
         },
             /**
              * 변경된 wrapper 사이즈를 확인/저장 한다.
              */
-            setWrapperSize: function () {
-                this.pageWidth = this.frameEl.clientWidth;
-            },
-            /**
-             * 변경된 panel들의 사이즈를 다시 설정한다.
-             */
-            setPanelsSize: function () {
-                for (var i = 0, len = this.panels.length; i < len; i += 1) {
-                    this.panels[i].setWidth(this.pageWidth);
-                }
+            setWrapperSize: function (width) {
+                this.pageWidth = width;
             },
             /**
              * 변경된 slide size 와 offset 을 다시 설정한다.
              */
-            setSlideSizeAndOffset: function () {
-                this.el.style.width = (this.pageWidth * 3) + 'px';
-                this.el.style.left = (-this.pageWidth) + 'px';
+            setSlideSizeAndOffset: function (width) {
+                this.sliderEl.style.width = (width * 3) + 'px';
+                this.sliderEl.style.left = (-width) + 'px';
             }
     });
 
