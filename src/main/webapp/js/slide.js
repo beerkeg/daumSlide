@@ -4,7 +4,6 @@
 (function (exports) {
     'use strict';
 
-    // TODO rename `wrapper` to `frame`
     // TODO rename `el` to `slider`
     // TODO introduce `frame` class
 
@@ -96,13 +95,13 @@
     exports.Slide = slide.Observable.extend({
         /**
          * 새로운 Slide를 초기화 또는 생성한다.
-         * @param wrapper {HTMLElement}
+         * @param frameEl {HTMLElement}
          * @param dataSource {Object} slide.DataSource 객체
          */
-        init: function (wrapper, dataSource) {
+        init: function (frameEl, dataSource) {
             slideInstanceNum++;
 
-            this.wrapper = wrapper;
+            this.frameEl = frameEl;
             this.el = null;
             this.panels = [];
 
@@ -111,7 +110,7 @@
             this.enableTransform = false;
             this.isInTransition = false;
 
-            this.pageWidth = this.wrapper.clientWidth;
+            this.pageWidth = this.frameEl.clientWidth;
 
             this.enable3DTransform();
             this.initSlider();
@@ -134,7 +133,7 @@
          * wrapper 내부에 들어갈 mark up 구조를 설정한다.
          */
         initSlider: function () {
-            this.wrapper.innerHTML =
+            this.frameEl.innerHTML =
                 '<div class="slide" id="slide-' + slideInstanceNum + '" style="overflow:hidden;position:relative;top:0;transform:translate3d(0,0,0);' +
                     'left:' + (-this.pageWidth) + 'px;width:' + (this.pageWidth * 3) + 'px;"></div>';
             this.el = document.getElementById("slide-" + slideInstanceNum);
@@ -166,7 +165,7 @@
                 return self.endDrag(session);
             });
 
-            onResized(this.wrapper, function () {
+            onResized(this.frameEl, function () {
                 self.resize();
             });
         },
@@ -468,7 +467,7 @@
              * 변경된 wrapper 사이즈를 확인/저장 한다.
              */
             setWrapperSize: function () {
-                this.pageWidth = this.wrapper.clientWidth;
+                this.pageWidth = this.frameEl.clientWidth;
             },
             /**
              * 변경된 panel들의 사이즈를 다시 설정한다.
