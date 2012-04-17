@@ -6,9 +6,7 @@
 
     // TODO rename `wrapper` to `frame`
     // TODO rename `el` to `slider`
-    // TODO introduce `panel` class
     // TODO introduce `frame` class
-
 
     var SLIDE_TRESHOLD = 0.1; // 20%
 
@@ -73,6 +71,7 @@
         });
     }
 
+    var PANEL_PREV = 0, PANEL_CURRENT = 1, PANEL_NEXT = 2;
     var Panel = Class.extend({
         init: function (width, enableTransform) {
             this.el = this.createPanel(width, enableTransform);
@@ -91,18 +90,6 @@
         },
         setData: function (data) {
             this.el.innerHTML = data ? data.toHTML() : '&nbsp;';
-        },
-        leavePanelList: function () {
-            var parent = this.el.parentNode;
-            if (parent) {
-                parent.removeChild(this.el);
-            }
-        },
-        enterLastOfPanelList: function (parent) {
-            parent.appendChild(this.el);
-        },
-        enterFirstOfPanelList: function (parent, firstEl) {
-            parent.insertBefore(this.el, firstEl);
         }
     });
 
@@ -125,9 +112,9 @@
             this.isInTransition = false;
 
             this.pageWidth = this.wrapper.clientWidth;
-            this.pageHeight = this.wrapper.clientHeight;
 
             this.enable3DTransform();
+            this.initSlider();
             this.initPanels();
             this.show();
             this.bindEvents();
@@ -146,25 +133,20 @@
         /**
          * wrapper 내부에 들어갈 mark up 구조를 설정한다.
          */
-        initPanels: function () {
+        initSlider: function () {
             this.wrapper.innerHTML =
                 '<div class="slide" id="slide-' + slideInstanceNum + '" style="overflow:hidden;position:relative;top:0;transform:translate3d(0,0,0);' +
                     'left:' + (-this.pageWidth) + 'px;width:' + (this.pageWidth * 3) + 'px;"></div>';
             this.el = document.getElementById("slide-" + slideInstanceNum);
-
-            // TODO should avoid HTMLCollection!
-            // this.panels = Array.prototype.slice.call(this.el.getElementsByClassName("panel"));
-            for (var i=0; i< 3; i++) {
-                this.panels.push(new Panel(this.pageWidth, this.enableTransform));
-                this.el.appendChild(this.panels[i].el);
-            }
         },
-            /**
-             * panel 내부에 들어갈 mark up 구조를 설정한다.
-             */
-            buildPanelHTML: function () {
-                var hardwareAccelStyle = this.enableTransform ? '-webkit-transform:translate3d(0,0,0);' : '';
-                return '<div class="panel" style="height: 100%;overflow:hidden;display:inline-block;' + hardwareAccelStyle + 'width:' + this.pageWidth + 'px;"></div>';
+        initPanels: function () {
+            this.initPanel(PANEL_PREV);
+            this.initPanel(PANEL_CURRENT);
+            this.initPanel(PANEL_NEXT);
+        },
+            initPanel: function (index) {
+                this.panels.push(new Panel(this.pageWidth, this.enableTransform));
+                this.el.appendChild(this.panels[index].el);
             },
         /**
          * slide 에 필요한 event를 bind 시킨다.
@@ -194,9 +176,9 @@
         show: function () {
             var panels = this.panels;
             this.dataSource.queryCurrentSet(function (set) {
-                panels[0].setData(set.prev);
-                panels[1].setData(set.current);
-                panels[2].setData(set.next);
+                panels[PANEL_PREV].setData(set.prev);
+                panels[PANEL_CURRENT].setData(set.current);
+                panels[PANEL_NEXT].setData(set.next);
             });
         },
 
@@ -250,7 +232,7 @@
                 var self = this;
                 this.dataSource.next();
                 this.dataSource.queryNext(function (next) {
-                    self.panels[2].setData(next);
+                    self.panels[PANEL_NEXT].setData(next);
                 });
             },
         /**
@@ -303,7 +285,7 @@
                 var self = this;
                 this.dataSource.prev();
                 this.dataSource.queryPrev(function (prev) {
-                    self.panels[0].setData(prev);
+                    self.panels[PANEL_PREV].setData(prev);
                 });
             },
 
@@ -487,7 +469,6 @@
              */
             setWrapperSize: function () {
                 this.pageWidth = this.wrapper.clientWidth;
-                this.pageHeight = this.wrapper.clientHeight;
             },
             /**
              * 변경된 panel들의 사이즈를 다시 설정한다.
