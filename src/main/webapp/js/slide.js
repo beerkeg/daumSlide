@@ -104,7 +104,7 @@
             var panel = document.createElement("div");
 
             panel.className = "panel";
-            panel.style.cssText = 'height:100%;overflow:hidden;display:inline-block;' + 
+            panel.style.cssText = 'height:100%;overflow:hidden;display:inline-block;' +
                                     hardwareAccelStyle + 'width:' + width + 'px;';
             return panel;
         },
