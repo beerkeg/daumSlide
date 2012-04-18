@@ -43,7 +43,7 @@
      * 3d gpu 가속 여부를 사용할수 있는지 판단한다.
      * @param uaString {String}
      */
-    var isTransformEnabled =  (function () {
+    var isTransformEnabled = exports.isTransformEnabled =  (function () {
         var ua = userAgent(),
             isOverGingerBread = ua.androidVersion.major > 2 ||
                 (ua.androidVersion.major === 2 && ua.androidVersion.minor >= 3);
@@ -241,17 +241,11 @@
         },
         /**
          * 주어진 offset 만큼 slide를 좌우 이동 시킨다.
+         * css transition animation 없이 단순 이동
          * @param offset {Number} 이동시킬 거리 값
          */
         move: function (offset) {
-            this.el.style.webkitTransform = 'translate3d(' + offset + 'px, 0, 0)';
-        },
-        /**
-         * 해당 slide(컨테이너 Element) 의 transitionDuration을 설정한다.
-         * @param duration {Number}
-         */
-        setTransitionDuration: function (duration) {
-            this.el.style.webkitTransitionDuration = duration + 'ms';
+            this.el.style.left = (offset - this.slide.pageWidth) + 'px';
         },
         /**
          * 변경된 slide size 와 offset 을 다시 설정한다.
@@ -266,24 +260,10 @@
          */
         getWidth : function () {
             return this.el.clientWidth;
-        },
-        /**
-         * 해당 콜백을 onwebkitTransitionEnd 에 등록한다.
-         * @param callback {function}
-         */
-        onTransitionEnd: function (callback) {
-            this.el.addEventListener('webkitTransitionEnd', callback);
-        },
-        /**
-         * 해당 콜백을 onwebkitTransitionEnd 에서 제거한다.
-         * @param callback {function}
-         */
-        offTransitionEnd: function (callback) {
-            this.el.removeEventListener('webkitTransitionEnd', callback);
         }
     });
     
-    var slide3d = slide.Observable.extend({
+    var Slide = slide.Observable.extend({
         /**
          * 새로운 Slide를 초기화 또는 생성한다.
          * @param frameEl {HTMLElement}
@@ -295,7 +275,6 @@
 
             this.dataSource = dataSource;
 
-            this.isInTransition = false;
             this.pageWidth = this.frameEl.clientWidth;
 
             this.initContainer();
@@ -334,10 +313,6 @@
          * 만약, 다음 슬라이드에 내용이 없을 경우 이동 시키지 않는다.
          */
         next: function () {
-            if (this.isInTransition) {
-                return;
-            }
-
             var self = this;
             this.dataSource.queryNext(function (next) {
                 if (next === null) {
@@ -375,10 +350,6 @@
          * 만약, 이전 슬라이드에 내용이 없을 경우 이동 시키지 않는다.
          */
         prev: function () {
-            if (this.isInTransition) {
-                return;
-            }
-
             var self = this;
             this.dataSource.queryPrev(function (prev) {
                 if (prev === null) {
@@ -418,50 +389,15 @@
          * @param callback {Function} transition animation 이 끝난 이후 호출되는 callback 함수
          */
         slide: function (offset, callback) {
-            var container = this.container;
-            this.enableTransition();
-            container.move(offset);
-
-            this.startTransitionEndTimer();
-
-            var self = this;
-            container.onTransitionEnd(function onTransitionEnd() {
-                container.offTransitionEnd(onTransitionEnd);
-                self.stopTransitionEndTimer();
-                self.disableTransition();
-
-                if (callback) {
-                    callback();
-                }
-            });
+            this.container.move(offset);
+            if (callback) {
+                callback();
+            }
         },
-            /**
-             * transitionEndTimer를 동작시킨다.
-             * transition end event 가 정상적으로 발생되지 않는 경우를 위한 보조 수단
-             */
-            startTransitionEndTimer: function () {
-                var self = this;
-                window.clearTimeout(this.transitionEndTimer);
-                this.transitionEndTimer = window.setTimeout(function () {
-                    self.disableTransition();
-                    self.transitionEndTimer = -1;
-                }, 1500);
-            },
-            /**
-             * transitionEndTimer를 멈춘다.
-             */
-            stopTransitionEndTimer: function () {
-                window.clearTimeout(this.transitionEndTimer);
-                this.transitionEndTimer = -1;
-            },
         /**
          * slide를 원위치 시킨다.
          */
         cancel: function () {
-            if (this.isInTransition) {
-                return;
-            }
-
             var self = this;
             this.slide(0, function onCancelEnd(){
                 self.emit("cancel");
@@ -479,10 +415,6 @@
          * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
          */
         drag: function (session) {
-            if (this.isInTransition) {
-                return ;
-            }
-
             if (session.isSwipe()) {
                 session.targetEvent.preventDefault();
                 this.container.move(session.delta.x / 2);
@@ -536,21 +468,6 @@
                 return this.container.getWidth() * SLIDE_TRESHOLD < session.delta.x;
             },
         /**
-         * Transition을 on한다.
-         * @param duration {Integer} Transition Duration Value
-         */
-        enableTransition: function (duration) {
-            this.container.setTransitionDuration(duration || 500);
-            this.isInTransition = true;
-        },
-        /**
-         * Transition을 off한다.
-         */
-        disableTransition: function () {
-            this.container.setTransitionDuration(0);
-            this.isInTransition = false;
-        },
-        /**
          * 변경된 wrapper, slide, panels의 size 와 offset을 다시 설정한다.
          */
         resize: function (width, height) {
@@ -565,30 +482,129 @@
             }
     });
 
-    var Container2d = Container.extend({
+    var AdvanceContainer = Container.extend({
         /**
          * 주어진 offset 만큼 slide를 좌우 이동 시킨다.
-         * css transition animation 없이 단순 이동
          * @param offset {Number} 이동시킬 거리 값
          */
         move: function (offset) {
-            this.el.style.left = (offset - this.slide.pageWidth) + 'px';
+            this.el.style.webkitTransform = 'translate3d(' + offset + 'px, 0, 0)';
+        },
+        /**
+         * 해당 slide(컨테이너 Element) 의 transitionDuration을 설정한다.
+         * @param duration {Number}
+         */
+        setTransitionDuration: function (duration) {
+            this.el.style.webkitTransitionDuration = duration + 'ms';
+        },
+        /**
+         * 해당 콜백을 onwebkitTransitionEnd 에 등록한다.
+         * @param callback {function}
+         */
+        onTransitionEnd: function (callback) {
+            this.el.addEventListener('webkitTransitionEnd', callback);
+        },
+        /**
+         * 해당 콜백을 onwebkitTransitionEnd 에서 제거한다.
+         * @param callback {function}
+         */
+        offTransitionEnd: function (callback) {
+            this.el.removeEventListener('webkitTransitionEnd', callback);
         }
     });
-    var slide2d = slide3d.extend({
+    var AdvanceSlide = Slide.extend({
+        init: function (frameEl, dataSource) {
+            this._super(frameEl, dataSource);
+            this.isInTransition = false;
+        },
         initContainer: function () {
-            this.container = new Container2d(this);
+            this.container = new AdvanceContainer(this);
             this.frameEl.innerHTML = '';
             this.frameEl.appendChild(this.container.el);
         },
         slide: function (offset, callback) {
-            this.container.move(offset);
-            if (callback) {
-                callback();
+            var container = this.container;
+            this.enableTransition();
+            container.move(offset);
+
+            this.startTransitionEndTimer();
+
+            var self = this;
+            container.onTransitionEnd(function onTransitionEnd() {
+                container.offTransitionEnd(onTransitionEnd);
+                self.stopTransitionEndTimer();
+                self.disableTransition();
+
+                if (callback) {
+                    callback();
+                }
+            });
+        },
+            /**
+             * transitionEndTimer를 동작시킨다.
+             * transition end event 가 정상적으로 발생되지 않는 경우를 위한 보조 수단
+             */
+            startTransitionEndTimer: function () {
+                var self = this;
+                window.clearTimeout(this.transitionEndTimer);
+                this.transitionEndTimer = window.setTimeout(function () {
+                    self.disableTransition();
+                    self.transitionEndTimer = -1;
+                }, 1500);
+            },
+            /**
+             * transitionEndTimer를 멈춘다.
+             */
+            stopTransitionEndTimer: function () {
+                window.clearTimeout(this.transitionEndTimer);
+                this.transitionEndTimer = -1;
+            },
+        /**
+         * Transition을 on한다.
+         * @param duration {Integer} Transition Duration Value
+         */
+        enableTransition: function (duration) {
+            this.container.setTransitionDuration(duration || 500);
+            this.isInTransition = true;
+        },
+        /**
+         * Transition을 off한다.
+         */
+        disableTransition: function () {
+            this.container.setTransitionDuration(0);
+            this.isInTransition = false;
+        },
+        drag: function (session) {
+            if (this.isInTransition) {
+                return ;
             }
+
+            this._super(session);
+        },
+        cancel: function () {
+            if (this.isInTransition) {
+                return;
+            }
+
+            this._super();
+        },
+        next: function () {
+            if (this.isInTransition) {
+                return;
+            }
+
+            this._super();
+        },
+        prev: function () {
+            if (this.isInTransition) {
+                return;
+            }
+
+            this._super();
         }
     });
 
-    exports.Slide = isTransformEnabled ? slide3d : slide2d;
+    exports.Container = isTransformEnabled ? AdvanceSlide : Slide;
+    exports.Slide = isTransformEnabled ? AdvanceSlide : Slide;
 })(window.slide = (typeof slide === 'undefined') ? {} : slide);
 
