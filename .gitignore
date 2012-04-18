@@ -1,3 +1,7 @@
 /target
 org.*
 .*
+/build/node_modules
+/build/*.merged.js
+/build/*.min.js
+
