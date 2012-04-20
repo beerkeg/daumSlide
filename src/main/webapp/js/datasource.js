@@ -139,6 +139,9 @@
         addBeforeData: function (addends) {
             this.setCurrentIndex(addends.length + this.index);
             this.data = addends.concat(this.data);
+        },
+        destroy: function () {
+            delete this.data;
         }
     });
 

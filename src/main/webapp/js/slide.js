@@ -220,7 +220,17 @@
              */
             setWrapperSize: function (width) {
                 this.pageWidth = width;
-            }
+            },
+        destroy: function () {
+            this.container.destroy();
+            this.container = null;
+
+            this.frameEl.innerHTML = '';
+            this.frameEl = null;
+
+            delete this.listeners;
+            this.dataSource = null;
+        }
     });
 
     var AdvanceSlide = Slide.extend({

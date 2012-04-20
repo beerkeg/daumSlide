@@ -7,7 +7,7 @@
     var hardwareAccelStyle = exports.hardwareAccelStyle;
 
     var Panel = exports.Panel = Class.extend({
-        /**
+        /*!
          * 새로운 Panel을 생성/초기화 한다.
          * @param slide {Slide Class}
          */
@@ -45,6 +45,10 @@
          */
         setData: function (data) {
             this.el.innerHTML = data ? data.toHTML() : '&nbsp;';
+        },
+        destroy: function () {
+            this.slide = null;
+            this.el = null;
         }
     });
 })(window.slide = (typeof slide === 'undefined') ? {} : slide);

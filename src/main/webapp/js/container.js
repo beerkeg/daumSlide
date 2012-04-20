@@ -144,8 +144,17 @@
         /**
          * 해당 slide(컨테이너 Element) 의 실제 크기를 반환한다.
          */
-        getWidth : function () {
+        getWidth: function () {
             return this.el.clientWidth;
+        },
+        destroy: function () {
+            this.slide = null;
+            this.el = null;
+
+            this.panels[0].destroy();
+            this.panels[1].destroy();
+            this.panels[2].destroy();
+            delete this.panels;
         }
     });
 
