@@ -4,4 +4,8 @@ org.*
 /build/node_modules
 /build/*.merged.js
 /build/*.min.js
+/build/sh.css
+/build/sh_main.js
+/build/slide.html
+/build/style.css
 
