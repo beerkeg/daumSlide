@@ -136,7 +136,7 @@
          * 기존의 데이터 앞에 새로운 데이터를 추가한다.
          * @param addends {Array}
          */
-        addBeforeData: function (addends) {
+        addPrevData: function (addends) {
             this.setCurrentIndex(addends.length + this.index);
             this.data = addends.concat(this.data);
         },

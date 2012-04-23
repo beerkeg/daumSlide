@@ -61,7 +61,7 @@
             if (pageInfo.prevPage > 0) {
                 loadMoreData(pageInfo.prevPage, function (data) {
                     var newSlides = buildSlides(data);
-                    self.addBeforeData(newSlides);
+                    self.addPrevData(newSlides);
                     callback(newSlides[newSlides.length-1]);
                     pageInfo.prevPage--;
                 });
