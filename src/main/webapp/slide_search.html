@@ -20,7 +20,7 @@ ul, li {
     padding: 0;
     list-style-type: none;
 }
-#wrapper {
+#frameEl {
     width: 100%;
     height:100%;
     overflow:hidden;
@@ -174,13 +174,13 @@ z-index: 30;
     <button id="searchbtn" type="button">검색</button>
 </div>
 
-<div id="wrapper"></div>
+<div id="frameEl"></div>
 <button type="button" class="prevBtn">prev</button>
 <button type="button" class="nextBtn">next</button>
 <div id="footer"></div>
 <script type="text/javascript">
 var headTag = document.getElementsByTagName("head")[0],
-        wrapper = document.getElementById("wrapper"),
+        frameEl = document.getElementById("frameEl"),
         queryEl = document.getElementById("query"),
         click = "ontouchstart" in window ? "touchstart" : "click",
         prevBtn = document.getElementsByClassName("prevBtn")[0],
@@ -229,11 +229,11 @@ var ImageSearchDataSource = slide.DataSource.extend({
 });
 
 function initSlide(data) {
-    wrapper.style.display = "block";
-    ImgManager.setClientSize(wrapper);
+    frameEl.style.display = "block";
+    ImgManager.setClientSize(frameEl);
 
     var ds = new ImageSearchDataSource(buildSlides(data));
-    var sl = new slide.Slide(wrapper, ds);
+    var sl = new slide.Slide(frameEl, ds);
 
     prevBtn.addEventListener(click, function(){
         sl.prev();
@@ -242,7 +242,7 @@ function initSlide(data) {
         sl.next();
     }, false);
     sl.on("resize", function () {
-        ImgManager.setClientSize(wrapper);
+        ImgManager.setClientSize(frameEl);
         sl.show();
     });
 
