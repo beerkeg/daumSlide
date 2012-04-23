@@ -45,9 +45,6 @@
             this.listeners = this.listeners || {};
             this.listeners[event] = this.listeners[event] || [];
             return this.listeners[event];
-        },
-        removeAllListener: function () {
-            delete this.listeners;
         }
     });
 })(window.slide = (typeof slide === 'undefined') ? {} : slide);
