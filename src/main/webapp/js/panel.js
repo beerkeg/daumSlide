@@ -51,4 +51,14 @@
             this.el = null;
         }
     });
+    var UlPanel = exports.UlPanel = Panel.extend({
+        createPanel: function (width) {
+            var panel = document.createElement("ul");
+
+            panel.className = "panel";
+            panel.style.cssText = 'height:100%;overflow:hidden;display:inline-block;' +
+                                    hardwareAccelStyle + 'width:' + width + 'px;';
+            return panel;
+        }
+    });
 })(window.slide = (typeof slide === 'undefined') ? {} : slide);

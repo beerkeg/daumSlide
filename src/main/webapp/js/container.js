@@ -15,14 +15,14 @@
          * 새로운 Container를 생성/초기화 한다.
          * @param slide {Slide Class}
          */
-        init: function (slide) {
-            slideInstanceNum+=1;
+        init: function (slide, option) {
             this.slide = slide;
+            this.option = option || {};
 
             this.el = this.createContainer(slide.pageWidth);
 
             this.panels = [];
-            this.initPanels();
+            this.initPanels(this.option.PanelClass || Panel);
             this.bindEvents();
         },
         /**
@@ -32,7 +32,12 @@
             var container = document.createElement("div");
 
             container.className = "slide";
-            container.id = "slide-" + slideInstanceNum;
+            if (this.option.containerId) {
+                container.id = this.option.containerId;
+            } else {
+                slideInstanceNum += 1;
+                container.id = "slide-" + slideInstanceNum;
+            }
             container.style.cssText = "overflow:hidden;position:relative;top:0;" + hardwareAccelStyle +
                                         "left:" + (-width) + "px;width:" + (width * 3) + "px;";
             return container;
@@ -40,16 +45,16 @@
         /**
          * slide내에 존재하는 패널들을 생성/초기화 한다.
          */
-        initPanels: function () {
-            this.initPanel(PANEL_PREV);
-            this.initPanel(PANEL_CURRENT);
-            this.initPanel(PANEL_NEXT);
+        initPanels: function (PanelClass) {
+            this.initPanel(PANEL_PREV, PanelClass);
+            this.initPanel(PANEL_CURRENT, PanelClass);
+            this.initPanel(PANEL_NEXT, PanelClass);
         },
             /**
              * panel 생성/초기화 한다.
              */
-            initPanel: function (index) {
-                var panel = new Panel(this.slide);
+            initPanel: function (index, PanelClass) {
+                var panel = new PanelClass(this.slide);
                 this.panels[index] = panel;
                 this.el.appendChild(panel.el);
             },

@@ -5,16 +5,18 @@
     'use strict';
 
     var isTransformEnabled = exports.isTransformEnabled;
+    var Panel = exports.Panel;
     var Container = exports.Container;
     var onResized = exports.onResized;
 
     var SLIDE_TRESHOLD = 0.1; // 20%
     var Slide = slide.Observable.extend({
-        init: function (frameEl, dataSource) {
+        init: function (frameEl, dataSource, option) {
             this.frameEl = frameEl;
             this.container = null;
 
             this.dataSource = dataSource;
+            this.option = option || {};
 
             this.pageWidth = this.frameEl.clientWidth;
 
@@ -26,7 +28,7 @@
          * wrapper 내부에 들어갈 mark up 구조를 설정한다.
          */
         initContainer: function () {
-            this.container = new Container(this);
+            this.container = new Container(this, this.option);
             this.frameEl.innerHTML = '';
             this.frameEl.appendChild(this.container.el);
         },
@@ -234,13 +236,13 @@
     });
 
     var AdvanceSlide = Slide.extend({
-        init: function (frameEl, dataSource) {
-            this._super(frameEl, dataSource);
+        init: function (frameEl, dataSource, option) {
+            this._super(frameEl, dataSource, option);
             this.isInTransition = false;
         },
         slide: function (offset, callback) {
             var container = this.container;
-            this.enableTransition();
+            this.enableTransition(this.duration);
             container.move(offset);
 
             this.startTransitionEndTimer();
@@ -266,6 +268,7 @@
                 this.transitionEndTimer = window.setTimeout(function () {
                     self.disableTransition();
                     self.transitionEndTimer = -1;
+                    this.emit("stopTransition");
                 }, 1500);
             },
             /**
@@ -304,18 +307,18 @@
 
             this._super();
         },
-        next: function () {
+        next: function (duration) {
             if (this.isInTransition) {
                 return;
             }
-
+            this.duration = duration || 500;
             this._super();
         },
-        prev: function () {
+        prev: function (duration) {
             if (this.isInTransition) {
                 return;
             }
-
+            this.duration = duration || 500;
             this._super();
         }
     });
