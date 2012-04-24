@@ -268,7 +268,6 @@
                 this.transitionEndTimer = window.setTimeout(function () {
                     self.disableTransition();
                     self.transitionEndTimer = -1;
-                    this.emit("stopTransition");
                 }, 1500);
             },
             /**
