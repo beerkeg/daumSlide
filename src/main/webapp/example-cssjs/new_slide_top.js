@@ -102,9 +102,13 @@ function getDummy() {
     return new Date().getTime() + Math.ceil(Math.random() * 2147483647);
 }
 
+function getDummy() {
+    return new Date().getTime() + Math.ceil(Math.random() * 2147483647);
+}
+
 // bug 2012/01/04
 daum.Browser.ie = daum.Browser.iemobile;
-if(daum.Browser.iemobile) {
+if (daum.Browser.iemobile) {
     daum.Element.getElementsByClassName = function(el, cname) {
         // native code 가 있을 경우
         //if(document.getElementsByClassName.toString().indexOf('native')>0){
@@ -115,45 +119,223 @@ if(daum.Browser.iemobile) {
          * function : ie6, ie7, ie8, ie9
          * object : windows phone OS7.5
          */
-        if(typeof document.getElementsByClassName == 'object') {
+        if (typeof document.getElementsByClassName == 'object') {
             return daum.$A(el.getElementsByClassName(cname));
         }
         // sizzle selector를 이용
         var is = el == document || el == document.body || el == window;
-        if(is || el.id){
-            return daum.$$((is ? '' : '#'+el.id+' ') + '.'+daum.String.trim(cname).replace(/\s+/g,'.'));
+        if (is || el.id) {
+            return daum.$$((is ? '' : '#' + el.id + ' ') + '.' + daum.String.trim(cname).replace(/\s+/g, '.'));
         }
         // 많이 힘든 경우
-        for(var nodes = daum.$(el).getElementsByTagName("*"), element = [], i = 0, l = nodes.length; i<l; i+=1){
-            if(daum.Element.hasClassName(nodes[i], cname)){
+        for (var nodes = daum.$(el).getElementsByTagName("*"), element = [], i = 0, l = nodes.length; i < l; i += 1) {
+            if (daum.Element.hasClassName(nodes[i], cname)) {
                 element.push(nodes[i]);
             }
         }
-        return (element.length > 0) ? element: [];
+        return (element.length > 0) ? element : [];
     }
 }
+
+/*
+var roll = function(options) {
+    this.roll = null;
+    this.$super(options);
+}.inherit(page).members({
+    stop: function() {
+        window.clearInterval(this.roll);
+    },
+    init: function(opts) {
+        this.contentEl = (typeof opts.target == 'string') ? $(opts.target) : opts.target;
+        this.json = opts.json;
+        this.maxPage = this.getMaxPage();
+        if (this.maxPage > 1)
+            this.roll = window.setInterval(this.next.bind(this), opts.interval);
+    }
+});
+*/
+
+function setPagingEvent() {
+    var news = paging({
+        target: 'news',
+        json: ['news', 'sports', 'enter'],
+        nil: 't__nil_mnews=',
+        home: 'newsHome',
+        page: 'newsPaging',
+        tab: 'newsArea',
+        info: 'li',
+        eHandler: {
+            prev: 'news_prev',
+            next: 'news_next'
+        },
+        homeBtn: {
+            'news': {title: '뉴스홈',url: 'http://m.media.daum.net/media/?t__nil_mnews=home'},
+            'sports': {title: '스포츠홈',url: 'http://m.sports.daum.net/sports/?t__nil_msports=home'},
+            'enter': {title: '연예홈',url: 'http://m.media.daum.net/media/entertain/?t__nil_menter=home'}
+        }
+    });
+    daum.addEvent($('newsTitle'), 'click', function(e) {
+        news.goTab('news');
+        daum.Event.stopEvent(e);
+    });
+    daum.addEvent($('sportsTitle'), 'click', function(e) {
+        news.goTab('sports');
+        daum.Event.stopEvent(e);
+    });
+    daum.addEvent($('enterTitle'), 'click', function(e) {
+        news.goTab('enter');
+        daum.Event.stopEvent(e);
+    });
+    var issue = paging({
+        target: 'issue',
+        json: ['shop', 'Msale', 'coupon'],
+        nil: 't__nil_shopping=',
+        home: 'issueHome',
+        page: 'issuePaging',
+        tab: 'issueArea',
+        eHandler: {
+            prev: 'issue_prev',
+            next: 'issue_next'
+        },
+        homeBtn: {
+            'shop': {title: '쇼핑하우홈',url: 'http://m.shopping.daum.net/?t__nil_shopping=shop_home'},
+            'Msale': {title: '쇼핑하우홈',url: 'http://m.shopping.daum.net/?t__nil_shopping=Msale_home'},
+            'coupon': {title: '소셜쇼핑홈',url: 'http://m.social.daum.net/?t__nil_shopping=coupon_home'}
+        }
+    });
+    daum.addEvent($('shopTitle'), 'click', function(e) {
+        issue.goTab('shop');
+        daum.Event.stopEvent(e);
+    });
+    daum.addEvent($('saleTitle'), 'click', function(e) {
+        issue.goTab('Msale');
+        daum.Event.stopEvent(e);
+    });
+    daum.addEvent($('couponTitle'), 'click', function(e) {
+        issue.goTab('coupon');
+        daum.Event.stopEvent(e);
+    });
+    var contents = paging({
+        target: 'contents',
+        json: ['story', 'agora', 'miznet', 'view'],
+        nil: 't__nil_live=',
+        home: 'contentsHome',
+        page: 'contentsPaging',
+        tab: 'contentsArea',
+        eHandler: {
+            prev: 'contents_prev',
+            next: 'contents_next'
+        },
+        homeBtn: {
+            'story': {title: '검색홈',url: 'http://issue.search.daum.net/issue?t__nil_live=story_home'},
+            'agora': {title: '아고라홈',url: 'http://m.agora.daum.net/?t__nil_live=agora_home'},
+            'miznet': {title: '미즈넷홈',url: 'http://m.miznet.daum.net/?t__nil_live=miznet_home'},
+            'view': {title: 'view홈',url: 'http://m.view.daum.net/?t__nil_live=view_home'}
+        
+        }
+    });
+    daum.addEvent($('hotTitle'), 'click', function(e) {
+        contents.goTab('story');
+        daum.Event.stopEvent(e);
+    });
+    daum.addEvent($('miznetTitle'), 'click', function(e) {
+        contents.goTab('miznet');
+        daum.Event.stopEvent(e);
+    });
+    daum.addEvent($('viewTitle'), 'click', function(e) {
+        contents.goTab('view');
+        daum.Event.stopEvent(e);
+    });
+    daum.addEvent($('agoraTitle'), 'click', function(e) {
+        contents.goTab('agora');
+        daum.Event.stopEvent(e);
+    });
+    // View Game tab for Android
+    if (daum.Browser.android) {
+        var funJsonList = ['game', 'cartoon', 'movie', 'music', 'tvpot', 'telzone'];
+    } else {
+        var funJsonList = ['cartoon', 'movie', 'music', 'tvpot', 'telzone'];
+    }
+    var fun = paging({
+        target: 'fun',
+        json: funJsonList,
+        nil: 't__nil_fun=',
+        home: 'funHome',
+        page: 'funPaging',
+        tab: 'funArea',
+        eHandler: {
+            prev: 'fun_prev',
+            next: 'fun_next'
+        },
+        homeBtn: {
+            'game': {title: '게임홈',url: 'http://m.sgame.daum.net/?t__nil_fun=game_home'},
+            'cartoon': {title: '만화홈',url: 'http://m.cartoon.media.daum.net/?t__nil_fun=cartoon_home'},
+            'movie': {title: '영화홈',url: 'http://m.movie.daum.net/?t__nil_fun=movie_home'},
+            'music': {title: '뮤직홈',url: 'http://m.music.daum.net/?t__nil_fun=music_home'},
+            'tvpot': {title: 'tv팟홈',url: 'http://m.tvpot.daum.net/?t__nil_fun=tvpot_home'},
+            'telzone': {title: '텔존홈',url: 'http://m.telzone.daum.net/?t__nil_fun=telzone_home'}
+        }
+    });
+    // View Game tab for Android
+    if (daum.Browser.android) {
+        daum.addEvent($('gameTitle'), 'click', function(e) {
+            fun.goTab('game');
+            daum.Event.stopEvent(e);
+        });
+    }
+    daum.addEvent($('comicTitle'), 'click', function(e) {
+        fun.goTab('cartoon');
+        daum.Event.stopEvent(e);
+    });
+    daum.addEvent($('movieTitle'), 'click', function(e) {
+        fun.goTab('movie');
+        daum.Event.stopEvent(e);
+    });
+    daum.addEvent($('musicTitle'), 'click', function(e) {
+        fun.goTab('music');
+        daum.Event.stopEvent(e);
+    });
+    daum.addEvent($('tvpotTitle'), 'click', function(e) {
+        fun.goTab('tvpot');
+        daum.Event.stopEvent(e);
+    });
+    daum.addEvent($('telzoneTitle'), 'click', function(e) {
+        fun.goTab('telzone');
+        daum.Event.stopEvent(e);
+    });
+/*
+    var stock = new roll({
+            target : 'stock',
+            json : ['stock'],
+            interval : 3000
+    });
+    */
+}
+;
 
 (function() {
     var sRankEl = $('searchRankArea');
     var sRankContainer = sRankEl.getElementsByTagName('UL')[0];
     var sRankTab = $('searchRankTab');
     var sRankTitle = $('searchRankTitle').getElementsByTagName('A')[0];
-    var sRankJson = ['issueRank','newsRank, twitterRank'];
+    var sRankJson = ['issueRank', 'socialRank, twitterRank'];
     var current = 0;
     var nilTag = 't__nil_searchrank=';
-    var curTab = 'issueRank';
+    
+    var curTab = (sRankContainer.className) ? sRankContainer.className + 'Rank' : 'issueRank';
+    
     var tabList = {
-        issueRank : '실시간이슈',
-        newsRank : '실시간뉴스',
-        twitterRank : '트위터인물'
+        'issueRank': '실시간이슈',
+        'socialRank': '소셜픽',
+        'twitterRank': '트위터인물'
     };
     var sRankDisplay = function(mode, idx) {
         var item = sRankContainer.getElementsByTagName('LI');
-        for(var i=0,il=item.length; i<il; i++) {
-            if(mode == 'open') {
+        for (var i = 0, il = item.length; i < il; i++) {
+            if (mode == 'open') {
                 item[i].style.display = 'block';
             } else {
-                if(current == i) {
+                if (current == i) {
                     item[i].style.display = 'block';
                 } else {
                     item[i].style.display = 'none';
@@ -162,42 +344,49 @@ if(daum.Browser.iemobile) {
         }
         sRankTitle.innerHTML = tabList[curTab];
     };
-    sRankContainer.className = 'issue';
-    sRankContainer.innerHTML = DMT.json['issueRank'][0];
+    
+    sRankContainer.innerHTML = DMT.json[curTab][0];
+    
     window.setInterval(function() {
-        if(sRankEl.className == 'open') return false;
+        if (sRankEl.className == 'open')
+            return false;
         sRankDisplay('close', current);
         current = (current == 9) ? 0 : current + 1;
     }, 3000);
     daum.addEvent($('rankOpen'), 'click', function(e) {
         var onOff = 'open';
-        if(sRankEl.className == 'close') {
+        if (sRankEl.className == 'close') {
             sRankDisplay('open', current);
             sRankEl.className = 'open';
         } else {
-            current = (current == 0) ? 9 : current-1;
+            current = (current == 0) ? 9 : current - 1;
             sRankDisplay('close', current);
             sRankEl.className = 'close';
             onOff = 'close';
         }
-        this.sendAnalURL = (typeof tiaraManager === 'object' && typeof tiaraManager.sendAnalURL === 'function') ? tiaraManager.sendAnalURL : function() {};
-        this.sendAnalURL(nilTag+onOff);
+        this.sendAnalURL = (typeof tiaraManager === 'object' && typeof tiaraManager.sendAnalURL === 'function') ? tiaraManager.sendAnalURL : function() {
+        };
+        this.sendAnalURL(nilTag + onOff);
         daum.Event.stopEvent(e);
         return false;
     });
     daum.addEvent($('rankClose'), 'click', function(e) {
-        current = (current == 0) ? 9 : current-1;
+        current = (current == 0) ? 9 : current - 1;
         sRankDisplay('close', current);
         sRankEl.className = 'close';
-        this.sendAnalURL = (typeof tiaraManager === 'object' && typeof tiaraManager.sendAnalURL === 'function') ? tiaraManager.sendAnalURL : function() {};
-        this.sendAnalURL(nilTag+'close');
+        window.scrollTo(0, 1);
+        this.sendAnalURL = (typeof tiaraManager === 'object' && typeof tiaraManager.sendAnalURL === 'function') ? tiaraManager.sendAnalURL : function() {
+        };
+        this.sendAnalURL(nilTag + 'close');
         daum.Event.stopEvent(e);
         return false;
     });
     daum.addEvent($('issueTab'), 'click', function(e) {
-        if(sRankContainer.className == 'issue') return false;
-        this.sendAnalURL = (typeof tiaraManager === 'object' && typeof tiaraManager.sendAnalURL === 'function') ? tiaraManager.sendAnalURL : function() {};
-        this.sendAnalURL(nilTag+'issue_tab');
+        if (sRankContainer.className == 'issue')
+            return false;
+        this.sendAnalURL = (typeof tiaraManager === 'object' && typeof tiaraManager.sendAnalURL === 'function') ? tiaraManager.sendAnalURL : function() {
+        };
+        this.sendAnalURL(nilTag + 'issue_tab');
         sRankContainer.innerHTML = DMT.json['issueRank'][0];
         current = 1;
         curTab = 'issueRank';
@@ -205,25 +394,29 @@ if(daum.Browser.iemobile) {
         sRankTab.className = 'issue';
         sRankTitle.innerHTML = tabList[curTab];
         daum.Event.preventDefault(e);
-                daum.Event.stopPropagation(e);
+        daum.Event.stopPropagation(e);
     });
-    daum.addEvent($('newsTab'), 'click', function(e) {
-        if(sRankContainer.className == 'news') return false;
-        this.sendAnalURL = (typeof tiaraManager === 'object' && typeof tiaraManager.sendAnalURL === 'function') ? tiaraManager.sendAnalURL : function() {};
-        this.sendAnalURL(nilTag+'news_tab');
-        sRankContainer.innerHTML = DMT.json['newsRank'][0];
+    daum.addEvent($('socialTab'), 'click', function(e) {
+        if (sRankContainer.className == 'social')
+            return false;
+        this.sendAnalURL = (typeof tiaraManager === 'object' && typeof tiaraManager.sendAnalURL === 'function') ? tiaraManager.sendAnalURL : function() {
+        };
+        this.sendAnalURL(nilTag + 'social_tab');
+        sRankContainer.innerHTML = DMT.json['socialRank'][0];
         current = 1;
-        curTab = 'newsRank';
-        sRankContainer.className = 'news';
-        sRankTab.className = 'news';
+        curTab = 'socialRank';
+        sRankContainer.className = 'social';
+        sRankTab.className = 'social';
         sRankTitle.innerHTML = tabList[curTab];
         daum.Event.preventDefault(e);
         daum.Event.stopPropagation(e);
     });
     daum.addEvent($('twitterTab'), 'click', function(e) {
-        if(sRankContainer.className == 'twitter') return false;
-        this.sendAnalURL = (typeof tiaraManager === 'object' && typeof tiaraManager.sendAnalURL === 'function') ? tiaraManager.sendAnalURL : function() {};
-        this.sendAnalURL(nilTag+'twitter_tab');
+        if (sRankContainer.className == 'twitter')
+            return false;
+        this.sendAnalURL = (typeof tiaraManager === 'object' && typeof tiaraManager.sendAnalURL === 'function') ? tiaraManager.sendAnalURL : function() {
+        };
+        this.sendAnalURL(nilTag + 'twitter_tab');
         sRankContainer.innerHTML = DMT.json['twitterRank'][0];
         current = 1;
         curTab = 'twitterRank';
@@ -236,15 +429,17 @@ if(daum.Browser.iemobile) {
 })();
 
 /*--- search/suggest ---*/
-if(!DMT.isApp) {    // app이 아닌 경우
+if (!DMT.isApp) { // app이 아닌 경우
     (function() {
         var evtAction;
-        var chkKeyValue = function() { $('daumBtnClear').style.display = ($('q').value == '') ? 'none' : 'block'; };
+        var chkKeyValue = function() {
+            $('daumBtnClear').style.display = ($('q').value == '') ? 'none' : 'block';
+        };
         var submitSearch = function(nilTag, formObj, eAction) {
             var nil = (typeof nilTag == 'string') ? nilTag : 'btn';
             $('nilSearch').value = nil;
             if (daum.Browser.iphone || daum.Browser.ipad || daum.Browser.ipod || daum.Browser.android) {
-                if(($('q').value == '') && ($('q').style.backgroundImage) && (eAction)) {
+                if (($('q').value == '') && ($('q').style.backgroundImage) && (eAction)) {
                     document.location.href = eAction;
                 } else {
                     $('search').submit();
@@ -256,71 +451,91 @@ if(!DMT.isApp) {    // app이 아닌 경우
         window.clearKeyValue = function(e) {
             $('daumBtnClear').style.display = 'none';
             $('q').value = '';
-            if($('header').className == 'search') $('q').focus();
+            if ($('header').className == 'search')
+                $('q').focus();
         };
         daum.suggest.Service.init();
         window.suggestInstance = daum.suggest.Service.add(
-            "q",
-            "daumSuggestWrap",
-            "http://sug.m.search.daum.net",
-            "/top_mbsuggest",
-            "suggestInstance.dataModel.forceLoadComplete",
-            true ).
-        setEncodeKeyword( "utf_in_out" ).
-        setBeforeSubmitFunc(function(form){ if(window.suggestInstance.listView.isRecent) { submitSearch('reckwd', form); } else { submitSearch('suggest', form); }}).
-        setLimit( [10,0] ).
-        setForm( document.search ).
+        "q", 
+        "daumSuggestWrap", 
+        "http://sug.m.search.daum.net", 
+        "/top_mbsuggest", 
+        "suggestInstance.dataModel.forceLoadComplete", 
+        true).
+        setEncodeKeyword("utf_in_out").
+        setBeforeSubmitFunc(function(form) {
+            if (window.suggestInstance.listView.isRecent) {
+                submitSearch('reckwd', form);
+            } else {
+                submitSearch('suggest', form);
+            }
+        }).
+        setLimit([10, 0]).
+        setForm(document.search).
         setEnableMyKeyword(true).
         setDefineCrossDomainStorageIframeId('tiara_anal').
         setUseCrossDomainStorage();
         //init 시점 이후 호출도 가능
-        if(DMT.isRecentKeyword) window.suggestInstance.setEnableRecentKeyword(true);
-
-        daum.addEvent(window.suggestInstance.inputBox, 'focus', function() { setTimeout(function() { if(window.pageYOffset == 0){ window.scrollTo(0, 1); }}, 100); chkKeyValue(); });
-        daum.addEvent(window.suggestInstance.inputBox, 'keyup', function() { chkKeyValue(); });
-        daum.addEvent($("search"), 'submit', function(e) { submitSearch('btn', this, evtAction); daum.Event.stopEvent(e); });
+        if (DMT.isRecentKeyword)
+            window.suggestInstance.setEnableRecentKeyword(true);
+        
+        daum.addEvent(window.suggestInstance.inputBox, 'focus', function() {
+            setTimeout(function() {
+                if (window.pageYOffset == 0) {
+                    window.scrollTo(0, 1);
+                }
+            }, 100);
+            chkKeyValue();
+        });
+        daum.addEvent(window.suggestInstance.inputBox, 'keyup', function() {
+            chkKeyValue();
+        });
+        daum.addEvent($("search"), 'submit', function(e) {
+            submitSearch('btn', this, evtAction);
+            daum.Event.stopEvent(e);
+        });
     })();
 }
 
-(function () {
+(function() {
     /**
      * dongtl > mobile > 사이트 전체 보기 모듈
      *      dependency : jigu-mobile
      */
     // TODO logging
-    var SiteMap = function () {
-        var relatedServices = [],
-       //     daumHead = Sizzle('#daumHead')[0],
-            daumHead = Sizzle('#svcNavi')[0],
-            daumHead2 = Sizzle('#sitemap_wrap')[0],
-            CATEGORIES_URL = 'http://m1.daumcdn.net/top-sc/script/sitequicklink_v2.js',
-            OPEN_CLASS = 'sitemap_open',
-            $E = daum.Element;
- 
- 
+    var SiteMap = function() {
+        var relatedServices = [], 
+        //     daumHead = Sizzle('#daumHead')[0],
+        daumHead = Sizzle('#svcNavi')[0], 
+        daumHead2 = Sizzle('#sitemap_wrap')[0], 
+        CATEGORIES_URL = 'http://m1.daumcdn.net/top-sc/script/sitequicklink_v2.js', 
+        OPEN_CLASS = 'sitemap_open', 
+        $E = daum.Element;
+        
+        
         var SiteMapView = {
             didRenderComplete: false,
- 
-            show: function () {
+            
+            show: function() {
                 $E.addClassName(daumHead, OPEN_CLASS);
                 $E.addClassName(daumHead2, OPEN_CLASS);
             },
-            hide: function () {
+            hide: function() {
                 $E.removeClassName(daumHead, OPEN_CLASS);
                 $E.removeClassName(daumHead2, OPEN_CLASS);
             },
-            visible: function () {
+            visible: function() {
                 return $E.hasClassName(daumHead, OPEN_CLASS);
             },
             /**
              * 서버로부터 넘겨 받은 데이터를 이용하여 화면을 그린다.
              */
-            render: function () {
+            render: function() {
                 if (this.didRenderComplete) {
                     return;
                 }
                 var self = this;
-                queryData(function (data) {
+                queryData(function(data) {
                     self.renderFrame();
                     self.renderRelatedService(relatedServices);
                     self.renderCategories(data.categories);
@@ -328,23 +543,23 @@ if(!DMT.isApp) {    // app이 아닌 경우
                     self.didRenderComplete = true;
                 });
             },
-            renderFrame: function () {
-                var siteMapElem = Sizzle("#sitemap_wrap")[0];   //
+            renderFrame: function() {
+                var siteMapElem = Sizzle("#sitemap_wrap")[0]; //
                 siteMapElem.innerHTML = TMPL_FRAME;
- 
+                
                 var closeBtn = Sizzle(".close_links button")[0]
-                daum.Event.addEvent(closeBtn, 'click', function (e) {
+                daum.Event.addEvent(closeBtn, 'click', function(e) {
                     SiteMapView.hide();
-                    window.scrollTo(0,1);
+                    window.scrollTo(0, 1);
                     daum.Event.preventDefault(e);
                 });
             },
             // TODO 관련 서비스가 없는 경우가 생길 수 있나?
-            renderRelatedService: function (items) {
-                var elem = Sizzle(".related_links")[0],
-                    listElem = Sizzle(".list_related")[0],
-                    sbuf = [];
- 
+            renderRelatedService: function(items) {
+                var elem = Sizzle(".related_links")[0], 
+                listElem = Sizzle(".list_related")[0], 
+                sbuf = [];
+                
                 if (items.length > 0) {
                     for (var i = 0; i < items.length; i++) {
                         sbuf.push(sprintf(TMPL_RELATED_SERVICE, items[i].url, items[i].name));
@@ -355,62 +570,62 @@ if(!DMT.isApp) {    // app이 아닌 경우
                     $E.hide(elem);
                 }
             },
-            renderCategories: function (categories) {
-                var elem = Sizzle(".inner_links")[0],
-                    sbuf = [];
- 
+            renderCategories: function(categories) {
+                var elem = Sizzle(".inner_links")[0], 
+                sbuf = [];
+                
                 var frag = document.createDocumentFragment();
                 for (var i = 0; i < categories.length; i++) {
-                    var categoryName = categories[i].categoryName,
-                        items = categories[i].item;
+                    var categoryName = categories[i].categoryName, 
+                    items = categories[i].item;
                     var div = document.createElement('div');
                     div.innerHTML = sprintf(TMPL_CATEGORY, categoryName);
                     frag.appendChild(div);
- 
+                    
                     sbuf = [];
                     var listElem = Sizzle(".list_sitemap", div)[0];
                     for (var j = 0; j < items.length; j++) {
                         var item = items[j];
                         var tmpl = (item.isMain) ? TMPL_MAIN_ITEM : TMPL_ITEM;
-                        sbuf.push(sprintf(tmpl, item.type, item.url, item.name,
-                                          item.isNew ? TMPL_NEW_ICON : ''));
+                        sbuf.push(sprintf(tmpl, item.type, item.url, item.name, 
+                        item.isNew ? TMPL_NEW_ICON : ''));
                     }
                     listElem.innerHTML = sbuf.join('');
                 }
                 elem.appendChild(frag);
-                 
+                
                 var site_list = $$('.sort_ganada li a');
                 var string = daum.Browser.getCookie("DMT_recent") || "";
                 var arr = [];
-                if(string) {
+                if (string) {
                     arr = string.split('|');
                 }
- 
+                
                 site_list.each(function(item) {
                     var sName = item.parentNode.className;
                     daum.Event.addEvent(item, 'click', function(e) {
                         var len = arr.length;
-                        for(var i=0; i != len; i++) {
-                            if(arr[i] == sName){
-                                arr = arr.slice(0, i).concat(arr.slice(i+1, len+1));
+                        for (var i = 0; i != len; i++) {
+                            if (arr[i] == sName) {
+                                arr = arr.slice(0, i).concat(arr.slice(i + 1, len + 1));
                                 len = arr.length;
                                 break;
                             }
                         }
-                        if(len >= 4) {
-                            arr = arr.slice(0, arr.length-1);
+                        if (len >= 4) {
+                            arr = arr.slice(0, arr.length - 1);
                         }
                         arr.splice(0, 0, sName)
                         var d = new Date();
                         d.setDate(d.getDate() + 365);
-                        document.cookie = "DMT_recent=" + escape(arr.join('|')) + "; path=/; domain="+window.location.hostname+"; expires=" + d.toGMTString() + ";";
+                        document.cookie = "DMT_recent=" + escape(arr.join('|')) + "; path=/; domain=" + window.location.hostname + "; expires=" + d.toGMTString() + ";";
                     });
                 });
             },
-            renderMobileSpecial: function (mobileData) {
-                var listElem = Sizzle(".list_etc")[0],
-                    items = mobileData.item,
-                    sbuf = [];
+            renderMobileSpecial: function(mobileData) {
+                var listElem = Sizzle(".list_etc")[0], 
+                items = mobileData.item, 
+                sbuf = [];
                 for (var i = 0; i < items.length; i++) {
                     sbuf.push(sprintf(TMPL_MOBILE_ITEM, items[i].type, items[i].url, items[i].name));
                 }
@@ -418,17 +633,17 @@ if(!DMT.isApp) {    // app이 아닌 경우
             }
         };
         // http://www.nczonline.net/blog/2011/10/11/simple-maintainable-templating-with-javascript/
-        function sprintf(text){
+        function sprintf(text) {
             var i = 1, args = arguments;
-            return text.replace(/%s/g, function(pattern){
+            return text.replace(/%s/g, function(pattern) {
                 return (i < args.length) ? args[i++] : "";
             });
         }
- 
+        
         function bindEvents() {
-        //    var siteMapBtn = Sizzle(".total_view")[0];
+            //    var siteMapBtn = Sizzle(".total_view")[0];
             var siteMapBtn = Sizzle(".sitemap")[0]; //
-            daum.Event.addEvent(siteMapBtn, 'click', function (e) {
+            daum.Event.addEvent(siteMapBtn, 'click', function(e) {
                 onSiteMapButtonPressed();
                 daum.Event.preventDefault(e);
             });
@@ -447,25 +662,26 @@ if(!DMT.isApp) {    // app이 아닌 경우
             var beacon = new Image();
             beacon.src = 'http://tiara.daum.net/tiara.front/front/click/?referer=http%3A%2F%2Fdummy.daum.net%2F&url=http://dummy.daum.net/?t__nil_mob_minidaum=servicemap';
         }
- 
+
         // transports ...
- 
-        var onDataLoaded = function () {};
+        
+        var onDataLoaded = function() {
+        };
         var cachedData = null;
         /**
          * 서버로부터 사이트 전체보기 데이터를 요청한다.
          * JSONP 방식 이용. 일정 시간안에 응답이 없을 경우 retry 한다.
          */
         function queryData(callback) {
-            onDataLoaded = function (categories) {
+            onDataLoaded = function(categories) {
                 if (!cachedData) {
                     cachedData = organizeData(categories);
                 }
                 callback(cachedData);
             };
-            daum.load(CATEGORIES_URL, null, { charset : "utf-8" });
+            daum.load(CATEGORIES_URL, null, {charset: "utf-8"});
             // fast retry
-            setTimeout(function () {
+            setTimeout(function() {
                 if (!cachedData) {
                     queryData(callback);
                 }
@@ -488,18 +704,18 @@ if(!DMT.isApp) {    // app이 아닌 경우
             }
             return result;
         }
- 
- 
+
+
         // public interfaces ...
         return {
             /**
              * SiteMap 모듈의 초기화
              */
- 
-            init: function () {
+            
+            init: function() {
                 bindEvents();
             },
- 
+
             /**
              * 관련서비스 등록 API
              * SiteMap.addRelatedService(name, url)
@@ -507,73 +723,73 @@ if(!DMT.isApp) {    // app이 아닌 경우
              *      SiteMap.addRelatedService('부동산', 'http://m.realestate.daum.net/');
              *      SiteMap.addRelatedService('환율', 'http://m.xxx.daum.net/');
              */
-            addRelatedService: function (name, url) {
-                relatedServices.push({ 'name': name, 'url': url });
+            addRelatedService: function(name, url) {
+                relatedServices.push({'name': name,'url': url});
             },
- 
+
             /**
              * 서버로부터 사이트맵 데이터(JSONP)를 불러온 이후 호출되는 callback function
              */
-            onDataLoaded: function (data) {
+            onDataLoaded: function(data) {
                 onDataLoaded(data);
             }
         };
     }();
- 
+
     // exports
     window.SiteMap = SiteMap;
- 
+
     // will be hoisted
-    var TMPL_FRAME = '' +
-            '<h2 class="screen_out">서비스 전체보기</h2>' +
-            '<div class="inner">' +
-            '    <div class="related_links">' +
-            '        <h3 class="tit_related">최근 이용한 서비스</h3>' +
-            '        <ul class="list_related">' +
-            '            <!-- TMPL_RELATED_SERVICE -->' +
-            '        </ul>' +
-            '    </div>' +
-            '    <div class="sitemap_links">' +
-            '        <h3 class="screen_out">가나다순 정렬</h3>' +
-            '        <!-- 주요서비스일 경우, 링크 안이 span대신 strong태그 사용 -->' +
-            '        <div class="inner_links">' +
-            '            <!-- TMPL_CATEGORY -->' +
-            '        </div>' +
-            '    </div>' +
-            '    <div class="etc_links">' +
-            '        <h3 class="screen_out">기타 서비스</h3>' +
-            '        <ul class="list_etc">' +
-            '        </ul>' +
-            '    </div>' +
-            '    <div class="close_links">' +
-            '        <button type="button" class="btn_close">' +
-            '            <span class="ico_gnbcomm ico_close"></span><span class="txt">닫기</span>' +
-            '        </button>' +
-            '    </div>' +
-            '</div>'/* +
-            '<span class="blank"></span>'*/,
-        TMPL_RELATED_SERVICE = '<li><a href="%s" class="link">%s</a></li>',
-        TMPL_CATEGORY = '' +
-            '<div class="sort_ganada">' +
-            '    <strong class="tit">%s</strong>' +
-            '    <ul class="list_sitemap">' +
-            '        <!-- TMPL_ITEM -->' +
-            '    </ul>' +
-            '</div>',
-        TMPL_ITEM = '<li class="%s"><a href="%s" class="link"><span class="txt">%s</span>%s</a></li>',
-        // 주요서비스 강조시에 사용할 template
-        TMPL_MAIN_ITEM = '<li class="%s"><a href="%s" class="link"><strong class="txt">%s</strong>%s</a></li>',
-        TMPL_NEW_ICON = '<span class="ico_gnbcomm ico_new">(신규)</span>',
-        TMPL_MOBILE_ITEM = '<li class="%s"><a href="%s" class="link"><span class="txt">%s</span></a></li>';
+    var TMPL_FRAME = '' + 
+    '<h2 class="screen_out">서비스 전체보기</h2>' + 
+    '<div class="inner">' + 
+    '    <div class="related_links">' + 
+    '        <h3 class="tit_related">최근 이용한 서비스</h3>' + 
+    '        <ul class="list_related">' + 
+    '            <!-- TMPL_RELATED_SERVICE -->' + 
+    '        </ul>' + 
+    '    </div>' + 
+    '    <div class="sitemap_links">' + 
+    '        <h3 class="screen_out">가나다순 정렬</h3>' + 
+    '        <!-- 주요서비스일 경우, 링크 안이 span대신 strong태그 사용 -->' + 
+    '        <div class="inner_links">' + 
+    '            <!-- TMPL_CATEGORY -->' + 
+    '        </div>' + 
+    '    </div>' + 
+    '    <div class="etc_links">' + 
+    '        <h3 class="screen_out">기타 서비스</h3>' + 
+    '        <ul class="list_etc">' + 
+    '        </ul>' + 
+    '    </div>' + 
+    '    <div class="close_links">' + 
+    '        <button type="button" class="btn_close">' + 
+    '            <span class="ico_gnbcomm ico_close"></span><span class="txt">닫기</span>' + 
+    '        </button>' + 
+    '    </div>' + 
+    '</div>' /* +
+            '<span class="blank"></span>'*/, 
+    TMPL_RELATED_SERVICE = '<li><a href="%s" class="link">%s</a></li>', 
+    TMPL_CATEGORY = '' + 
+    '<div class="sort_ganada">' + 
+    '    <strong class="tit">%s</strong>' + 
+    '    <ul class="list_sitemap">' + 
+    '        <!-- TMPL_ITEM -->' + 
+    '    </ul>' + 
+    '</div>', 
+    TMPL_ITEM = '<li class="%s"><a href="%s" class="link"><span class="txt">%s</span>%s</a></li>', 
+    // 주요서비스 강조시에 사용할 template
+    TMPL_MAIN_ITEM = '<li class="%s"><a href="%s" class="link"><strong class="txt">%s</strong>%s</a></li>', 
+    TMPL_NEW_ICON = '<span class="ico_gnbcomm ico_new">(신규)</span>', 
+    TMPL_MOBILE_ITEM = '<li class="%s"><a href="%s" class="link"><span class="txt">%s</span></a></li>';
 })();
+
 
 function setSlidePanels () {
     var homeBtn = {};
     homeBtn.news = {
         news: {title:'뉴스홈', url:'http://m.media.daum.net/media/?t__nil_mnews=home'},
         sports: {title:'스포츠홈', url:'http://m.sports.daum.net/sports/?t__nil_msports=home'},
-        enter: {title:'연예홈', url:'http://m.media.daum.net/media/entertain/?t__nil_menter=home'},
-        vote: {title:'총선홈', url:'http://m.media.daum.net/2012g_election/?t__nil_mvote=home'}
+        enter: {title:'연예홈', url:'http://m.media.daum.net/media/entertain/?t__nil_menter=home'}
     };
     homeBtn.contents = {
         story: {title:'검색홈', url:'http://issue.search.daum.net/issue?t__nil_live=story_home'},
@@ -590,12 +806,24 @@ function setSlidePanels () {
         telzone:{title:'텔존홈', url:'http://m.telzone.daum.net/?t__nil_fun=telzone_home'}
     };
     homeBtn.issue = {
+        shop: {title: '쇼핑하우홈',url: 'http://m.shopping.daum.net/?t__nil_shopping=shop_home'},
         Msale: {title:'쇼핑하우홈', url:'http://m.shopping.daum.net/?t__nil_shopping=Msale_home'},
         coupon: {title:'소셜쇼핑홈', url:'http://m.social.daum.net/?t__nil_shopping=coupon_home'}
     };
 
-    function setPageNumber (el, index) {
-        el.innerHTML = ''+ (index + 1);
+    function setPageNumber (el, index, length) {
+        if (slide.isTransformEnabled) {
+            for (var i = 0; i < length; i++) {
+                if (el.childNodes[i].tagName == 'STRONG') {
+                    var nEl = document.createElement('SPAN');
+                    el.replaceChild(nEl, el.childNodes[i]);
+                }
+            }
+            var cEl = document.createElement('STRONG');
+            el.replaceChild(cEl, el.childNodes[index]);
+        } else {
+            el.innerHTML = ''+ (index + 1);
+        }
     }
     
     function setCurrentTab (area, home, btn, type) {
@@ -607,13 +835,14 @@ function setSlidePanels () {
     function buildSlides (data) {
         var arr = [];
         for (var item in data) {
+            console.log(data, item);
             for (var i=0, len=data[item].length; i< len; i++) {
                 arr.push({
                     type: item, 
                     dataList: data[item][i][0],
                     index: arr.length,
                     toHTML: function () {
-                        return '<ul>' + this.dataList + '</ul>'
+                        return this.dataList;
                     }
                 });
             }
@@ -625,14 +854,21 @@ function setSlidePanels () {
     function createSwipe(elStr, data, slideName, tabs) {
         var wrapper = document.getElementById(elStr);
         var ds = new slide.InfiniteDataSource(buildSlides(data));
-        var sl = new slide.Slide(wrapper, ds);
-        var pagenum = document.getElementById(slideName+"Paging").getElementsByClassName("page_no")[0];
+        var sl = new slide.Slide(wrapper, ds, {
+            containerId: slideName,
+            PanelClass: slide.UlPanel
+        });
+        if (slide.isTransformEnabled) {
+            var pagenum = document.getElementById(slideName+"Paging").getElementsByClassName("paging_swipe")[0];            
+        } else {
+            var pagenum = document.getElementById(slideName+"Paging").getElementsByClassName("page_no")[0];
+        }
         var area = document.getElementById(slideName+"Area");
         var home = document.getElementById(slideName+"Home");
 
         function setPagingAndTap () {
             ds.queryCurrent(function (data) {
-                setPageNumber(pagenum, data.index);
+                setPageNumber(pagenum, data.index, ds.data.length);
                 setCurrentTab(area, home, homeBtn[slideName], data.type);
             });
         }
@@ -660,6 +896,7 @@ function setSlidePanels () {
         var ob = null;
         sl.on("endDrag", function(session){
             if (session.isSwipe()) {
+                daum.Event.stopObserving(ob);
                 ob = daum.addEvent(wrapper, 'click', function preventClick(e) {
                     daum.Event.stopEvent(e);
                 });
@@ -674,12 +911,10 @@ function setSlidePanels () {
     mediaData.news = DMT.json.news;
     mediaData.sports = DMT.json.sports;
     mediaData.enter = DMT.json.enter;
-    mediaData.vote = DMT.json.vote;
     createSwipe("newsContents", mediaData, "news", [
         {id:"newsTitle", index: 0},
         {id:"sportsTitle", index: 4},
-        {id:"enterTitle", index: 5},
-        {id:"voteTitle", index: 6},
+        {id:"enterTitle", index: 5}
     ]);
 
     var contentData = {};
@@ -695,24 +930,28 @@ function setSlidePanels () {
     ]);
 
     var funData = {};
+    funData.game = DMT.json.game;
     funData.cartoon = DMT.json.cartoon;
     funData.movie = DMT.json.movie;
     funData.music = DMT.json.music;
     funData.tvpot = DMT.json.tvpot;
     funData.telzone = DMT.json.telzone;
     createSwipe("funContents", funData, "fun", [
-        {id:"comicTitle", index: 0},
-        {id:"movieTitle", index: 1},
-        {id:"musicTitle", index: 2},
-        {id:"tvpotTitle", index: 3},
-        {id:"telzoneTitle", index: 4}
+        {id:"gameTitle", index: 0},
+        {id:"comicTitle", index: 1},
+        {id:"movieTitle", index: 2},
+        {id:"musicTitle", index: 3},
+        {id:"tvpotTitle", index: 4},
+        {id:"telzoneTitle", index: 5}
     ]);
 
     var issueData = {};
+    issueData.shop = DMT.json.shop;
     issueData.Msale = DMT.json.Msale;
     issueData.coupon = DMT.json.coupon;
     createSwipe("issueContents", issueData, "issue", [
-        {id:"saleTitle", index: 0},
-        {id:"shopTitle", index: 2}
+        {id:"shopTitle", index: 0},
+        {id:"saleTitle", index: 2},
+        {id:"couponTitle", index: 4}
     ]);
 }
