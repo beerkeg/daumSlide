@@ -168,7 +168,11 @@
          * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
          */
         endDrag: function (session) {
-            if (session.delta.x === 0) {
+            if (session.isScroll()) {
+                return;
+            }
+            
+            if (session.delta.x === 0 && session.delta.y === 0) {
                 this.emit("click");
                 return;
             }
@@ -238,6 +242,7 @@
     var AdvanceSlide = Slide.extend({
         init: function (frameEl, dataSource, option) {
             this._super(frameEl, dataSource, option);
+            this.defaultDuration = this.option.duration || 500;
             this.isInTransition = false;
         },
         slide: function (offset, callback) {
@@ -282,7 +287,7 @@
          * @param duration {Integer} Transition Duration Value
          */
         enableTransition: function (duration) {
-            this.container.setTransitionDuration(duration || 500);
+            this.container.setTransitionDuration(duration || this.defaultDuration);
             this.isInTransition = true;
         },
         /**
@@ -310,14 +315,14 @@
             if (this.isInTransition) {
                 return;
             }
-            this.duration = duration || 500;
+            this.duration = duration || this.defaultDuration;
             this._super();
         },
         prev: function (duration) {
             if (this.isInTransition) {
                 return;
             }
-            this.duration = duration || 500;
+            this.duration = duration || this.defaultDuration;
             this._super();
         }
     });
