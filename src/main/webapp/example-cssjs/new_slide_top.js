@@ -783,7 +783,6 @@ if (!DMT.isApp) { // app이 아닌 경우
     TMPL_MOBILE_ITEM = '<li class="%s"><a href="%s" class="link"><span class="txt">%s</span></a></li>';
 })();
 
-
 function setSlidePanels () {
     var homeBtn = {};
     homeBtn.news = {
@@ -832,14 +831,31 @@ function setSlidePanels () {
         home.innerHTML = btn[type].title;
     }
 
+    function changeData (data) {
+        var st = data.replaceAll("</a>","</div></a>"),
+            temps = st.split('>');
+
+        for (var i=0,len=temps.length;i<len;i++) {
+            if(temps[i].indexOf('<a') > -1) {
+                temps[i+1] = '<div>' + temps[i+1];
+            }
+        }
+        return temps.join('>');
+    }
+
     function buildSlides (data) {
-        var arr = [];
+        var arr = [],
+            dataList = '';
         for (var item in data) {
-            console.log(data, item);
             for (var i=0, len=data[item].length; i< len; i++) {
+                if (slide.isTransformEnabled) {
+                    dataList = changeData(data[item][i][0]);
+                } else {
+                    dataList = data[item][i][0];
+                }
                 arr.push({
                     type: item, 
-                    dataList: data[item][i][0],
+                    dataList: dataList,
                     index: arr.length,
                     toHTML: function () {
                         return this.dataList;
@@ -847,7 +863,6 @@ function setSlidePanels () {
                 });
             }
         }
-        console.log(arr);
         return arr;
     }
 
@@ -856,6 +871,7 @@ function setSlidePanels () {
         var ds = new slide.InfiniteDataSource(buildSlides(data));
         var sl = new slide.Slide(wrapper, ds, {
             containerId: slideName,
+            duration: 300,
             PanelClass: slide.UlPanel
         });
         if (slide.isTransformEnabled) {
