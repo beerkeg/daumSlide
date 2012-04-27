@@ -7,8 +7,8 @@
         wrapper = document.getElementById("wrapper"),
         click = "ontouchstart" in window ? "touchstart" : "click",
         header = document.getElementById("header"),
-        psTitle = header.getElementsByClassName("ps-title")[0],
-        psCount = header.getElementsByClassName("count")[0],
+        psTitle = document.getElementById("ps-title"),
+        psCount = document.getElementById("count"),
         footer = document.getElementById("footer"),
         prevBtn = document.getElementById("prev-button"),
         nextBtn = document.getElementById("next-button"),
@@ -79,10 +79,10 @@
         ds.setCurrentIndex(pageInfo.initIndex);
         var sl = new slide.Slide(wrapper, ds);
 
-        prevBtn.addEventListener(click, function(){
+        EventUtil.listen(prevBtn, click, function(){
             sl.prev();
         }, false);
-        nextBtn.addEventListener(click, function(){
+        EventUtil.listen(nextBtn, click, function(){
             sl.next();
         }, false);
         sl.on("resize", function () {
@@ -92,7 +92,12 @@
 
         setDesc();
         sl.on("startDrag", function (session) {
-            session.targetEvent.preventDefault();
+            var ev = session.targetEvent;
+            if(ev.preventDefault){
+                ev.preventDefault();
+            } else {
+                ev.returnValue = false;
+            }
         });
         sl.on("next", setDesc);
         sl.on("prev", setDesc);
@@ -163,11 +168,11 @@
                  '</div>' +
                 '</div>';
     }
-
+    var EventUtil = window.gesture.EventUtil;
     (function main () {
-        window.addEventListener("load", function(e){
+        EventUtil.listen(window, "load", function(e){
             loadInitialData();
-            closeBtn.addEventListener("click", function () {
+            EventUtil.listen(closeBtn, "click", function () {
                 history.back();
             });
         });
