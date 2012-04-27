@@ -167,8 +167,8 @@ z-index: 30;
 </head>
 <body>
 <div id="wrapper"></div>
-<button type="button" class="prevBtn">prev</button>
-<button type="button" class="nextBtn">next</button>
+<button type="button" class="prevBtn" id="prevBtn">prev</button>
+<button type="button" class="nextBtn" id="nextBtn">next</button>
 <div id="footer"></div>
 <script type="text/javascript">
 function getChildElements (el) {
@@ -220,8 +220,8 @@ var headTag = document.getElementsByTagName("head")[0],
     wrapper = document.getElementById("wrapper"),
     queryEl = document.getElementById("query"),
     click = "ontouchstart" in window ? "touchstart" : "click",
-    prevBtn = document.getElementsByClassName("prevBtn")[0],
-    nextBtn = document.getElementsByClassName("nextBtn")[0],
+    prevBtn = document.getElementById("prevBtn"),
+    nextBtn = document.getElementById("nextBtn"),
     footer = document.getElementById("footer"),
     pageNum = 1;
 
