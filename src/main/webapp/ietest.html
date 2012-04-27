@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<title>slide example</title>
+<style>
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow:hidden;
+    background-color: #333;
+}
+ul, li {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+#frameEl {
+    width: 100%;
+    height:100%;
+    overflow:hidden;
+    background-color: #333;
+    position: relative;
+}
+.slide {
+    height:100%;
+}
+.panel {
+    position: relative;  
+    background: url(http://m1.daumcdn.net/img-section/enter/common/loading.gif) 50% 50% no-repeat;  
+}
+.panel img {
+    position: absolute;
+    top: 0;
+}
+.prevBtn, .nextBtn {
+    position: absolute;
+    top: 45%;
+    z-index: 30;
+    width: 23px;
+    height: 45px;
+    background: url(http://m1.daumcdn.net/imgsrc.search/search_all/2009/mobile/safari/btn_view_nav.png) 0 0 no-repeat;
+    text-indent: -10000px;
+    border-size: 0px;
+    border-style: none;
+    font: inherit;
+    cursor: hand;
+    cursor: pointer;
+    padding: 0px;
+}
+.prevBtn {
+    left: 10px;
+    background-position: 0 0;
+}
+.nextBtn {
+    right: 10px;
+    background-position: 0 -50px;
+}
+#desc_field {
+z-index: 30;
+}
+
+.wrap_desc {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    z-index: 30;
+    width: 100%;
+    height: 82px;
+    padding-top: 12px;
+    border-top: 1px solid #434346;
+    background-color: black;
+    opacity: 0.7;
+    text-align: center;
+    line-height: 16px;
+}
+
+.wrap_desc .tit {
+    font-size: 15px;
+    color: #D2D6DD;
+    letter-spacing: -1px;
+    display: block;
+    text-decoration: none;
+    z-index: 30;
+}
+
+.wrap_desc .link_src {
+    margin-left: 17px;
+    font-size: 13px;
+    color: #7E93FF;
+    text-decoration: none;
+    z-index: 30;
+}
+
+.wrap_desc .info {
+    font-size: 12px;
+    color: #B8BDC3;
+    z-index: 30;
+}
+
+.wrap_desc .wrap_btn {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    height: 39px;
+    border-top: 1px solid #434346;
+    z-index: 30;
+}
+
+.wrap_desc .wrap_btn a {
+    display: block;
+    position: absolute;
+    top: 0px;
+    width: 50%;
+    height: 39px;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: -1px;
+    color: #B8BDC3;
+    text-decoration: none;
+    line-height: 39px;
+    z-index: 30;
+}
+
+.wrap_desc .wrap_btn a.left_wrap {
+    left: 0px;
+}
+.wrap_desc .wrap_btn a.right_wrap {
+    right: 0px;
+}
+.wrap_desc .wrap_btn a.right_wrap .bar {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 1px;
+    height: 39px;
+    border-left: 1px solid #434346;
+}
+.wrap_desc .wrap_btn .prev {
+    display: inline-block;
+    padding-left: 11px;
+    background: url(http://m1.daumcdn.net/imgsrc.search/search_all/2009/mobile/safari/btn_prev_search.png) 0 15px no-repeat;
+}
+
+#footer {
+    width: 100%;
+    z-index: 999;
+    position: absolute;
+    bottom:0;
+}
+
+</style>
+<script type="text/javascript" src="http://s1.daumcdn.net/svc/attach/U0301/cssjs/jquery/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/gesture/gesture-1.0.3.min.js"></script>
+<script src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/ejohn/class-0.1.0.min.js"></script>
+<script type="text/javascript" src="js/datasource.js"></script>
+<script type="text/javascript" src="js/util.js"></script>
+<script type="text/javascript" src="js/panel.js"></script>
+<script type="text/javascript" src="js/container.js"></script>
+<script type="text/javascript" src="js/observable.js"></script>
+<script type="text/javascript" src="js/slide.js"></script>
+</head>
+<body>
+<div id="frameEl"></div>
+<button type="button" id="prevBtn" class="prevBtn">이전</button>
+<button type="button" id="nextBtn" class="nextBtn">다음</button>
+<div id="footer"></div>
+<script type="text/javascript">
+var headTag = document.getElementsByTagName("head")[0],
+        frameEl = document.getElementById("frameEl"),
+        click = "ontouchstart" in window ? "touchstart" : "click",
+        prevBtn = document.getElementById("prevBtn"),
+        nextBtn = document.getElementById("nextBtn"),
+        footer = document.getElementById("footer"),
+        pageNum = 0;
+
+function loadData(callback) {
+    pageNum += 1;
+    $.ajax({
+        url : "http://apis.daum.net/search/image",
+        dataType : "jsonp",
+        type : "post",
+        jsonp : "callback",
+        data : {
+            apikey : "080a78bc84cc6b814fb365591b1d7d7fc26575b3",        // API KEY
+            q : "소녀시대",                   // 검색어
+            result : "10",                 // 한페이지에 출력될 결과수
+            pageno : pageNum,               // 페이지번호
+            output : "json"                // JSONP 형식으로 호출하기 때문에 결과값 포맷은 json
+        },
+        success : function(r){
+            callback(r);
+        }
+    });
+}
+
+var ieSlide = slide.BasicSlide.extend({
+    bindEvents: function () {
+        var el = this.frameEl,
+            resizeEvent = 'onorientationchange' in window ? 'orientationchange' : 'resize',
+            width = el.clientWidth, height = el.clientHeight;
+
+        function isSizeReallyChanged () {
+            return !(width === el.clientWidth && height === el.clientHeight);
+        }
+        gesture.EventUtil.listen(window, resizeEvent, function () {
+            var cnt = 0;
+            setTimeout(function checkResize() {
+                if (isSizeReallyChanged()) {
+                    width = el.clientWidth;
+                    height = el.clientHeight;
+                    this.resize(width, height);
+                } else {
+                    if (cnt++ < 20) {
+                        setTimeout(checkResize, 50);
+                    }
+                }
+            }, 50);
+        });
+    },
+    drag: function (session) {
+        if (session.isSwipe()) {
+            if (session.targetEvent.preventDefault) {
+                session.targetEvent.preventDefault();
+            } else {
+                session.targetEvent.returnValue = false;
+            }            
+            this.container.move(session.delta.x / 2);
+        }
+    },
+    slide: function (offset, callback) {
+        $(this.container.el).animate({
+            left: (offset - this.pageWidth) + "px"
+        }, this.duration, function() {
+            if (callback) {
+                callback();
+            }
+        });
+    },
+    next: function (duration) {
+        this.duration = duration || this.defaultDuration;
+        this._super();
+    },
+    prev: function (duration) {
+        this.duration = duration || this.defaultDuration;
+        this._super();
+    }
+    
+});
+
+
+// slide.Datasource 와 slide.Slide를 생성/초기화 하는 함수.
+function initSlide(data) {
+    ImgManager.setClientSize(frameEl);
+    // init data를 파싱한다.
+    var items = buildSlides(data);
+    // 파싱한 init data를 가지고 DataSource를 생성.
+    var ds = new slide.DataSource(items);
+    
+    // DataSource내의 data의 끝에 도달 했을 시 추가 데이터를 불러온다.
+    ds.willQueryEndOfData(function (callback) {
+        var self = this;
+        loadData(function (data) {
+            var items = buildSlides(data);
+            self.addNextData(items);
+            callback(items[0]); // (ds.queryNext에서 넘겨 받은 callback 함수)
+        });
+    });
+
+    // frameEl과, 생성한 DataSource를 이용하여 Slide를 초기화 한다.
+//    var sl = new ieSlide(frameEl, ds);
+    var sl = new slide.Slide(frameEl, ds);
+    sl.on("resize", function () {
+        ImgManager.setClientSize(frameEl);
+        sl.show();
+    });
+    // Slide의 좌우 버튼 기능을 추가한다.
+    setButton(sl);
+
+    // Slide의 하단 설명 레이어를 보여주는 기능을 추가한다.
+    setFooter(sl, ds);
+
+    // Slide click시 버튼과 하단 설명레이어를 토글할 수 있는 기능을 추가한다.
+    setToggle(sl);
+}
+
+function buildSlides(data) {
+    var items = data.channel.item,
+            arr = [];
+    for (var i = 0, len = items.length; i < len; i++) {
+        var item = items[i];
+        arr.push({
+            image: item.image,
+            width: item.width,
+            height: item.height,
+            title: item.title,
+            link: item.link,
+            toHTML: function () {
+                var imgSize = ImgManager.resizeImg(this.width, this.height),
+                    imgOffset = ImgManager.getImgOffset(imgSize.width, imgSize.height);
+                return '<img alt="' + this.title + '" src="' + this.image + '" width="' + imgSize.width + '" height="' + imgSize.height +
+                            '" data-width="' + item.width + '" data-height="' + item.height +
+                            '"style=position:absolute;top:' + imgOffset.top + 'px;left:' + imgOffset.left + 'px;" ' +
+                            'onload="d.onImgLoad(this);" ' +
+                            'onerror="d.onImgLoadError(this);" ' +
+                            'onabort="d.onImgLoadError(this);">';
+            }
+        });
+    }
+    return arr;
+}
+
+function setButton(sl) {
+    $("#prevBtn").on(click, function(){
+        sl.prev();
+    });
+    $("#nextBtn").on(click, function(){
+        sl.next();
+    });
+}
+function setFooter(sl, ds) {
+    function setDesc () {
+        ds.queryCurrent(function (data) {
+            footer.innerHTML = createDesc(data);
+        });
+    }
+    sl.on("startDrag", function (session) {
+        if (session.targetEvent.preventDefault) {
+            session.targetEvent.preventDefault();
+        } else {
+            session.targetEvent.returnValue = false;
+        }
+    });
+    sl.on("next", setDesc);
+    sl.on("prev", setDesc);
+    setDesc();
+}
+function createDesc (data) {
+    var title = unescapeHTML(data.title),
+        linktext = cutString(data.link, 37);
+    return '<div class="wrap_desc" style="opacity: 0.7;" id="desc_field">' +
+                '<a href="'+data.link+'" class="tit" id="desc_title">'+ title +'</a>' +
+                '<span class="info" id="desc_info">'+data.width+' x '+data.height+'</span><a href="'+data.link+'" id="desc_url" class="link_src">'+ linktext +'</a>' +
+                '<div class="wrap_btn">' +
+                    '<a href="" class="left_wrap"><span class="prev">검색결과로 돌아가기</span></a>' +
+                    '<a id="desc_link" href="'+data.image+'" target="_blank" class="right_wrap"><span class="bar"></span><span>원본 바로보기</span></a>' +
+                '</div></div>';
+}
+function unescapeHTML (text) {
+   return text.replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g," ").replace(/&amp;/g,"&").replace(/&quot;/g,"\"").replace(/&#39;/g,"'");
+}
+function cutString (text, length) {
+    if (text.length > length) {
+        return text.substring(0,length-2) + ".."
+    } else {
+        return text;
+    }
+}
+
+
+function setToggle(sl) {
+    var viewState = "block";
+    function setDisplay (state) {
+        footer.style.display = state;
+        prevBtn.style.display = state;
+        nextBtn.style.display = state;
+        viewState = state;
+    }
+
+    sl.on("click", function() {
+        if (viewState === "none") {
+            setDisplay("block");
+        } else {
+            setDisplay("none");
+        }
+    });
+}
+
+(function main() {
+    $(window).on("load",function () {
+        loadData(function (data){
+            initSlide(data);
+        });
+    });
+})();
+
+
+var d= {};
+d.onImgLoad = function (el) {
+    el.parentNode.style.background = "none";
+};
+d.onImgLoadError = function (el) {
+    el.parentNode.style.background = "none";
+};
+
+var ImgManager = {
+    clientWidth: 0,
+    clientHeight: 0,
+    setClientSize: function (el) {
+        this.clientHeight = el.clientHeight - 10;
+        this.clientWidth = el.clientWidth - 10;
+    },
+    resizeImg: function (width, height) {
+        if (this.clientHeight > this.clientWidth) {
+            return this.potraitResizeImg(width, height);
+        } else {
+            return this.landscapeResizeImg(width, height);
+        }
+    },
+    potraitResizeImg: function (width, height) {
+        if (this.clientWidth * height > this.clientHeight * width) {
+            return this.resizeByHeight(width, height);
+        } else {
+            return this.resizeByWidth(width, height);
+        }
+    },
+    landscapeResizeImg: function (width, height) {
+        if (this.clientWidth * height < this.clientHeight * width) {
+            return this.resizeByWidth(width, height);
+        } else {
+            return this.resizeByHeight(width, height);
+        }
+    },
+    resizeByHeight: function (width, height) {
+        return {width: parseInt(this.clientHeight * width / height), height: this.clientHeight};
+    },
+    resizeByWidth: function (width, height) {
+        return {width: this.clientWidth, height: parseInt(this.clientWidth * height / width)};
+    },
+    getImgOffset: function (width, height) {
+        return {left: parseInt((this.clientWidth + 10 - width) / 2), top: parseInt((this.clientHeight + 10 - height) / 2)};
+    }
+};
+
+
+</script>
+
+</body>
+</html>
