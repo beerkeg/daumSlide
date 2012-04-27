@@ -6,11 +6,74 @@
 
     var hardwareAccelStyle = exports.hardwareAccelStyle;
     var isTransformEnabled = exports.isTransformEnabled;
+    var isSwipeEnabled = exports.isSwipeEnabled;
     var Panel = exports.Panel;
 
     var slideInstanceNum = 0;
     var PANEL_PREV = 0, PANEL_CURRENT = 1, PANEL_NEXT = 2;
-    var Container = Class.extend({
+    var BasicContainer= exports.BasicContainer = Class.extend({
+        init: function (slide, option) {
+            this.slide = slide;
+            this.option = option || {};
+
+            this.el = this.createContainer(slide.pageWidth);
+
+            this.panel = this.initPanel(this.option.PanelClass || Panel);
+            this.bindEvents();
+        },
+        createContainer: function (width) {
+            var container = document.createElement("div");
+
+            container.className = "slide";
+            if (this.option.containerId) {
+                container.id = this.option.containerId;
+            } else {
+                slideInstanceNum += 1;
+                container.id = "slide-" + slideInstanceNum;
+            }
+            container.style.cssText = this.setContainerStyle(width);
+            return container;
+        },
+            setContainerStyle: function (width) {
+                return "overflow:hidden;position:relative;top:0;left:0;" +
+                        "width:" + width + "px;";
+            },
+        initPanel: function (PanelClass) {
+            var panel = new PanelClass(this.slide);
+            this.el.appendChild(panel.el);
+            return panel;
+        },
+        bindEvents: function () {
+            var GESTURE_THRESHOLD = 0,
+                listener = gesture.GestureListener(this.el, GESTURE_THRESHOLD),
+                self = this;
+
+            listener.onGestureStart(function (session) {
+                return self.slide.startDrag(session);
+            });
+            listener.onGestureEnd(function (session) {
+                return self.slide.endDrag(session);
+            });
+            this.slide.on('resize', function (width) {
+                self.setSlideSize(width);
+            });
+            return listener;
+        },
+        setSlideSize: function (width) {
+            this.el.style.width = width + 'px';
+        },
+        getWidth: function () {
+            return this.el.clientWidth;
+        },
+        destroy: function () {
+            this.slide = null;
+            this.el = null;
+
+            this.panel.destroy();
+            this.panel = null;
+        }
+    });
+    var MiddleContainer = exports.MiddleContainer = BasicContainer.extend({
         /**
          * 새로운 Container를 생성/초기화 한다.
          * @param slide {Slide Class}
@@ -25,60 +88,23 @@
             this.initPanels(this.option.PanelClass || Panel);
             this.bindEvents();
         },
-        /**
-         * slide(container Element)를 생성 한다.
-         */
-        createContainer: function (width, enableTransform) {
-            var container = document.createElement("div");
-
-            container.className = "slide";
-            if (this.option.containerId) {
-                container.id = this.option.containerId;
-            } else {
-                slideInstanceNum += 1;
-                container.id = "slide-" + slideInstanceNum;
-            }
-            container.style.cssText = "overflow:hidden;position:relative;top:0;" + hardwareAccelStyle +
-                                        "left:" + (-width) + "px;width:" + (width * 3) + "px;";
-            return container;
+        setContainerStyle: function (width) {
+            return "overflow:hidden;position:relative;top:0;" + hardwareAccelStyle +
+                    "left:" + (-width) + "px;width:" + (width * 3) + "px;";
         },
         /**
          * slide내에 존재하는 패널들을 생성/초기화 한다.
          */
         initPanels: function (PanelClass) {
-            this.initPanel(PANEL_PREV, PanelClass);
-            this.initPanel(PANEL_CURRENT, PanelClass);
-            this.initPanel(PANEL_NEXT, PanelClass);
+            this.panels[PANEL_PREV] = this.initPanel(PanelClass);
+            this.panels[PANEL_CURRENT] = this.initPanel(PanelClass);
+            this.panels[PANEL_NEXT] = this.initPanel(PanelClass);
         },
-            /**
-             * panel 생성/초기화 한다.
-             */
-            initPanel: function (index, PanelClass) {
-                var panel = new PanelClass(this.slide);
-                this.panels[index] = panel;
-                this.el.appendChild(panel.el);
-            },
-        /**
-         * slide에 있는 패널들에 현재 인덱스 기준의 데이터 셋을 넣는다.
-         * @param set {Object} HTMLElement 데이터 셋
-         */
         bindEvents: function () {
-            var GESTURE_THRESHOLD = 0,
-                listener = gesture.GestureListener(this.el, GESTURE_THRESHOLD),
+            var listener = this._super(),
                 self = this;
-
-            listener.onGestureStart(function (session) {
-                return self.slide.startDrag(session);
-            });
             listener.onGestureMove(function (session) {
                 return self.slide.drag(session);
-            });
-            listener.onGestureEnd(function (session) {
-                return self.slide.endDrag(session);
-            });
-
-            this.slide.on('resize', function (width) {
-                self.setSlideSizeAndOffset(width);
             });
         },
         /**
@@ -142,15 +168,9 @@
          * 변경된 slide size 와 offset 을 다시 설정한다.
          * @param width {Number}
          */
-        setSlideSizeAndOffset: function (width) {
+        setSlideSize: function (width) {
             this.el.style.width = (width * 3) + 'px';
             this.el.style.left = (-width) + 'px';
-        },
-        /**
-         * 해당 slide(컨테이너 Element) 의 실제 크기를 반환한다.
-         */
-        getWidth: function () {
-            return this.el.clientWidth;
         },
         destroy: function () {
             this.slide = null;
@@ -162,8 +182,7 @@
             delete this.panels;
         }
     });
-
-    var AdvanceContainer = Container.extend({
+    var AdvanceContainer = exports.AdvanceContainer = MiddleContainer.extend({
         /**
          * 주어진 offset 만큼 slide를 좌우 이동 시킨다.
          * @param offset {Number} 이동시킬 거리 값
@@ -193,5 +212,6 @@
             this.el.removeEventListener('webkitTransitionEnd', callback);
         }
     });
-    exports.Container = isTransformEnabled ? AdvanceContainer : Container;
+    
+    exports.Container = isTransformEnabled ? AdvanceContainer : isSwipeEnabled ? MiddleContainer : BasicContainer;
 })(window.slide = (typeof slide === 'undefined') ? {} : slide);

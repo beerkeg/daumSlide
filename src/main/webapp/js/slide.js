@@ -5,12 +5,15 @@
     'use strict';
 
     var isTransformEnabled = exports.isTransformEnabled;
+    var isSwipeEnabled = exports.isSwipeEnabled;
     var Panel = exports.Panel;
+    var BasicContainer = exports.BasicContainer;
     var Container = exports.Container;
     var onResized = exports.onResized;
 
     var SLIDE_TRESHOLD = 0.1; // 20%
-    var Slide = slide.Observable.extend({
+    
+    var BasicSlide = exports.BasicSlide = slide.Observable.extend({
         init: function (frameEl, dataSource, option) {
             this.frameEl = frameEl;
             this.container = null;
@@ -46,8 +49,8 @@
          */
         show: function () {
             var container = this.container;
-            this.dataSource.queryCurrentSet(function (set) {
-                container.setData(set);
+            this.dataSource.queryCurrent(function (current) {
+                container.panel.setData(current);
             });
         },
 
@@ -63,6 +66,92 @@
                 } else {
                     self.nextSlide();
                 }
+            });
+        },
+            nextSlide: function () {
+                this.dataSource.next();
+                this.show();
+                this.emit("next");
+            },
+        /**
+         * 슬라이드를 우로 이동시킨다. 이전(prev) 슬라이드를 보여준다.
+         * 만약, 이전 슬라이드에 내용이 없을 경우 이동 시키지 않는다.
+         */
+        prev: function () {
+            var self = this;
+            this.dataSource.queryPrev(function (prev) {
+                if (prev === null) {
+                    self.cancel();
+                } else {
+                    self.prevSlide();
+                }
+            });
+        },
+            prevSlide: function () {
+                this.dataSource.prev();
+                this.show();
+                this.emit("prev");
+            },
+        /**
+         * slide를 원위치 시킨다.
+         */
+        cancel: function () {
+            this.emit("cancel");
+        },
+        /**
+         * mousedown or touchstart 이벤트 발생시 동작하는 함수
+         * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
+         */
+        startDrag: function (session) {
+            this.emit("startDrag", session);
+        },
+        /**
+         * mouseup or touchend 이벤트 발생시 동작하는 함수
+         * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
+         */
+        endDrag: function (session) {
+            if (session.isScroll()) {
+                return;
+            }
+            
+            if (session.delta.x === 0 && session.delta.y === 0) {
+                this.emit("click");
+                return;
+            }
+            this.emit("endDrag", session);
+        },
+        /**
+         * 변경된 wrapper, slide, panels의 size 와 offset을 다시 설정한다.
+         */
+        resize: function (width, height) {
+            this.setWrapperSize(width, height);
+            this.emit("resize", width, height);
+        },
+            /**
+             * 변경된 wrapper 사이즈를 확인/저장 한다.
+             */
+            setWrapperSize: function (width) {
+                this.pageWidth = width;
+            },
+        destroy: function () {
+            this.container.destroy();
+            this.container = null;
+
+            this.frameEl.innerHTML = '';
+            this.frameEl = null;
+
+            delete this.listeners;
+            this.dataSource = null;
+        }
+    });
+    var MiddleSlide = exports.MiddleSlide = BasicSlide.extend({
+        /**
+         * 데이터 소스로부터 데이터를 받아서 슬라이드에 보여준다.
+         */
+        show: function () {
+            var container = this.container;
+            this.dataSource.queryCurrentSet(function (set) {
+                container.setData(set);
             });
         },
         /**
@@ -88,20 +177,6 @@
                     container.setNextData(next);
                 });
             },
-        /**
-         * 슬라이드를 우로 이동시킨다. 이전(prev) 슬라이드를 보여준다.
-         * 만약, 이전 슬라이드에 내용이 없을 경우 이동 시키지 않는다.
-         */
-        prev: function () {
-            var self = this;
-            this.dataSource.queryPrev(function (prev) {
-                if (prev === null) {
-                    self.cancel();
-                } else {
-                    self.prevSlide();
-                }
-            });
-        },
         /**
          * 슬라이드 우로 이동시킨 후 panel들을 재정렬 + 그 이전 데이터를 미리 로딩해둔다.
          */
@@ -145,13 +220,6 @@
             this.slide(0, function onCancelEnd(){
                 self.emit("cancel");
             });
-        },
-        /**
-         * mousedown or touchstart 이벤트 발생시 동작하는 함수
-         * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
-         */
-        startDrag: function (session) {
-            this.emit("startDrag", session);
         },
         /**
          * mousemove or touchmove 이벤트 발생시 동작하는 함수
@@ -213,33 +281,10 @@
              */
             isPrevThreshold: function (session) {
                 return this.container.getWidth() * SLIDE_TRESHOLD < session.delta.x;
-            },
-        /**
-         * 변경된 wrapper, slide, panels의 size 와 offset을 다시 설정한다.
-         */
-        resize: function (width, height) {
-            this.setWrapperSize(width, height);
-            this.emit("resize", width, height);
-        },
-            /**
-             * 변경된 wrapper 사이즈를 확인/저장 한다.
-             */
-            setWrapperSize: function (width) {
-                this.pageWidth = width;
-            },
-        destroy: function () {
-            this.container.destroy();
-            this.container = null;
-
-            this.frameEl.innerHTML = '';
-            this.frameEl = null;
-
-            delete this.listeners;
-            this.dataSource = null;
-        }
+            }
     });
 
-    var AdvanceSlide = Slide.extend({
+    var AdvanceSlide = exports.AdvanceSlide = MiddleSlide.extend({
         init: function (frameEl, dataSource, option) {
             this._super(frameEl, dataSource, option);
             this.defaultDuration = this.option.duration || 500;
@@ -299,6 +344,7 @@
         },
         drag: function (session) {
             if (this.isInTransition) {
+                session.targetEvent.preventDefault();
                 return ;
             }
 
@@ -327,5 +373,5 @@
         }
     });
 
-    exports.Slide = isTransformEnabled ? AdvanceSlide : Slide;
+    exports.Slide = isTransformEnabled ? AdvanceSlide : isSwipeEnabled ? MiddleSlide : BasicSlide;
 })(window.slide = (typeof slide === 'undefined') ? {} : slide);

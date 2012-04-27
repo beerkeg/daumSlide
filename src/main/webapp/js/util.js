@@ -8,15 +8,16 @@
         ua = (ua || window.navigator.userAgent).toString();
         return {
             ua: ua,
-            isAndroid: function () {
-                return ua.match(/android/i);
-            },
-            isIOS: function () {
-                return ua.match(/like mac os x./i);
-            },
-            isSafari: function () {
-                return !ua.match(/mobile/i) && ua.match(/safari/i);
-            },
+            isIe8: !!(ua.match(/msie 8/i)),
+            isIe9: !!(ua.match(/msie 9/i)),
+            isPolaris: !!(ua.match(/polaris/i)),
+            isOpera: !!(ua.match(/opera/i)),
+            isWinMobile: !!(ua.match(/windows ce/i) || ua.match(/windows mobile/i)),
+            isFirefox: !!(ua.match(/firefox/i)),
+            isAndroid: !!(ua.match(/android/i)),
+            isDolfin: !!(ua.match(/dolfin/i)),
+            isIOS: !!(ua.match(/like mac os x./i)),
+            isSafari: !!(!ua.match(/mobile/i) && ua.match(/safari/i)),
             androidVersion: function() {
                 var major = 1, minor = 0, versions,
                     matches = / android ([0-9\.]+);/i.exec(ua);
@@ -41,10 +42,15 @@
         var ua = userAgent(),
             isOverGingerBread = ua.androidVersion.major > 2 ||
                 (ua.androidVersion.major === 2 && ua.androidVersion.minor >= 3);
-        return !!((ua.isAndroid() && isOverGingerBread) || ua.isIOS() || ua.isSafari());
+        return !!((ua.isAndroid && isOverGingerBread) || ua.isIOS || ua.isSafari);
     })();
     exports.hardwareAccelStyle = isTransformEnabled ? '-webkit-transform:translate3d(0,0,0);' : '';
 
+    var isSwipeEnabled = exports.isSwipeEnabled =  (function () {
+        var ua = userAgent();
+        return (ua.isAndroid || ua.isIOS || ua.isSafari || ua.isFirefox || ua.isDolfin || ua.isIe9 || ua.isIe8 || ua.isOpera) &&
+            !(ua.isPolaris || ua.isWinMobile);
+    })();
 
     exports.onResized = function (el, callback) {
         var resizeEvent = 'onorientationchange' in window ? 'orientationchange' : 'resize',
@@ -54,7 +60,7 @@
             return !(width === el.clientWidth && height === el.clientHeight);
         }
 
-        window.addEventListener(resizeEvent, function () {
+        window.gesture.EventUtil.listen(window, resizeEvent, function () {
             var cnt = 0;
             setTimeout(function checkResize() {
                 if (isSizeReallyChanged()) {
