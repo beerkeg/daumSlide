@@ -95,6 +95,53 @@ var items = [
 ];
 ~~~~~~~
 
+~~~~~~~
+var items = [ itme1, item2, item3 ... ];
+
+var item = {
+        variable1: variable1,
+        variable2: variable2,
+        ...
+        toHTML: function () {   
+            // 필수 함수 요소 : itme의 variable들의 값을 가지고, panel에 보여줄 html String 값을 리턴하는 함수.
+            return <HTMLString>;
+        }
+    };
+~~~~~~~
+
+### 3. slide에서 보여줄 데이터를 관리하는 데이터 소스를 초기화 한다. <span><a href="#" class="mark">#</a></span>
+
+~~~~~~~
+var ds = new slide.DataSource(items);
+
+[OR]
+
+var ds = new slide.InfiniteDataSource(items); // 데이터 반복형
+~~~~~~~
+
+### 4. frameEl과 datasource를 이용하여 slide를 초기화 한다. <span><a href="#" class="mark">#</a></span>
+
+~~~~~~~
+var sl = new slide.Slide(frameEl, ds, option); 
+~~~~~~~
+
+~~~~~~~
+var option = {
+        containerId: String,    // default = "slide-" + Number
+        duration: Number,       // default = 500
+        PanelClass: PanelClass  // default = Panel
+    };
+~~~~~~~
+
+# Api <span><a href="#" class="mark">#</a></span>
+
+## slide.Datasource <span><a href="#" class="mark">#</a></span>
+
+slide에서 보여줄 데이터를 관리하는 Class.
+
+~~~~~~~
+var ds = new slide.DataSource(items);
+~~~~~~~
 
 ~~~~~~~
 var items = [ itme1, item2, item3 ... ];
@@ -110,49 +157,22 @@ var item = {
     };
 ~~~~~~~
 
-+ items {Array}
+### items {Array}
 
-    `DataSource` 초기화시 최초 데이터로 사용할 값들.
+`DataSource` 초기화시 최초 데이터로 사용할 값들.
 
-    + item {Object}
+#### item {Object}
 
-        `items` array에 들어갈 데이터의 형태 오브젝트.
+`items` array에 들어갈 데이터의 형태 오브젝트.
 
-        + variable {Variable}
++ variable {Variable}
 
-            `item` 오브젝트 내부의 변수들.
+    `item` 오브젝트 내부의 변수들.
 
-        + toHTML {Function} : return {HTMLString}
++ toHTML {Function} : return {HTMLString}
 
-            `item` 오브젝트 내부에 필수적으로 있어야 하는 함수.
+    `item` 오브젝트 내부에 필수적으로 있어야 하는 함수.
 
-
-### 3. slide에서 보여줄 데이터를 관리하는 데이터 소스를 초기화 한다. <span><a href="#" class="mark">#</a></span>
-
-~~~~~~~
-var ds = new slide.DataSource(items);
-
-[OR]
-
-var ds = new slide.InfiniteDataSource(items); // 데이터 반복형
-~~~~~~~
-
-### 4. frameEl과 datasource를 이용하여 slide를 초기화 한다. <span><a href="#" class="mark">#</a></span>
-
-~~~~~~~
-var sl = new slide.Slide(frameEl, ds); 
-~~~~~~~
-
-
-# Api <span><a href="#" class="mark">#</a></span>
-
-## slide.Datasource <span><a href="#" class="mark">#</a></span>
-
-slide에서 보여줄 데이터를 관리하는 Class.
-
-~~~~~~~
-var ds = new slide.DataSource(items);
-~~~~~~~
 
 ### willQueryFirstOfData <span><a href="#" class="mark">#</a></span>
 
@@ -271,8 +291,57 @@ delete ds;
 `DataSource` 로부터 데이터를 가져와 화면상에 보이는 것을 관리하는 Class.
 
 ~~~~~~~
-var sl = new slide.Slide(frameEl, ds);
+var sl = new slide.Slide(frameEl, ds, option);
 ~~~~~~~
+
+~~~~~~~
+var frameEl = document.getElementById("frameEl");
+var ds = new slide.DataSource(items);
+var option = {
+        containerId: String,    // default = "slide-" + Number
+        duration: Number,       // default = 500
+        PanelClass: PanelClass  // default = Panel
+    };
+~~~~~~~
+
+
+### frameEl {HTML Element}
+
+`Slide` 가 동작할 frame element
+
+### ds {Class DataSource}
+
+`Slide` 에서 보여줄 데이터를 관리하는 Class.
+
+### option {Object}
+
+`Slide` 초기화시 사용할 옵션값들. 미지정된 옵션값은 디폴트 값으로 대체 사용.
+
+#### containerId {String}
+
++ 생성되는 `Container` Element 의 id를 지정.
+
++ 디폴트로 slide-{Number} 숫자값이 증가 1부터 차례대로 증가하며 생성.
+
+    + (ex) slide-1, slide-2 ...
+
+        
+#### duration {Number}
+
++ Slide의 트랜지션시 적용되는 duration값을 지정.
+
++ 디폴트로 500 값이 적용.
+
+
+#### PanelClass {Class `Panel`}
+
++ 생성되는 Panel Class를 지정.
+
++ 디폴트로 Panel Class로 지정. 
+
+    + 다른 값으로 `UlPanal` 이 있으며, 임의로 Panel Class를 상속받는 클래스를 작성하여 지정 가능.
+
+
 
 ### destroy <span><a href="#" class="mark">#</a></span>
 

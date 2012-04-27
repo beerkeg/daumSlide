@@ -14,7 +14,7 @@
 
     var fileList = exports.fileList = [
                 'http://m1.daumcdn.net/svc/attach/U0301/cssjs/ejohn/class-0.1.0.min.js',
-                'http://m1.daumcdn.net/svc/attach/U0301/cssjs/gesture/gesture-1.0.1.js',
+                'http://m1.daumcdn.net/svc/attach/U0301/cssjs/gesture/gesture-1.0.3.js',
                 'datasource.js',
                 'util.js',
                 'panel.js',
