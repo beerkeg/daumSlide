@@ -631,7 +631,7 @@ function setSlidePanels () {
     };
 
     function setPageNumber (el, index, length) {
-        if (slide.isTransformEnabled) {
+        if (slide.isTransformEnabled || slide.isSwipeEnabled) {
             for (var i = 0; i < length; i++) {
                 if (el.childNodes[i].tagName == 'STRONG') {
                     var nEl = document.createElement('SPAN');
@@ -694,7 +694,7 @@ function setSlidePanels () {
             duration: 300,
             PanelClass: slide.UlPanel
         });
-        if (slide.isTransformEnabled) {
+        if (slide.isTransformEnabled || slide.isSwipeEnabled) {
             var pagenum = $$("#"+slideName+"Paging .paging_swipe")[0]; 
         } else {
         	var pagenum = $$("#"+slideName+"Paging .page_no")[0]; 
@@ -704,11 +704,12 @@ function setSlidePanels () {
 
         function setPagingAndTap () {
             ds.queryCurrent(function (data) {
-                setPageNumber(pagenum, data.index, ds.data.length);
+            	setPageNumber(pagenum, data.index, ds.data.length);
                 setCurrentTab(area, home, homeBtn[slideName], data.type);
             });
         }
         setPagingAndTap();
+
         if (tabs && tabs.length > 0) {
             for(var i=0,len = tabs.length;i<len;i++) { 
                 (function (id, index) {
@@ -762,7 +763,7 @@ function setSlidePanels () {
         {id:"hotTitle", index: 0},
         {id:"agoraTitle", index: 2},
         {id:"miznetTitle", index: 3},
-        {id:"viewTitle", index: 4},
+        {id:"viewTitle", index: 4}
     ]);
 
     var funData = {};
@@ -772,14 +773,16 @@ function setSlidePanels () {
     funData.music = DMT.json.music;
     funData.tvpot = DMT.json.tvpot;
     funData.telzone = DMT.json.telzone;
-    createSwipe("funContents", funData, "fun", [
-        {id:"gameTitle", index: 0},
-        {id:"comicTitle", index: 1},
-        {id:"movieTitle", index: 2},
-        {id:"musicTitle", index: 3},
-        {id:"tvpotTitle", index: 4},
-        {id:"telzoneTitle", index: 5}
-    ]);
+    var funDataArr = [];
+    if($("gameTitle")) {
+    	funDataArr.push({id:"gameTitle", index: 0});
+	}
+    funDataArr.push({id:"comicTitle", index: 1});
+    funDataArr.push({id:"movieTitle", index: 2});
+    funDataArr.push({id:"musicTitle", index: 3});
+    funDataArr.push({id:"tvpotTitle", index: 4});
+    funDataArr.push({id:"telzoneTitle", index: 5});
+    createSwipe("funContents", funData, "fun", funDataArr);
 
     var issueData = {};
     issueData.shop = DMT.json.shop;
