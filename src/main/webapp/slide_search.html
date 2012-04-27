@@ -156,7 +156,7 @@ z-index: 30;
 }
 
 </style>
-<script type="text/javascript" src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/gesture/gesture-1.0.1.min.js"></script>
+<script type="text/javascript" src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/gesture/gesture-1.0.3.min.js"></script>
 <script src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/ejohn/class-0.1.0.min.js"></script>
 <script type="text/javascript" src="js/datasource.js"></script>
 <script type="text/javascript" src="js/util.js"></script>
@@ -172,18 +172,19 @@ z-index: 30;
 </div>
 
 <div id="frameEl"></div>
-<button type="button" class="prevBtn">prev</button>
-<button type="button" class="nextBtn">next</button>
+<button type="button" id="prevBtn" class="prevBtn">prev</button>
+<button type="button" id="nextBtn" class="nextBtn">next</button>
 <div id="footer"></div>
 <script type="text/javascript">
 var headTag = document.getElementsByTagName("head")[0],
         frameEl = document.getElementById("frameEl"),
         queryEl = document.getElementById("query"),
         click = "ontouchstart" in window ? "touchstart" : "click",
-        prevBtn = document.getElementsByClassName("prevBtn")[0],
-        nextBtn = document.getElementsByClassName("nextBtn")[0],
+        prevBtn = document.getElementById("prevBtn"),
+        nextBtn = document.getElementById("nextBtn"),
         footer = document.getElementById("footer"),
         pageNum = 1;
+var EventUtil = window.gesture.EventUtil;
 
 var simpleSearchAPICallback = null;
 function simpleSearchAPIJsonp(callback) {
@@ -232,10 +233,10 @@ function initSlide(data) {
     var ds = new ImageSearchDataSource(buildSlides(data));
     var sl = new slide.Slide(frameEl, ds);
 
-    prevBtn.addEventListener(click, function(){
+    EventUtil.listen(prevBtn, click, function(){
         sl.prev();
     }, false);
-    nextBtn.addEventListener(click, function(){
+    EventUtil.listen(nextBtn, click, function(){
         sl.next();
     }, false);
     sl.on("resize", function () {
@@ -243,18 +244,29 @@ function initSlide(data) {
         sl.show();
     });
 
+    function setDesc () {
+        ds.queryCurrent(function (data) {
+            footer.innerHTML = createDesc(data);
+        });
+    }
     setDesc();
     sl.on("startDrag", function (session) {
-        session.targetEvent.preventDefault();
+        var ev = session.targetEvent;
+        if(ev.preventDefault){
+            ev.preventDefault();
+        } else {
+            ev.returnValue = false;
+        }
     });
     sl.on("next", setDesc);
     sl.on("prev", setDesc);
-        function setDesc () {
-            ds.queryCurrent(function (data) {
-                footer.innerHTML = createDesc(data);
-            });
-        }
-
+        
+    function setDisplay (state) {
+        footer.style.display = state;
+        prevBtn.style.display = state;
+        nextBtn.style.display = state;
+        viewState = state;
+    }
     var viewState = "block";
     sl.on("click", function() {
         if (viewState === "none") {
@@ -263,13 +275,6 @@ function initSlide(data) {
             setDisplay("none");
         }
     });
-        function setDisplay (state) {
-            footer.style.display = state;
-            prevBtn.style.display = state;
-            nextBtn.style.display = state;
-            viewState = state;
-        }
-//        SlideManager.setCurrentDesc();
 }
 
 function buildSlides(data) {
@@ -321,20 +326,18 @@ function cutString (text, length) {
     }
 }
 
-
-
 (function main() {
-    document.getElementById("searchbtn").addEventListener("click",function(){
+    EventUtil.listen(document.getElementById("searchbtn"), "click", function(){
         document.getElementById("searchBox").style.display = "none";
         loadInitialData();
     },false);
-    window.addEventListener("keypress", function(e){
+    EventUtil.listen(window, "keypress", function(e){
         if (e.keyCode === 13) {
             document.getElementById("searchBox").style.display = "none";
             loadInitialData();
         }
     });
-    window.addEventListener("load", function(e){
+    EventUtil.listen(window, "load", function(e){
         var qIndex = location.href.indexOf("q=");
         if (qIndex > -1) {
             query.value = location.href.substring(qIndex+2);
@@ -391,6 +394,8 @@ var ImgManager = {
         return {left: parseInt((this.clientWidth + 10 - width) / 2), top: parseInt((this.clientHeight + 10 - height) / 2)};
     }
 };
+
+alert(slide.isTransformEnabled +"/"+ slide.isSwipeEnabled);
 </script>
 
 </body>

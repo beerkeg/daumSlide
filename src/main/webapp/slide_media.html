@@ -171,7 +171,7 @@ div.ps-caption {
 <div id="wrapper"></div>
 <div id="header">
     <div class="ps-caption" style="left: 0px; position: absolute; overflow-x: hidden; overflow-y: hidden; z-index: 1000; top: 0px; width: 1078px; opacity: 0.8; display: block; ">
-        <div class="ps-caption-content"><span class="ps-title"></span><span class="count"></span></div>
+        <div class="ps-caption-content"><span class="ps-title" id="ps-title"></span><span class="count" id="count"></span></div>
         <div id="close-button"><div class="ico"></div></div>
     </div>
 </div>
@@ -181,9 +181,9 @@ div.ps-caption {
 <script type="text/javascript">
 var pageInfo = {
         initPage: 2, 
-        initIndex: 3,
+        initIndex: 30,
         numPerPage: 32,
-        nextPage: 43,
+        nextPage: 3,
         prevPage: 1,
         getApiUrl: function (pageNum, callbackName) {
             return 'http://media.daum.net/export/json/3165a129029c43ea8078217ae6ed99a2?photoId=2797&newsId=&page='
@@ -191,7 +191,7 @@ var pageInfo = {
         }
     };
 </script>
-<script type="text/javascript" src="http://s1.daumcdn.net/svc/attach/U0301/cssjs/gesture/gesture-1.0.1.min.js"></script>
+<script type="text/javascript" src="http://s1.daumcdn.net/svc/attach/U0301/cssjs/gesture/gesture-1.0.3.min.js"></script>
 <script src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/ejohn/class-0.1.0.min.js"></script>
 <script type="text/javascript" src="js/datasource.js"></script>
 <script type="text/javascript" src="js/util.js"></script>
