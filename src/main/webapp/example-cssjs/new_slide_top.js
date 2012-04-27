@@ -102,10 +102,6 @@ function getDummy() {
     return new Date().getTime() + Math.ceil(Math.random() * 2147483647);
 }
 
-function getDummy() {
-    return new Date().getTime() + Math.ceil(Math.random() * 2147483647);
-}
-
 // bug 2012/01/04
 daum.Browser.ie = daum.Browser.iemobile;
 if (daum.Browser.iemobile) {
@@ -136,182 +132,6 @@ if (daum.Browser.iemobile) {
         return (element.length > 0) ? element : [];
     }
 }
-
-/*
-var roll = function(options) {
-    this.roll = null;
-    this.$super(options);
-}.inherit(page).members({
-    stop: function() {
-        window.clearInterval(this.roll);
-    },
-    init: function(opts) {
-        this.contentEl = (typeof opts.target == 'string') ? $(opts.target) : opts.target;
-        this.json = opts.json;
-        this.maxPage = this.getMaxPage();
-        if (this.maxPage > 1)
-            this.roll = window.setInterval(this.next.bind(this), opts.interval);
-    }
-});
-*/
-
-function setPagingEvent() {
-    var news = paging({
-        target: 'news',
-        json: ['news', 'sports', 'enter'],
-        nil: 't__nil_mnews=',
-        home: 'newsHome',
-        page: 'newsPaging',
-        tab: 'newsArea',
-        info: 'li',
-        eHandler: {
-            prev: 'news_prev',
-            next: 'news_next'
-        },
-        homeBtn: {
-            'news': {title: '뉴스홈',url: 'http://m.media.daum.net/media/?t__nil_mnews=home'},
-            'sports': {title: '스포츠홈',url: 'http://m.sports.daum.net/sports/?t__nil_msports=home'},
-            'enter': {title: '연예홈',url: 'http://m.media.daum.net/media/entertain/?t__nil_menter=home'}
-        }
-    });
-    daum.addEvent($('newsTitle'), 'click', function(e) {
-        news.goTab('news');
-        daum.Event.stopEvent(e);
-    });
-    daum.addEvent($('sportsTitle'), 'click', function(e) {
-        news.goTab('sports');
-        daum.Event.stopEvent(e);
-    });
-    daum.addEvent($('enterTitle'), 'click', function(e) {
-        news.goTab('enter');
-        daum.Event.stopEvent(e);
-    });
-    var issue = paging({
-        target: 'issue',
-        json: ['shop', 'Msale', 'coupon'],
-        nil: 't__nil_shopping=',
-        home: 'issueHome',
-        page: 'issuePaging',
-        tab: 'issueArea',
-        eHandler: {
-            prev: 'issue_prev',
-            next: 'issue_next'
-        },
-        homeBtn: {
-            'shop': {title: '쇼핑하우홈',url: 'http://m.shopping.daum.net/?t__nil_shopping=shop_home'},
-            'Msale': {title: '쇼핑하우홈',url: 'http://m.shopping.daum.net/?t__nil_shopping=Msale_home'},
-            'coupon': {title: '소셜쇼핑홈',url: 'http://m.social.daum.net/?t__nil_shopping=coupon_home'}
-        }
-    });
-    daum.addEvent($('shopTitle'), 'click', function(e) {
-        issue.goTab('shop');
-        daum.Event.stopEvent(e);
-    });
-    daum.addEvent($('saleTitle'), 'click', function(e) {
-        issue.goTab('Msale');
-        daum.Event.stopEvent(e);
-    });
-    daum.addEvent($('couponTitle'), 'click', function(e) {
-        issue.goTab('coupon');
-        daum.Event.stopEvent(e);
-    });
-    var contents = paging({
-        target: 'contents',
-        json: ['story', 'agora', 'miznet', 'view'],
-        nil: 't__nil_live=',
-        home: 'contentsHome',
-        page: 'contentsPaging',
-        tab: 'contentsArea',
-        eHandler: {
-            prev: 'contents_prev',
-            next: 'contents_next'
-        },
-        homeBtn: {
-            'story': {title: '검색홈',url: 'http://issue.search.daum.net/issue?t__nil_live=story_home'},
-            'agora': {title: '아고라홈',url: 'http://m.agora.daum.net/?t__nil_live=agora_home'},
-            'miznet': {title: '미즈넷홈',url: 'http://m.miznet.daum.net/?t__nil_live=miznet_home'},
-            'view': {title: 'view홈',url: 'http://m.view.daum.net/?t__nil_live=view_home'}
-        
-        }
-    });
-    daum.addEvent($('hotTitle'), 'click', function(e) {
-        contents.goTab('story');
-        daum.Event.stopEvent(e);
-    });
-    daum.addEvent($('miznetTitle'), 'click', function(e) {
-        contents.goTab('miznet');
-        daum.Event.stopEvent(e);
-    });
-    daum.addEvent($('viewTitle'), 'click', function(e) {
-        contents.goTab('view');
-        daum.Event.stopEvent(e);
-    });
-    daum.addEvent($('agoraTitle'), 'click', function(e) {
-        contents.goTab('agora');
-        daum.Event.stopEvent(e);
-    });
-    // View Game tab for Android
-    if (daum.Browser.android) {
-        var funJsonList = ['game', 'cartoon', 'movie', 'music', 'tvpot', 'telzone'];
-    } else {
-        var funJsonList = ['cartoon', 'movie', 'music', 'tvpot', 'telzone'];
-    }
-    var fun = paging({
-        target: 'fun',
-        json: funJsonList,
-        nil: 't__nil_fun=',
-        home: 'funHome',
-        page: 'funPaging',
-        tab: 'funArea',
-        eHandler: {
-            prev: 'fun_prev',
-            next: 'fun_next'
-        },
-        homeBtn: {
-            'game': {title: '게임홈',url: 'http://m.sgame.daum.net/?t__nil_fun=game_home'},
-            'cartoon': {title: '만화홈',url: 'http://m.cartoon.media.daum.net/?t__nil_fun=cartoon_home'},
-            'movie': {title: '영화홈',url: 'http://m.movie.daum.net/?t__nil_fun=movie_home'},
-            'music': {title: '뮤직홈',url: 'http://m.music.daum.net/?t__nil_fun=music_home'},
-            'tvpot': {title: 'tv팟홈',url: 'http://m.tvpot.daum.net/?t__nil_fun=tvpot_home'},
-            'telzone': {title: '텔존홈',url: 'http://m.telzone.daum.net/?t__nil_fun=telzone_home'}
-        }
-    });
-    // View Game tab for Android
-    if (daum.Browser.android) {
-        daum.addEvent($('gameTitle'), 'click', function(e) {
-            fun.goTab('game');
-            daum.Event.stopEvent(e);
-        });
-    }
-    daum.addEvent($('comicTitle'), 'click', function(e) {
-        fun.goTab('cartoon');
-        daum.Event.stopEvent(e);
-    });
-    daum.addEvent($('movieTitle'), 'click', function(e) {
-        fun.goTab('movie');
-        daum.Event.stopEvent(e);
-    });
-    daum.addEvent($('musicTitle'), 'click', function(e) {
-        fun.goTab('music');
-        daum.Event.stopEvent(e);
-    });
-    daum.addEvent($('tvpotTitle'), 'click', function(e) {
-        fun.goTab('tvpot');
-        daum.Event.stopEvent(e);
-    });
-    daum.addEvent($('telzoneTitle'), 'click', function(e) {
-        fun.goTab('telzone');
-        daum.Event.stopEvent(e);
-    });
-/*
-    var stock = new roll({
-            target : 'stock',
-            json : ['stock'],
-            interval : 3000
-    });
-    */
-}
-;
 
 (function() {
     var sRankEl = $('searchRankArea');
@@ -867,7 +687,7 @@ function setSlidePanels () {
     }
 
     function createSwipe(elStr, data, slideName, tabs) {
-        var wrapper = document.getElementById(elStr);
+        var wrapper = $(elStr);
         var ds = new slide.InfiniteDataSource(buildSlides(data));
         var sl = new slide.Slide(wrapper, ds, {
             containerId: slideName,
@@ -875,12 +695,12 @@ function setSlidePanels () {
             PanelClass: slide.UlPanel
         });
         if (slide.isTransformEnabled) {
-            var pagenum = document.getElementById(slideName+"Paging").getElementsByClassName("paging_swipe")[0];            
+            var pagenum = $$("#"+slideName+"Paging .paging_swipe")[0]; 
         } else {
-            var pagenum = document.getElementById(slideName+"Paging").getElementsByClassName("page_no")[0];
+        	var pagenum = $$("#"+slideName+"Paging .page_no")[0]; 
         }
-        var area = document.getElementById(slideName+"Area");
-        var home = document.getElementById(slideName+"Home");
+        var area = $(slideName+"Area");
+        var home = $(slideName+"Home");
 
         function setPagingAndTap () {
             ds.queryCurrent(function (data) {
@@ -892,20 +712,20 @@ function setSlidePanels () {
         if (tabs && tabs.length > 0) {
             for(var i=0,len = tabs.length;i<len;i++) { 
                 (function (id, index) {
-                    document.getElementById(id).addEventListener("click", function(e) { 
-                        ds.setCurrentIndex(index);
+                    daum.addEvent(id, "click", function(e){
+			            ds.setCurrentIndex(index);
                         sl.show();
                         setPagingAndTap();
                         daum.Event.stopEvent(e);
-                    });
+			        });
                 })(tabs[i].id, tabs[i].index);
             }
         }
 
-        document.getElementById(slideName + "_prev").addEventListener("click", function(){
+        daum.addEvent(slideName + "_prev", "click", function(){
             sl.prev();
         });
-        document.getElementById(slideName + "_next").addEventListener("click", function(){
+        daum.addEvent(slideName + "_next", "click", function(){
             sl.next();
         });
 
