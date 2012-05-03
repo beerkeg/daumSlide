@@ -32,7 +32,7 @@ ul, li {
 }
 .panel {
     position: relative;  
-    background: url(http://m1.daumcdn.net/img-section/enter/common/loading.gif) 50% 50% no-repeat;  
+ /*   background: url(http://m1.daumcdn.net/img-section/enter/common/loading.gif) 50% 50% no-repeat;  */
 }
 .panel img {
     position: absolute;
@@ -157,7 +157,7 @@ z-index: 30;
 
 </style>
 <script type="text/javascript" src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/gesture/gesture-1.0.3.min.js"></script>
-<script src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/ejohn/class-0.1.0.min.js"></script>
+<script type="text/javascript" src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/ejohn/class-0.1.0.min.js"></script>
 <script type="text/javascript" src="js/datasource.js"></script>
 <script type="text/javascript" src="js/util.js"></script>
 <script type="text/javascript" src="js/panel.js"></script>
@@ -167,7 +167,7 @@ z-index: 30;
 </head>
 <body>
 <div id="searchBox">
-    <input type="text" id="query" value="이연희" />
+    <input type="text" id="query" value="소녀시대" />
     <button id="searchbtn" type="button">검색</button>
 </div>
 
@@ -177,13 +177,14 @@ z-index: 30;
 <div id="footer"></div>
 <script type="text/javascript">
 var headTag = document.getElementsByTagName("head")[0],
-        frameEl = document.getElementById("frameEl"),
-        queryEl = document.getElementById("query"),
-        click = "ontouchstart" in window ? "touchstart" : "click",
-        prevBtn = document.getElementById("prevBtn"),
-        nextBtn = document.getElementById("nextBtn"),
-        footer = document.getElementById("footer"),
-        pageNum = 1;
+    frameEl = document.getElementById("frameEl"),
+    queryEl = document.getElementById("query"),
+    click = "ontouchstart" in window ? "touchstart" : "click",
+    prevBtn = document.getElementById("prevBtn"),
+    nextBtn = document.getElementById("nextBtn"),
+    footer = document.getElementById("footer"),
+    pageNum = 1;
+
 var EventUtil = window.gesture.EventUtil;
 
 var simpleSearchAPICallback = null;
@@ -294,9 +295,10 @@ function buildSlides(data) {
                 return '<img alt="' + this.title + '" src="' + this.image + '" width="' + imgSize.width + '" height="' + imgSize.height +
                             '" data-width="' + item.width + '" data-height="' + item.height +
                             '"style=position:absolute;top:' + imgOffset.top + 'px;left:' + imgOffset.left + 'px;" ' +
-                            'onload="d.onImgLoad(this);" ' +
-                            'onerror="d.onImgLoadError(this);" ' +
-                            'onabort="d.onImgLoadError(this);">';
+                            '>';
+                            // 'onload="d.onImgLoad(this);" ' +
+                            // 'onerror="d.onImgLoadError(this);" ' +
+                            // 'onabort="d.onImgLoadError(this);">';
             }
         });
     }
@@ -395,7 +397,6 @@ var ImgManager = {
     }
 };
 
-alert(slide.isTransformEnabled +"/"+ slide.isSwipeEnabled);
 </script>
 
 </body>
