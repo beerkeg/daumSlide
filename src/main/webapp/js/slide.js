@@ -39,7 +39,19 @@
          * slide 에 필요한 event를 bind 시킨다.
          */
         bindEvents: function () {
-            var self = this;
+            var GESTURE_THRESHOLD = 0,
+                listener = gesture.GestureListener(this.frameEl, GESTURE_THRESHOLD),
+                self = this;
+
+            listener.onGestureStart(function (session) {
+                return self.startDrag(session);
+            });
+            listener.onGestureMove(function (session) {
+                return self.drag(session);
+            });
+            listener.onGestureEnd(function (session) {
+                return self.endDrag(session);
+            });
             onResized(this.frameEl, function (width, height) {
                 self.resize(width, height);
             });
@@ -53,7 +65,6 @@
                 container.panel.setData(current);
             });
         },
-
         /**
          * 슬라이드를 좌로 이동시킨다. 다음(next) 슬라이드를 보여준다.
          * 만약, 다음 슬라이드에 내용이 없을 경우 이동 시키지 않는다.
@@ -104,6 +115,9 @@
          */
         startDrag: function (session) {
             this.emit("startDrag", session);
+        },
+        drag: function () {
+
         },
         /**
          * mouseup or touchend 이벤트 발생시 동작하는 함수
@@ -162,7 +176,6 @@
                 movingOffset = -1 * this.pageWidth;
 
             this.slide(movingOffset, function onMoveNextEnd() {
-                self.container.rearrangePanelsAfterNext();
                 self.preloadNextData();
                 self.emit("next");
             });
@@ -174,7 +187,7 @@
                 var container = this.container;
                 this.dataSource.next();
                 this.dataSource.queryNext(function (next) {
-                    container.setNextData(next);
+                    container.rearrangePanelsAfterNext(next);
                 });
             },
         /**
@@ -184,7 +197,6 @@
             var self = this,
                 movingOffset = this.pageWidth;
             this.slide(movingOffset, function onMovePrevEnd() {
-                self.container.rearrangePanelsAfterPrev();
                 self.preloadPrevData();
                 self.emit("prev");
             });
@@ -196,7 +208,7 @@
                 var container = this.container;
                 this.dataSource.prev();
                 this.dataSource.queryPrev(function (prev) {
-                    container.setPrevData(prev);
+                    container.rearrangePanelsAfterPrev(prev);
                 });
             },
 

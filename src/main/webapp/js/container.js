@@ -44,20 +44,10 @@
             return panel;
         },
         bindEvents: function () {
-            var GESTURE_THRESHOLD = 0,
-                listener = gesture.GestureListener(this.el, GESTURE_THRESHOLD),
-                self = this;
-
-            listener.onGestureStart(function (session) {
-                return self.slide.startDrag(session);
-            });
-            listener.onGestureEnd(function (session) {
-                return self.slide.endDrag(session);
-            });
+            var self = this;
             this.slide.on('resize', function (width) {
                 self.setSlideSize(width);
             });
-            return listener;
         },
         setSlideSize: function (width) {
             this.el.style.width = width + 'px';
@@ -100,13 +90,6 @@
             this.panels[PANEL_CURRENT] = this.initPanel(PanelClass);
             this.panels[PANEL_NEXT] = this.initPanel(PanelClass);
         },
-        bindEvents: function () {
-            var listener = this._super(),
-                self = this;
-            listener.onGestureMove(function (session) {
-                return self.slide.drag(session);
-            });
-        },
         /**
          * slide에 있는 패널들에 현재 인덱스 기준의 데이터 셋을 넣는다.
          * @param set {Object} HTMLElement 데이터 셋
@@ -135,26 +118,28 @@
          * next 이후 패널들을 재정렬한다.
          * 첫번째 패널을 마지막으로 옮긴다.
          */
-        rearrangePanelsAfterNext: function () {
+        rearrangePanelsAfterNext: function (next) {
             var panel = this.panels.shift(),
                 firstPanelEl = panel.el;
             this.el.removeChild(firstPanelEl);
             this.move(0);
-            this.el.appendChild(firstPanelEl);
             this.panels.push(panel);
+            this.setNextData(next);
+            this.el.appendChild(firstPanelEl);
         },
         /**
          * prev 이후 패널들을 재정렬한다.
          * 마지막 패널을 첫번째로 옮긴다.
          */
-        rearrangePanelsAfterPrev: function () {
+        rearrangePanelsAfterPrev: function (prev) {
             var panel = this.panels.pop(),
                 lastPanelEl = panel.el,
                 firstPanelEl = this.panels[0].el;
             this.el.removeChild(lastPanelEl);
             this.move(0);
-            this.el.insertBefore(lastPanelEl, firstPanelEl);
             this.panels.unshift(panel);
+            this.setPrevData(prev);
+            this.el.insertBefore(lastPanelEl, firstPanelEl);
         },
         /**
          * 주어진 offset 만큼 slide를 좌우 이동 시킨다.
@@ -210,6 +195,29 @@
          */
         offTransitionEnd: function (callback) {
             this.el.removeEventListener('webkitTransitionEnd', callback);
+        },
+        rearrangePanels: function (callback) {
+            var cloneEl = this.el.cloneNode(true),
+                parent = this.el.parentNode;
+            parent.replaceChild(cloneEl, this.el);
+            
+            if (callback) {
+                callback();
+            }
+
+            parent.replaceChild(this.el, cloneEl);
+        },
+        rearrangePanelsAfterNext: function (next) {
+            var self = this;
+            this.rearrangePanels(function () {
+                self._super(next);
+            });
+        },
+        rearrangePanelsAfterPrev: function (prev) {
+            var self = this;
+            this.rearrangePanels(function () {
+                self._super(prev);
+            });
         }
     });
     
