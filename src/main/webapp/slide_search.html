@@ -184,7 +184,6 @@ var headTag = document.getElementsByTagName("head")[0],
     nextBtn = document.getElementById("nextBtn"),
     footer = document.getElementById("footer"),
     pageNum = 1;
-
 var EventUtil = window.gesture.EventUtil;
 
 var simpleSearchAPICallback = null;
@@ -206,6 +205,7 @@ function simpleJsonpCallback(data) {
 
 function loadInitialData(callback) {
     simpleSearchAPIJsonp(function (data) {
+        // 최초 데이터를 받아온 후, 이미지 슬라이드를 생성/초기화 한다.
         initSlide(data);
     });
 }
@@ -227,24 +227,46 @@ var ImageSearchDataSource = slide.DataSource.extend({
     }
 });
 
+// 이미지 슬라이드를 생성/초기화 해주는 함수.
 function initSlide(data) {
     frameEl.style.display = "block";
     ImgManager.setClientSize(frameEl);
 
-    var ds = new ImageSearchDataSource(buildSlides(data));
+    // json데이터를 알맞은 형태로 파싱.
+    var initData = buildSlides(data);
+
+    // DataSource 생성/초기화 부분.
+    var ds = new ImageSearchDataSource(initData);
+
+    // Slide 생성/초기화 부분.
     var sl = new slide.Slide(frameEl, ds);
 
+    // 좌우 버튼 클릭시 이미지 전환 해주는 부분.
+    setButton(sl);
+    
+    // 화면 가로세로 전환시 리자이즈 해주는 부분.
+    sl.on("resize", function () {
+        ImgManager.setClientSize(frameEl);
+        sl.show();
+    });
+   
+    // 하단 레이어 설정 함수.
+    setFooter(sl, ds); 
+
+    // 하단레이어및 좌우 버튼 토클 함수.
+    setToggle(sl);
+}
+
+function setButton(sl) {
     EventUtil.listen(prevBtn, click, function(){
         sl.prev();
     }, false);
     EventUtil.listen(nextBtn, click, function(){
         sl.next();
     }, false);
-    sl.on("resize", function () {
-        ImgManager.setClientSize(frameEl);
-        sl.show();
-    });
+}
 
+function setFooter(sl, ds) {
     function setDesc () {
         ds.queryCurrent(function (data) {
             footer.innerHTML = createDesc(data);
@@ -261,14 +283,17 @@ function initSlide(data) {
     });
     sl.on("next", setDesc);
     sl.on("prev", setDesc);
-        
+}
+
+function setToggle(sl) {
+    var viewState = "block";
     function setDisplay (state) {
         footer.style.display = state;
         prevBtn.style.display = state;
         nextBtn.style.display = state;
         viewState = state;
     }
-    var viewState = "block";
+
     sl.on("click", function() {
         if (viewState === "none") {
             setDisplay("block");
@@ -358,6 +383,7 @@ d.onImgLoadError = function (el) {
     el.parentNode.style.background = "none";
 };
 
+// 화면에 맞게 이미지를 리사이즈 해주는 오브젝트.
 var ImgManager = {
     clientWidth: 0,
     clientHeight: 0,
