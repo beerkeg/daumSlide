@@ -39,7 +39,19 @@
          * slide 에 필요한 event를 bind 시킨다.
          */
         bindEvents: function () {
-            var self = this;
+            var GESTURE_THRESHOLD = 0,
+                self = this;
+
+            var listener = this.listener = gesture.GestureListener(this.frameEl, GESTURE_THRESHOLD);
+            listener.onGestureStart(function (session) {
+                return self.startDrag(session);
+            });
+            listener.onGestureMove(function (session) {
+                return self.drag(session);
+            });
+            listener.onGestureEnd(function (session) {
+                return self.endDrag(session);
+            });
             onResized(this.frameEl, function (width, height) {
                 self.resize(width, height);
             });
@@ -105,6 +117,9 @@
         startDrag: function (session) {
             this.emit("startDrag", session);
         },
+        drag: function () {
+
+        },
         /**
          * mouseup or touchend 이벤트 발생시 동작하는 함수
          * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
@@ -162,7 +177,6 @@
                 movingOffset = -1 * this.pageWidth;
 
             this.slide(movingOffset, function onMoveNextEnd() {
-                self.container.rearrangePanelsAfterNext();
                 self.preloadNextData();
                 self.emit("next");
             });
@@ -174,7 +188,7 @@
                 var container = this.container;
                 this.dataSource.next();
                 this.dataSource.queryNext(function (next) {
-                    container.setNextData(next);
+                    container.rearrangePanelsAfterNext(next);
                 });
             },
         /**
@@ -184,7 +198,6 @@
             var self = this,
                 movingOffset = this.pageWidth;
             this.slide(movingOffset, function onMovePrevEnd() {
-                self.container.rearrangePanelsAfterPrev();
                 self.preloadPrevData();
                 self.emit("prev");
             });
@@ -196,10 +209,9 @@
                 var container = this.container;
                 this.dataSource.prev();
                 this.dataSource.queryPrev(function (prev) {
-                    container.setPrevData(prev);
+                    container.rearrangePanelsAfterPrev(prev);
                 });
             },
-
         /**
          * 주어진 offset 만큼 slide를 좌우 이동 시킨다.
          * css transition animation을 통하여 '스르륵' 이동
@@ -294,39 +306,18 @@
             var container = this.container;
             this.enableTransition(this.duration);
             container.move(offset);
-
-            this.startTransitionEndTimer();
-
+            
             var self = this;
-            container.onTransitionEnd(function onTransitionEnd() {
-                container.offTransitionEnd(onTransitionEnd);
-                self.stopTransitionEndTimer();
-                self.disableTransition();
-
+            window.setTimeout(function slideEnd() {
+                container.setTransitionDuration(0);
                 if (callback) {
                     callback();
                 }
-            });
+                window.setTimeout(function () {
+                    self.isInTransition = false;
+                }, 50);
+            }, this.duration + 100);
         },
-            /**
-             * transitionEndTimer를 동작시킨다.
-             * transition end event 가 정상적으로 발생되지 않는 경우를 위한 보조 수단
-             */
-            startTransitionEndTimer: function () {
-                var self = this;
-                window.clearTimeout(this.transitionEndTimer);
-                this.transitionEndTimer = window.setTimeout(function () {
-                    self.disableTransition();
-                    self.transitionEndTimer = -1;
-                }, 1500);
-            },
-            /**
-             * transitionEndTimer를 멈춘다.
-             */
-            stopTransitionEndTimer: function () {
-                window.clearTimeout(this.transitionEndTimer);
-                this.transitionEndTimer = -1;
-            },
         /**
          * Transition을 on한다.
          * @param duration {Integer} Transition Duration Value
@@ -342,9 +333,25 @@
             this.container.setTransitionDuration(0);
             this.isInTransition = false;
         },
-        drag: function (session) {
+        startDrag: function (session) {
             if (this.isInTransition) {
                 session.targetEvent.preventDefault();
+                this.isDragging = false;
+                return ;
+            }
+            this.isDragging = true;
+            this._super(session);
+        },
+        drag: function (session) {
+            if (this.isInTransition || !this.isDragging) {
+                session.targetEvent.preventDefault();
+                return ;
+            }
+
+            this._super(session);
+        },
+        endDrag: function (session) {
+            if (this.isInTransition || !this.isDragging) {
                 return ;
             }
 
