@@ -265,7 +265,6 @@ var ImageSearchDataSource = slide.DataSource.extend({
             var newSlides = buildSlides(data);
             self.data = self.data.concat(newSlides);
             callback(newSlides[0]);
-            console.log(self.data);
         });
     }
 });
