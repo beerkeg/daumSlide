@@ -42,7 +42,7 @@
         var ua = userAgent(),
             isOverGingerBread = ua.androidVersion.major > 2 ||
                 (ua.androidVersion.major === 2 && ua.androidVersion.minor >= 3);
-        return !!((ua.isAndroid && isOverGingerBread) || ua.isIOS || ua.isSafari);
+        return !!((ua.isAndroid && isOverGingerBread) || ua.isIOS || ua.isSafari || ua.isDolfin);
     })();
     exports.hardwareAccelStyle = isTransformEnabled ? '-webkit-transform:translate3d(0,0,0);' : '';
 

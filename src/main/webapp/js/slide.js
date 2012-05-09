@@ -315,8 +315,8 @@
                 }
                 window.setTimeout(function () {
                     self.isInTransition = false;
-                }, 50);
-            }, this.duration + 100);
+                }, 0);
+            }, this.duration + 50);
         },
         /**
          * Transition을 on한다.
