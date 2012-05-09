@@ -19,16 +19,18 @@
             isIOS: !!(ua.match(/like mac os x./i)),
             isSafari: !!(!ua.match(/mobile/i) && ua.match(/safari/i)),
             androidVersion: function() {
-                var major = 1, minor = 0, versions,
+                var major = 1, minor = 0, patch = 0, versions,
                     matches = / android ([0-9\.]+);/i.exec(ua);
                 if (matches && matches.length === 2) {
                     versions = matches[1].split('.');
                     major = parseInt(versions[0], 10);
                     minor = parseInt(versions[1], 10);
+                    patch = parseInt(versions[2], 10);
                 }
                 return {
                     major: major,
-                    minor: minor
+                    minor: minor,
+                    patch: patch
                 };
             }()
         };
