@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<title>Timeout (duration + 50ms)</title>
+<style>
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow:hidden;
+    background-color: #333;
+}
+ul, li {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+#wrapper {
+    width: 100%;
+    height:100%;
+    overflow:hidden;
+    background-color: #333;
+    position: relative;
+}
+.slide {
+    height:100%;
+}
+.panel {
+    position: relative;  
+    background: url(http://m1.daumcdn.net/img-section/enter/common/loading.gif) 50% 50% no-repeat;  
+}
+.panel img {
+    position: absolute;
+    top: 0;
+}
+.prevBtn, .nextBtn {
+    position: absolute;
+    top: 35%;
+    z-index: 30;
+    width: 23px;
+    height: 45px;
+    background: url(http://m1.daumcdn.net/imgsrc.search/search_all/2009/mobile/safari/btn_view_nav.png) 0 0 no-repeat;
+    text-indent: -10000px;
+    border-size: 0px;
+    border-style: none;
+    font: inherit;
+    cursor: hand;
+    cursor: pointer;
+    padding: 0px;
+}
+.prevBtn {
+    left: 10px;
+    background-position: 0 0;
+}
+.nextBtn {
+    right: 10px;
+    background-position: 0 -50px;
+}
+#desc_field {
+z-index: 30;
+}
+
+.wrap_desc {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    z-index: 30;
+    width: 100%;
+    height: 82px;
+    padding-top: 12px;
+    border-top: 1px solid #434346;
+    background-color: black;
+    opacity: 0.7;
+    text-align: center;
+    line-height: 16px;
+}
+
+.wrap_desc .tit {
+    font-size: 15px;
+    color: #D2D6DD;
+    letter-spacing: -1px;
+    display: block;
+    text-decoration: none;
+    z-index: 30;
+}
+
+.wrap_desc .link_src {
+    margin-left: 17px;
+    font-size: 13px;
+    color: #7E93FF;
+    text-decoration: none;
+    z-index: 30;
+}
+
+.wrap_desc .info {
+    font-size: 12px;
+    color: #B8BDC3;
+    z-index: 30;
+}
+
+.wrap_desc .wrap_btn {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    height: 39px;
+    border-top: 1px solid #434346;
+    z-index: 30;
+}
+
+.wrap_desc .wrap_btn a {
+    display: block;
+    position: absolute;
+    top: 0px;
+    width: 50%;
+    height: 39px;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: -1px;
+    color: #B8BDC3;
+    text-decoration: none;
+    line-height: 39px;
+    z-index: 30;
+}
+
+.wrap_desc .wrap_btn a.left_wrap {
+    left: 0px;
+}
+.wrap_desc .wrap_btn a.right_wrap {
+    right: 0px;
+}
+.wrap_desc .wrap_btn a.right_wrap .bar {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 1px;
+    height: 39px;
+    border-left: 1px solid #434346;
+}
+.wrap_desc .wrap_btn .prev {
+    display: inline-block;
+    padding-left: 11px;
+    background: url(http://m1.daumcdn.net/imgsrc.search/search_all/2009/mobile/safari/btn_prev_search.png) 0 15px no-repeat;
+}
+
+#footer {
+    width: 100%;
+    z-index: 999;
+    position: absolute;
+    bottom:0;
+}
+
+</style>
+<script type="text/javascript" src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/gesture/gesture-1.0.3.min.js"></script>
+<script src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/ejohn/class-0.1.0.min.js"></script>
+<script type="text/javascript" src="../js/datasource.js"></script>
+<script type="text/javascript" src="../js/util.js"></script>
+<script type="text/javascript" src="../js/panel.js"></script>
+<script type="text/javascript" src="../js/container.js"></script>
+<script type="text/javascript" src="../js/observable.js"></script>
+<script type="text/javascript" src="../js/slide.js"></script>
+</head>
+<body>
+<div id="wrapper"></div>
+<button type="button" class="prevBtn" id="prevBtn">prev</button>
+<button type="button" class="nextBtn" id="nextBtn">next</button>
+<div id="footer"></div>
+<script type="text/javascript">
+function getChildElements (el) {
+    var i = el.firstChild, a = [];
+    try{
+        do {
+            if (i.nodeType === 1){
+                a.push(i);
+            }
+        } while(i = i.nextSibling);
+    }catch(e){}
+    return a;
+}
+function getSameNameLength(node, name) {
+    var len = 0;
+    var cNodes = getChildElements(node);
+    for (var i=0,l=cNodes.length;i<l;i+=1){
+            if ( name === cNodes[i].nodeName ) {
+                len++;
+            }
+    }
+    return len;
+}
+function xmlToObject (xmlDocument) {
+    var root = xmlDocument.documentElement,
+    builder = function(node){
+        for (var obj = {}, cNodes = getChildElements(node), name, value, i=0,l=cNodes.length;i<l;i+=1){
+            name = cNodes[i].nodeName;
+            value = (getChildElements(cNodes[i]).length > 0) ? builder(cNodes[i]) : (cNodes[i].firstChild==null) ? '' : cNodes[i].firstChild.nodeValue;
+
+            if(obj[name] != undefined || getSameNameLength(node, name) > 1) {
+                if(obj[name] == undefined){
+                    obj[name] = [];
+                }
+                obj[name].push(value);
+            } else {
+                obj[name] = value;
+            }
+            for (var j=0;j<cNodes[i].attributes.length;j+=1) {
+                obj[name + '@' + cNodes[i].attributes[j].nodeName] = (cNodes[i].attributes[j].nodeValue||"").toString();
+            }
+        }
+        return obj; 
+    }
+    return builder(root);
+}
+
+var headTag = document.getElementsByTagName("head")[0],
+    wrapper = document.getElementById("wrapper"),
+    queryEl = document.getElementById("query"),
+    click = "ontouchstart" in window ? "touchstart" : "click",
+    prevBtn = document.getElementById("prevBtn"),
+    nextBtn = document.getElementById("nextBtn"),
+    footer = document.getElementById("footer"),
+    pageNum = 1;
+
+var simpleSearchAPICallback = null;
+function simpleSearchAPIJsonp(callback) {
+    simpleSearchAPICallback = callback;
+    var jsonUrl = 'http://imgv.m.search.daum.net/mviewer/search?w=xml&m=mimage&q='
+                + '%C0%CC%B9%CE%C1%A4' + '&sidx=' + pageNum 
+                + '&lpp=9&SortType=totalMobile&SimilarYN=Y',
+        url = 'http://uie.daum.net:8093/?url='+jsonUrl+'&callback=simpleJsonpCallback';
+    
+    var s = document.createElement("script");
+    s.type = "text/javascript";
+    s.src = url;
+    s.charset = "utf-8";
+    headTag.appendChild(s);
+}
+function simpleJsonpCallback(data) {
+    headTag.removeChild(headTag.lastChild);
+    simpleSearchAPICallback(data);
+}
+
+
+
+function loadInitialData(callback) {
+    simpleSearchAPIJsonp(function (data) {
+        initSlide(data);
+    });
+}
+function loadMoreData(callback) {
+    pageNum += 9;
+    simpleSearchAPIJsonp(function (data) {
+        callback(data);
+    });
+}
+
+var ImageSearchDataSource = slide.DataSource.extend({
+    willQueryEndOfDataDelegate: function (callback) {
+        var self = this;
+        loadMoreData(function (data) {
+            var newSlides = buildSlides(data);
+            self.data = self.data.concat(newSlides);
+            callback(newSlides[0]);
+        });
+    }
+});
+
+var TimeoutSlide50 = slide.Slide.extend({
+    slide: function (offset, callback) {
+        var container = this.container;
+        this.enableTransition(this.duration);
+        container.move(offset);
+        this.startTransitionEndTimer();
+        
+        var self = this;
+        window.setTimeout(function slideEnd() {
+            self.stopTransitionEndTimer();
+            self.disableTransition();
+            if (callback) {
+                callback();
+            }
+        }, this.duration + 50);
+    }
+});
+
+
+function initSlide(data) {
+    wrapper.style.display = "block";
+    ImgManager.setClientSize(wrapper);
+
+    var ds = new ImageSearchDataSource(buildSlides(data));
+    var sl = new TimeoutSlide50(wrapper, ds);
+
+    prevBtn.addEventListener(click, function(){
+        sl.prev();
+    }, false);
+    nextBtn.addEventListener(click, function(){
+        sl.next();
+    }, false);
+    sl.on("resize", function () {
+        ImgManager.setClientSize(wrapper);
+        sl.show();
+    });
+
+    setDesc();
+    sl.on("startDrag", function (session) {
+        session.targetEvent.preventDefault();
+    });
+    sl.on("next", setDesc);
+    sl.on("prev", setDesc);
+        function setDesc () {
+            ds.queryCurrent(function (data) {
+                footer.innerHTML = createDesc(data);
+            });
+        }
+
+    var viewState = "block";
+    sl.on("click", function() {
+        if (viewState === "none") {
+            setDisplay("block");
+        } else {
+            setDisplay("none");
+        }
+    });
+        function setDisplay (state) {
+            footer.style.display = state;
+            prevBtn.style.display = state;
+            nextBtn.style.display = state;
+            viewState = state;
+        }
+}
+function buildSlides(data) {
+    var doc = new DOMParser().parseFromString(data,'text/xml'),
+        xml = xmlToObject(doc),
+        items = xml.result,
+        arr = [];
+    for (var i = 0, len = items.length; i < len; i++) {
+        var item = items[i];
+        arr.push({
+            image: item.org_img,
+            width: item.width,
+            height: item.height,
+            title: item.title,
+            link: item.link,
+            toHTML: function () {
+                var imgSize = ImgManager.resizeImg(this.width, this.height),
+                    imgOffset = ImgManager.getImgOffset(imgSize.width, imgSize.height),
+                    imgurl = "http://m1.daumcdn.net/thumb/T480x416/70/?fname="+ escape(this.image);
+                return '<img alt="' + escape(item.title) + '" src="' + imgurl + 
+                            '" width="' + imgSize.width + '" height="' + imgSize.height +
+                            '" data-width="' + item.width + '" data-height="' + item.height +
+                            '"style=position:absolute;top:' + imgOffset.top + 'px;left:' +imgOffset.left + 'px;" ' +
+                           'onload="onImgLoad(this);" ' +
+                           'onerror="onImgLoadError(this);" ' +
+                           'onabort="onImgLoadError(this);">';
+            }
+        });
+    }
+    return arr;
+}
+
+
+function createDesc (data) {
+    var title = this.unescapeHTML(data.title),
+        linktext = this.cutString(data.link, 37);
+    return '<div class="wrap_desc" style="opacity: 0.7;" id="desc_field">' +
+                '<a href="'+data.link+'" class="tit" id="desc_title">'+ title +'</a>' +
+                '<span class="info" id="desc_info">'+data.width+' x '+data.height+'</span><a href="'+data.link+'" id="desc_url" class="link_src">'+ linktext +'</a>' +
+                '<div class="wrap_btn">' +
+                    '<a href="" class="left_wrap"><span class="prev">검색결과로 돌아가기</span></a>' +
+                    '<a id="desc_link" href="'+data.image+'" target="_blank" class="right_wrap"><span class="bar"></span><span>원본 바로보기</span></a>' +
+                '</div></div>';
+}
+function unescapeHTML (text) {
+   return text.replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&nbsp;/g," ").replace(/&amp;/g,"&").replace(/&quot;/g,"\"").replace(/&#39;/g,"'");
+}
+function cutString (text, length) {
+    if (text.length > length) {
+        return text.substring(0,length-2) + ".."
+    } else {
+        return text;
+    }
+}
+
+
+
+(function main() {
+    window.addEventListener("load", function(e){
+        var typeIndex = location.href.indexOf("type=");
+        if (typeIndex > -1 && slide.isTransformEnabled) {
+            type = location.href.substring(typeIndex+5);
+            slide.hardwareAccelStyle += "-webkit-transition-timing-function:" + type + ";";
+            console.log(slide.hardwareAccelStyle);
+        }
+        loadInitialData();
+    });
+})();
+
+function onImgLoad (el) {
+    el.parentNode.style.background = "none";
+}
+function onImgLoadError (el) {
+    el.parentNode.style.background = "none";
+}
+
+var ImgManager = {
+    clientWidth: 0,
+    clientHeight: 0,
+    setClientSize: function (el) {
+        this.clientHeight = el.clientHeight - 10;
+        this.clientWidth = el.clientWidth - 10;
+    },
+    resizeImg: function (width, height) {
+        if (this.clientHeight > this.clientWidth) {
+            return this.potraitResizeImg(width, height);
+        } else {
+            return this.landscapeResizeImg(width, height);
+        }
+    },
+    potraitResizeImg: function (width, height) {
+        if (this.clientWidth * height > this.clientHeight * width) {
+            return this.resizeByHeight(width, height);
+        } else {
+            return this.resizeByWidth(width, height);
+        }
+    },
+    landscapeResizeImg: function (width, height) {
+        if (this.clientWidth * height < this.clientHeight * width) {
+            return this.resizeByWidth(width, height);
+        } else {
+            return this.resizeByHeight(width, height);
+        }
+    },
+    resizeByHeight: function (width, height) {
+        return {width: parseInt(this.clientHeight * width / height), height: this.clientHeight};
+    },
+    resizeByWidth: function (width, height) {
+        return {width: this.clientWidth, height: parseInt(this.clientWidth * height / width)};
+    },
+    getImgOffset: function (width, height) {
+        return {left: parseInt((this.clientWidth + 10 - width) / 2), top: parseInt((this.clientHeight + 10 - height) / 4)};
+    }
+};
+</script>
+
+</body>
+</html>

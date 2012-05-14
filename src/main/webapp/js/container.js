@@ -4,7 +4,6 @@
 (function (exports) {
     'use strict';
 
-    var hardwareAccelStyle = exports.hardwareAccelStyle;
     var isTransformEnabled = exports.isTransformEnabled;
     var isSwipeEnabled = exports.isSwipeEnabled;
     var Panel = exports.Panel;
@@ -79,7 +78,7 @@
             this.bindEvents();
         },
         setContainerStyle: function (width) {
-            return "overflow:hidden;position:relative;top:0;" + hardwareAccelStyle +
+            return "overflow:hidden;position:relative;top:0;" + exports.hardwareAccelStyle +
                     "left:" + (-width) + "px;width:" + (width * 3) + "px;";
         },
         /**
@@ -124,7 +123,7 @@
             this.el.removeChild(firstPanelEl);
             this.move(0);
             this.panels.push(panel);
-            this.setNextData(next);
+        //    this.setNextData(next);
             this.el.appendChild(firstPanelEl);
         },
         /**
@@ -138,7 +137,7 @@
             this.el.removeChild(lastPanelEl);
             this.move(0);
             this.panels.unshift(panel);
-            this.setPrevData(prev);
+        //    this.setPrevData(prev);
             this.el.insertBefore(lastPanelEl, firstPanelEl);
         },
         /**
@@ -181,6 +180,20 @@
          */
         setTransitionDuration: function (duration) {
             this.el.style.webkitTransitionDuration = duration + 'ms';
+        },
+        /**
+         * 해당 콜백을 onwebkitTransitionEnd 에 등록한다.
+         * @param callback {function}
+         */
+        onTransitionEnd: function (callback) {
+            this.el.addEventListener('webkitTransitionEnd', callback);
+        },
+        /**
+         * 해당 콜백을 onwebkitTransitionEnd 에서 제거한다.
+         * @param callback {function}
+         */
+        offTransitionEnd: function (callback) {
+            this.el.removeEventListener('webkitTransitionEnd', callback);
         }
     });
     

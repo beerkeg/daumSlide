@@ -4,8 +4,6 @@
 (function (exports) {
     'use strict';
 
-    var hardwareAccelStyle = exports.hardwareAccelStyle;
-
     var Panel = exports.Panel = Class.extend({
         /*!
          * 새로운 Panel을 생성/초기화 한다.
@@ -29,7 +27,7 @@
 
             panel.className = "panel";
             panel.style.cssText = 'height:100%;overflow:hidden;display:inline-block;' +
-                                    hardwareAccelStyle + 'width:' + width + 'px;';
+                                    exports.hardwareAccelStyle + 'width:' + width + 'px;';
             return panel;
         },
         /**

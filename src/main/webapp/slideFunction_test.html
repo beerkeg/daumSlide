@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<title>Slide Function test</title>
+<style>
+label b {
+    color: red;
+}
+.number {
+    width: 50px;
+}
+</style>
+</head>
+<body>
+<fieldset id="fs">
+    <legend>Select Transition Function</legend>
+    <a href="http://www.roblaplaca.com/examples/bezierBuilder/">cubic-bezier 참고</a>
+    <div id="radioGroup">
+        <input type="radio" name="f" id="f1" value="linear" checked/><label for="f1"><b>linear</b> cubic-bezier(0,0,1,1)</label><br/>
+        <input type="radio" name="f" id="f2" value="ease" /><label for="f2"><b>ease</b> cubic-bezier(0.25,0.1,0.25,1)</label><br/>
+        <input type="radio" name="f" id="f3" value="ease-in" /><label for="f3"><b>ease-in</b> cubic-bezier(0.42,0,1,1)</label><br/>
+        <input type="radio" name="f" id="f4" value="ease-out" /><label for="f4"><b>ease-out</b> cubic-bezier(0,0,0.58,1)</label><br/>
+        <input type="radio" name="f" id="f5" value="ease-in-out" /><label for="f5"><b>ease-in-out</b> cubic-bezier(0.42,0,0.58,1)</label><br/>
+        <input type="radio" name="f" id="f6" value="custom" /><label for="f6"><b>custom</b> cubic-bezier(0~1,0~1,0~1,0~1)</label>
+    </div>
+    <div id="customValue">
+        <input type="number" name="custom" id="f6-1" value="0" step="0.01" min="0" max="1" class="number" />
+        <input type="number" name="custom" id="f6-2" value="1" step="0.01" min="0" max="1" class="number" />
+        <input type="number" name="custom" id="f6-3" value="0" step="0.01" min="0" max="1" class="number" />
+        <input type="number" name="custom" id="f6-4" value="1" step="0.01" min="0" max="1" class="number" />
+    </div>
+</fieldset>
+
+<h1>Timeout</h1>
+<h3>1. Timeout (duration + 0ms)</h3>
+<a href="example-cssjs/t0.html" target="_blank" onclick="onClick(this);">Timeout (duration + 0ms)</a>
+
+<h3>2. Timeout (duration + 30ms)</h3>
+<a href="example-cssjs/t30.html" target="_blank" onclick="onClick(this);">Timeout (duration + 30ms)</a>
+
+<h3>3. Timeout (duration + 50ms)</h3>
+<a href="example-cssjs/t50.html" target="_blank" onclick="onClick(this);">Timeout (duration + 50ms)</a>
+
+<h1>Transition end</h1>
+<h3>1. Transition end</h3>
+<a href="example-cssjs/tend.html" target="_blank" onclick="onClick(this);">Transition end</a>
+
+<h3>2. Transition end - Timeout (0ms)</h3>
+<a href="example-cssjs/tend0.html" target="_blank" onclick="onClick(this);">Transition end - Timeout (0ms)</a>
+
+<h3>3. Transition end - Timeout (20ms)</h3>
+<a href="example-cssjs/tend20.html" target="_blank" onclick="onClick(this);">Transition end - Timeout (20ms)</a>
+
+<script type="text/javascript">
+var radioGroup = document.getElementById("radioGroup").getElementsByTagName("input");
+var customValue = document.getElementById("customValue").getElementsByTagName("input");
+var type = 'linear';
+
+function onClick(a) {
+    for(var i=0, len=radioGroup.length; i<len; i++) {
+        if (radioGroup[i].checked) {
+            type = radioGroup[i].value;
+        }
+    }
+
+    if (type === "custom") {
+        type = "cubic-bezier(";
+        for(var i=0, len=customValue.length-1; i<len; i++) {
+            type += customValue[i].value + ",";
+        }
+        type += customValue[i].value + ")";
+    }
+
+    a.href += "?type=" + type;
+}
+</script>
+</body>
+</html>

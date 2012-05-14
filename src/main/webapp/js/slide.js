@@ -11,7 +11,7 @@
     var Container = exports.Container;
     var onResized = exports.onResized;
 
-    var SLIDE_TRESHOLD = 0.1; // 20%
+    var SLIDE_TRESHOLD = 0.1; // 10%
     
     var BasicSlide = exports.BasicSlide = slide.Observable.extend({
         init: function (frameEl, dataSource, option) {
@@ -177,6 +177,7 @@
                 movingOffset = -1 * this.pageWidth;
 
             this.slide(movingOffset, function onMoveNextEnd() {
+                self.container.rearrangePanelsAfterNext();
                 self.preloadNextData();
                 self.emit("next");
             });
@@ -188,7 +189,7 @@
                 var container = this.container;
                 this.dataSource.next();
                 this.dataSource.queryNext(function (next) {
-                    container.rearrangePanelsAfterNext(next);
+                    container.setNextData(next);
                 });
             },
         /**
@@ -198,6 +199,7 @@
             var self = this,
                 movingOffset = this.pageWidth;
             this.slide(movingOffset, function onMovePrevEnd() {
+                self.container.rearrangePanelsAfterPrev();
                 self.preloadPrevData();
                 self.emit("prev");
             });
@@ -209,7 +211,7 @@
                 var container = this.container;
                 this.dataSource.prev();
                 this.dataSource.queryPrev(function (prev) {
-                    container.rearrangePanelsAfterPrev(prev);
+                    container.setPrevData(prev);
                 });
             },
         /**
@@ -299,25 +301,44 @@
     var AdvanceSlide = exports.AdvanceSlide = MiddleSlide.extend({
         init: function (frameEl, dataSource, option) {
             this._super(frameEl, dataSource, option);
-            this.defaultDuration = this.option.duration || 500;
+            this.defaultDuration = this.option.duration || 300;
             this.isInTransition = false;
         },
         slide: function (offset, callback) {
             var container = this.container;
             this.enableTransition(this.duration);
             container.move(offset);
+            this.startTransitionEndTimer();
             
             var self = this;
-            window.setTimeout(function slideEnd() {
-                container.setTransitionDuration(0);
+            container.onTransitionEnd(function transitionEnd() {
+                self.stopTransitionEndTimer();
+                container.offTransitionEnd(transitionEnd);
+                self.disableTransition();
                 if (callback) {
                     callback();
                 }
-                window.setTimeout(function () {
-                    self.isInTransition = false;
-                }, 0);
-            }, this.duration + 50);
+            });
         },
+            /**
+             * transitionEndTimer를 동작시킨다.
+             * transition end event 가 정상적으로 발생되지 않는 경우를 위한 보조 수단
+             */
+            startTransitionEndTimer: function () {
+                var self = this;
+                window.clearTimeout(this.transitionEndTimer);
+                this.transitionEndTimer = window.setTimeout(function () {
+                    self.disableTransition();
+                    self.transitionEndTimer = -1;
+                }, 1500);
+            },
+            /**
+             * transitionEndTimer를 멈춘다.
+             */
+            stopTransitionEndTimer: function () {
+                window.clearTimeout(this.transitionEndTimer);
+                this.transitionEndTimer = -1;
+            },
         /**
          * Transition을 on한다.
          * @param duration {Integer} Transition Duration Value
