@@ -123,8 +123,6 @@
             this.el.removeChild(firstPanelEl);
             this.move(0);
             this.panels.push(panel);
-        //    this.setNextData(next);
-
             this.el.appendChild(firstPanelEl);
         },
         /**
@@ -138,8 +136,6 @@
             this.el.removeChild(lastPanelEl);
             this.move(0);
             this.panels.unshift(panel);
-        //    this.setPrevData(prev);
-
             this.el.insertBefore(lastPanelEl, firstPanelEl);
         },
         /**
