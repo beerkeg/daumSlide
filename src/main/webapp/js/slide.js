@@ -308,7 +308,6 @@
             var container = this.container;
             this.enableTransition(this.duration);
             container.move(offset);
-            this.startTransitionEndTimer();
             
             var self = this;
             window.setTimeout(function slideEnd (){
