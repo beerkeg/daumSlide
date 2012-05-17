@@ -8,6 +8,17 @@
     var isSwipeEnabled = exports.isSwipeEnabled;
     var Panel = exports.Panel;
 
+    /**
+     * ics 4.0.3 이상 버젼 대응.
+     */
+    var isUsingClone = exports.isUsingClone =  (function () {
+        var ua = exports.userAgent(),
+            isOverIcs4_0_3 = ua.androidVersion.major > 4 ||
+                (ua.androidVersion.major === 4 && ua.androidVersion.minor > 0) ||
+                (ua.androidVersion.major === 4 && ua.androidVersion.minor === 0 && ua.androidVersion.patch >= 3);
+        return !!((ua.isAndroid && isOverIcs4_0_3) || ua.isDolfin);
+    })();
+
     var slideInstanceNum = 0;
     var PANEL_PREV = 0, PANEL_CURRENT = 1, PANEL_NEXT = 2;
     var BasicContainer= exports.BasicContainer = Class.extend({
@@ -122,8 +133,8 @@
                 firstPanelEl = panel.el;
             this.el.removeChild(firstPanelEl);
             this.move(0);
-            this.panels.push(panel);
             this.el.appendChild(firstPanelEl);
+            this.panels.push(panel);
         },
         /**
          * prev 이후 패널들을 재정렬한다.
@@ -135,8 +146,8 @@
                 firstPanelEl = this.panels[0].el;
             this.el.removeChild(lastPanelEl);
             this.move(0);
-            this.panels.unshift(panel);
             this.el.insertBefore(lastPanelEl, firstPanelEl);
+            this.panels.unshift(panel);
         },
         /**
          * 주어진 offset 만큼 slide를 좌우 이동 시킨다.
@@ -192,7 +203,10 @@
          */
         offTransitionEnd: function (callback) {
             this.el.removeEventListener('webkitTransitionEnd', callback);
-        },
+        }
+    });
+    
+    var CloneAdvanceContainer = exports.CloneAdvanceContainer = AdvanceContainer.extend({
         rearrangePanels: function (callback) {
             var cloneEl = this.el.cloneNode(true),
                 parent = this.el.parentNode;
@@ -217,6 +231,6 @@
             });
         }
     });
-    
-    exports.Container = isTransformEnabled ? AdvanceContainer : isSwipeEnabled ? MiddleContainer : BasicContainer;
+
+    exports.Container = isUsingClone ? CloneAdvanceContainer : isTransformEnabled ? AdvanceContainer : isSwipeEnabled ? MiddleContainer : BasicContainer;
 })(window.slide = (typeof slide === 'undefined') ? {} : slide);
