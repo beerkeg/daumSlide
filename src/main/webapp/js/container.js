@@ -124,6 +124,7 @@
             this.move(0);
             this.panels.push(panel);
         //    this.setNextData(next);
+
             this.el.appendChild(firstPanelEl);
         },
         /**
@@ -138,6 +139,7 @@
             this.move(0);
             this.panels.unshift(panel);
         //    this.setPrevData(prev);
+
             this.el.insertBefore(lastPanelEl, firstPanelEl);
         },
         /**
@@ -194,6 +196,29 @@
          */
         offTransitionEnd: function (callback) {
             this.el.removeEventListener('webkitTransitionEnd', callback);
+        },
+        rearrangePanels: function (callback) {
+            var cloneEl = this.el.cloneNode(true),
+                parent = this.el.parentNode;
+            parent.replaceChild(cloneEl, this.el);
+            
+            if (callback) {
+                callback();
+            }
+
+            parent.replaceChild(this.el, cloneEl);
+        },
+        rearrangePanelsAfterNext: function (next) {
+            var self = this;
+            this.rearrangePanels(function () {
+                self._super(next);
+            });
+        },
+        rearrangePanelsAfterPrev: function (prev) {
+            var self = this;
+            this.rearrangePanels(function () {
+                self._super(prev);
+            });
         }
     });
     
