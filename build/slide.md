@@ -666,10 +666,10 @@ function setToggle(sl) {
 
 # 추가 Example <span><a href="#" class="mark">#</a></span>
 
-1. [slide_search.html](http://east.ftdev.daum.net/sl/slide_search.html)
-2. [slide_search2.html](http://east.ftdev.daum.net/sl/slide_search2.html)
-3. [slide_media.html](http://east.ftdev.daum.net/sl/slide_media.html)
-4. [new_top.html](http://east.ftdev.daum.net/sl/new_top.html)
+1. [slide_search.html](http://uie.daum.net/mobile_guide/slide/slide_search.html)
+2. [slide_search2.html](http://uie.daum.net/mobile_guide/slide/slide_search2.html)
+3. [slide_media.html](http://uie.daum.net/mobile_guide/slide/slide_media.html)
+4. [new_top.html](http://uie.daum.net/mobile_guide/slide/new_top.html)
 
 
 
