@@ -38,7 +38,6 @@
 
     /**
      * 3d gpu 가속 여부를 사용할수 있는지 판단한다.
-     * @param uaString {String}
      */
     var isTransformEnabled = exports.isTransformEnabled =  (function () {
         var ua = userAgent(),
