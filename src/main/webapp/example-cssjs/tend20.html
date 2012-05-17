@@ -269,7 +269,7 @@ var ImageSearchDataSource = slide.DataSource.extend({
     }
 });
 
-var TendSlide0 = slide.Slide.extend({
+var TendSlide20 = slide.Slide.extend({
     slide: function (offset, callback) {
         var container = this.container;
         this.enableTransition(this.duration);
@@ -287,7 +287,26 @@ var TendSlide0 = slide.Slide.extend({
                 }
             }, 20);
         });
-    }
+    },
+        /**
+         * transitionEndTimer를 동작시킨다.
+         * transition end event 가 정상적으로 발생되지 않는 경우를 위한 보조 수단
+         */
+        startTransitionEndTimer: function () {
+            var self = this;
+            window.clearTimeout(this.transitionEndTimer);
+            this.transitionEndTimer = window.setTimeout(function () {
+                self.disableTransition();
+                self.transitionEndTimer = -1;
+            }, 1500);
+        },
+        /**
+         * transitionEndTimer를 멈춘다.
+         */
+        stopTransitionEndTimer: function () {
+            window.clearTimeout(this.transitionEndTimer);
+            this.transitionEndTimer = -1;
+        }
 });
 
 
@@ -296,7 +315,7 @@ function initSlide(data) {
     ImgManager.setClientSize(wrapper);
 
     var ds = new ImageSearchDataSource(buildSlides(data));
-    var sl = new TendSlide0(wrapper, ds);
+    var sl = new TendSlide20(wrapper, ds);
 
     prevBtn.addEventListener(click, function(){
         sl.prev();

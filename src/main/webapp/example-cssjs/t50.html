@@ -274,11 +274,9 @@ var TimeoutSlide50 = slide.Slide.extend({
         var container = this.container;
         this.enableTransition(this.duration);
         container.move(offset);
-        this.startTransitionEndTimer();
         
         var self = this;
         window.setTimeout(function slideEnd() {
-            self.stopTransitionEndTimer();
             self.disableTransition();
             if (callback) {
                 callback();
