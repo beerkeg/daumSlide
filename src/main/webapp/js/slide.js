@@ -311,34 +311,13 @@
             this.startTransitionEndTimer();
             
             var self = this;
-            container.onTransitionEnd(function transitionEnd() {
-                self.stopTransitionEndTimer();
-                container.offTransitionEnd(transitionEnd);
+            window.setTimeout(function slideEnd (){
                 self.disableTransition();
                 if (callback) {
                     callback();
                 }
-            });
+            }, this.duration + 30);
         },
-            /**
-             * transitionEndTimer를 동작시킨다.
-             * transition end event 가 정상적으로 발생되지 않는 경우를 위한 보조 수단
-             */
-            startTransitionEndTimer: function () {
-                var self = this;
-                window.clearTimeout(this.transitionEndTimer);
-                this.transitionEndTimer = window.setTimeout(function () {
-                    self.disableTransition();
-                    self.transitionEndTimer = -1;
-                }, 1500);
-            },
-            /**
-             * transitionEndTimer를 멈춘다.
-             */
-            stopTransitionEndTimer: function () {
-                window.clearTimeout(this.transitionEndTimer);
-                this.transitionEndTimer = -1;
-            },
         /**
          * Transition을 on한다.
          * @param duration {Integer} Transition Duration Value
