@@ -118,31 +118,31 @@
 
         // STEP #3 minify "slide.merged.js" to "slide.min.js"
         function minifyFile(data, cb) {
-            // try {
-            //     new compressor.minify({
-            //         type: 'yui',
-            //         fileIn: __dirname + "/"+destFileName+".merged.js",
-            //         fileOut: __dirname + "/"+destFileName+".min.js",
-            //         callback: function(err){
-            //             if (err) {
-            //                 cb(err);
-            //             } else {
-            //                 cb(null);
-            //             }
-            //         }
-            //     });
-            // } catch (err) {
-            //     cb(err);
-            // }
-            var command = "uglifyjs --output " +
-                            __dirname + "/"+destFileName+".min.js " +
-                            __dirname + "/" + destFileName + ".merged.js";
-            console.log(command);
-            require('child_process').exec(command, function (error, stdout, stderr){
-                if (error !== null) {
-                  console.error(error.stack);
-                }
-            });
+//            try {
+//                new compressor.minify({
+//                    type: 'gcc',
+//                    fileIn: __dirname + "/"+destFileName+".merged.js",
+//                    fileOut: __dirname + "/"+destFileName+".min.js",
+//                    callback: function(err){
+//                        if (err) {
+//                            cb(err);
+//                        } else {
+//                            cb(null);
+//                        }
+//                    }
+//                });
+//            } catch (err) {
+//                cb(err);
+//            }
+             var command = "uglifyjs --output " +
+                             __dirname + "/"+destFileName+".min.js " +
+                             __dirname + "/" + destFileName + ".merged.js";
+             console.log(command);
+             require('child_process').exec(command, function (error, stdout, stderr){
+                 if (error !== null) {
+                   console.error(error.stack);
+                 }
+             });
         }
 
         async.waterfall([

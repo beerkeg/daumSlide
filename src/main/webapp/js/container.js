@@ -217,6 +217,7 @@
             }
 
             parent.replaceChild(this.el, cloneEl);
+            cloneEl = null;
         },
         rearrangePanelsAfterNext: function (next) {
             var self = this;

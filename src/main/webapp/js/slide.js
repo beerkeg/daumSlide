@@ -6,8 +6,6 @@
 
     var isTransformEnabled = exports.isTransformEnabled;
     var isSwipeEnabled = exports.isSwipeEnabled;
-    var Panel = exports.Panel;
-    var BasicContainer = exports.BasicContainer;
     var Container = exports.Container;
     var onResized = exports.onResized;
 

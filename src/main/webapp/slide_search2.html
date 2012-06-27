@@ -20,7 +20,7 @@ ul, li {
     padding: 0;
     list-style-type: none;
 }
-#wrapper {
+#frameEl {
     width: 100%;
     height:100%;
     overflow:hidden;
@@ -155,21 +155,37 @@ z-index: 30;
     bottom:0;
 }
 
+#loading {
+    position: absolute;
+    top:0;
+    left:0;
+    width: 100%;
+    height:100%;
+    z-index: 9999;
+    background: url(http://m1.daumcdn.net/img-section/enter/common/loading.gif) 50% 50% no-repeat;  
+    display: none;
+}
+
+
 </style>
-<script type="text/javascript" src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/gesture/gesture-1.0.3.min.js"></script>
+<!-- <script type="text/javascript" src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/gesture/gesture-1.0.3.min.js"></script>
 <script src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/ejohn/class-0.1.0.min.js"></script>
 <script type="text/javascript" src="js/datasource.js"></script>
 <script type="text/javascript" src="js/util.js"></script>
 <script type="text/javascript" src="js/panel.js"></script>
 <script type="text/javascript" src="js/container.js"></script>
 <script type="text/javascript" src="js/observable.js"></script>
-<script type="text/javascript" src="js/slide.js"></script>
+<script type="text/javascript" src="js/slide.js"></script> -->
+<script type="text/javascript"
+ src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/slide/slide-1.0.1.min.js"></script>
+
 </head>
 <body>
-<div id="wrapper"></div>
+<div id="frameEl"></div>
 <button type="button" class="prevBtn" id="prevBtn">prev</button>
 <button type="button" class="nextBtn" id="nextBtn">next</button>
 <div id="footer"></div>
+<div id="loading"></div>
 <script type="text/javascript">
 function getChildElements (el) {
     var i = el.firstChild, a = [];
@@ -217,13 +233,14 @@ function xmlToObject (xmlDocument) {
 }
 
 var headTag = document.getElementsByTagName("head")[0],
-    wrapper = document.getElementById("wrapper"),
+    frameEl = document.getElementById("frameEl"),
     queryEl = document.getElementById("query"),
     click = "ontouchstart" in window ? "touchstart" : "click",
     prevBtn = document.getElementById("prevBtn"),
     nextBtn = document.getElementById("nextBtn"),
     footer = document.getElementById("footer"),
     pageNum = 1;
+var EventUtil = window.gesture.EventUtil;
 
 var simpleSearchAPICallback = null;
 function simpleSearchAPIJsonp(callback) {
@@ -252,13 +269,30 @@ function loadInitialData(callback) {
     });
 }
 function loadMoreData(callback) {
-    pageNum += 9;
+    pageNum += 1;
+    // 돌돌이 보이기
+    showLoadingBar();
     simpleSearchAPIJsonp(function (data) {
         callback(data);
+        // 돌돌이 숨기기
+        hideLoadingBar();
     });
+}
+var loading = document.getElementById("loading");
+function showLoadingBar() {
+    loading.style.display = "block";
+}
+function hideLoadingBar() {
+    loading.style.display = "none";
 }
 
 var ImageSearchDataSource = slide.DataSource.extend({
+    queryPrevForPreLoad: function (callback) {
+        callback(this.data[this.index - 2] || null, this.data[this.index - 3] || null);
+    },
+    queryNextForPreLoad: function (callback) {
+        callback(this.data[this.index + 2] || null, this.data[this.index + 3] || null);
+    },
     willQueryEndOfDataDelegate: function (callback) {
         var self = this;
         loadMoreData(function (data) {
@@ -269,37 +303,97 @@ var ImageSearchDataSource = slide.DataSource.extend({
     }
 });
 
+// 이미지 슬라이드를 생성/초기화 해주는 함수.
 function initSlide(data) {
-    wrapper.style.display = "block";
-    ImgManager.setClientSize(wrapper);
+    ImgManager.setClientSize(frameEl);
 
-    var ds = new ImageSearchDataSource(buildSlides(data));
-    var sl = new slide.Slide(wrapper, ds);
+    // json데이터를 알맞은 형태로 파싱.
+    var initData = buildSlides(data);
 
-    prevBtn.addEventListener(click, function(){
-        sl.prev();
-    }, false);
-    nextBtn.addEventListener(click, function(){
-        sl.next();
-    }, false);
+    // DataSource 생성/초기화 부분.
+    var ds = new ImageSearchDataSource(initData);
+
+    // Slide 생성/초기화 부분.
+    var sl = new slide.Slide(frameEl, ds);
+
+    // 좌우 버튼 클릭시 이미지 전환 해주는 부분.
+    setButton(sl);
+    
+    // 화면 가로세로 전환시 리자이즈 해주는 부분.
     sl.on("resize", function () {
-        ImgManager.setClientSize(wrapper);
+        ImgManager.setClientSize(frameEl);
         sl.show();
     });
+   
+    // 하단 레이어 설정 함수.
+    setFooter(sl, ds); 
 
+    // 하단레이어및 좌우 버튼 토클 함수.
+    setToggle(sl);
+
+    // pre 이미지 로딩 함수.
+    preImgLoader(sl, ds);
+}
+
+function setButton(sl) {
+    EventUtil.listen(prevBtn, click, function(){
+        sl.prev();
+    }, false);
+    EventUtil.listen(nextBtn, click, function(){
+        sl.next();
+    }, false);
+}
+
+function setFooter(sl, ds) {
+    function setDesc () {
+        ds.queryCurrent(function (data) {
+            footer.innerHTML = createDesc(data);
+        });
+    }
     setDesc();
     sl.on("startDrag", function (session) {
-        session.targetEvent.preventDefault();
+        var ev = session.targetEvent;
+        if(ev.preventDefault){
+            ev.preventDefault();
+        } else {
+            ev.returnValue = false;
+        }
     });
+
     sl.on("next", setDesc);
     sl.on("prev", setDesc);
-        function setDesc () {
-            ds.queryCurrent(function (data) {
-                footer.innerHTML = createDesc(data);
-            });
-        }
+}
 
+function preImgLoader(sl, ds) {
+    function preLoadImg(data) {
+        if (data && data.image) {
+            var img = new Image();
+            img.src = data.image;
+        }
+    }
+    sl.on("next", function () {
+        ds.queryNextForPreLoad(function (next1, next2){
+            preLoadImg(next1);
+            preLoadImg(next2);
+        });
+    });
+    sl.on("prev", function () {
+        ds.queryPrevForPreLoad(function (prev1, prev2){
+            preLoadImg(prev1);
+            preLoadImg(prev2);
+        });
+    });
+}
+
+function setToggle(sl) {
     var viewState = "block";
+    function setDisplay (state) {
+        footer.style.display = state;
+        prevBtn.style.display = state;
+        nextBtn.style.display = state;
+        viewState = state;
+    }
+
     sl.on("click", function() {
         if (viewState === "none") {
             setDisplay("block");
@@ -307,13 +401,8 @@ function initSlide(data) {
             setDisplay("none");
         }
     });
-        function setDisplay (state) {
-            footer.style.display = state;
-            prevBtn.style.display = state;
-            nextBtn.style.display = state;
-            viewState = state;
-        }
 }
+
 function buildSlides(data) {
     var doc = new DOMParser().parseFromString(data,'text/xml'),
         xml = xmlToObject(doc),
@@ -350,10 +439,12 @@ function createDesc (data) {
         linktext = this.cutString(data.link, 37);
     return '<div class="wrap_desc" style="opacity: 0.7;" id="desc_field">' +
                 '<a href="'+data.link+'" class="tit" id="desc_title">'+ title +'</a>' +
-                '<span class="info" id="desc_info">'+data.width+' x '+data.height+'</span><a href="'+data.link+'" id="desc_url" class="link_src">'+ linktext +'</a>' +
+                '<span class="info" id="desc_info">'+data.width+' x '+data.height+'</span>' +
+                '<a href="'+data.link+'" id="desc_url" class="link_src">'+ linktext +'</a>' +
                 '<div class="wrap_btn">' +
                     '<a href="" class="left_wrap"><span class="prev">검색결과로 돌아가기</span></a>' +
-                    '<a id="desc_link" href="'+data.image+'" target="_blank" class="right_wrap"><span class="bar"></span><span>원본 바로보기</span></a>' +
+                    '<a id="desc_link" href="'+data.image+'" target="_blank" class="right_wrap">' +
+                        '<span class="bar"></span><span>원본 바로보기</span></a>' +
                 '</div></div>';
 }
 function unescapeHTML (text) {
@@ -371,6 +462,7 @@ function cutString (text, length) {
 
 (function main() {
     window.addEventListener("load", function(e){
+        slide.hardwareAccelStyle += slide.isTransformEnabled ? '-webkit-transition-timing-function:linear;' : '';
         loadInitialData();
     });
 })();
