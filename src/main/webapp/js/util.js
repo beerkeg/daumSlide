@@ -76,4 +76,22 @@
             }, 50);
         });
     };
+    
+    exports.preventDefault = function (e) {
+        var ev = e || window.event;
+        if (ev.preventDefault) {
+            ev.preventDefault();
+        } else {
+            ev.returnValue = false;
+        }
+    };
+    
+    exports.stopPropagation = function (e) {
+        var ev = e || window.event;
+        if (ev.stopPropagation) {
+            ev.stopPropagation();
+        } else {
+            ev.cancelBubble = true;
+        }
+    };
 })(window.slide = (typeof slide === 'undefined') ? {} : slide);

@@ -8,6 +8,7 @@
     var isSwipeEnabled = exports.isSwipeEnabled;
     var Container = exports.Container;
     var onResized = exports.onResized;
+    var preventDefault = exports.preventDefault;
 
     var SLIDE_TRESHOLD = 0.1; // 10%
     
@@ -239,7 +240,7 @@
          */
         drag: function (session) {
             if (session.isSwipe()) {
-                session.targetEvent.preventDefault();
+                preventDefault(session.targetEvent);
                 this.container.move(session.delta.x / 2);
             }
         },
@@ -332,7 +333,7 @@
         },
         startDrag: function (session) {
             if (this.isInTransition) {
-                session.targetEvent.preventDefault();
+                preventDefault(session.targetEvent);
                 this.isDragging = false;
                 return ;
             }
@@ -341,7 +342,7 @@
         },
         drag: function (session) {
             if (this.isInTransition || !this.isDragging) {
-                session.targetEvent.preventDefault();
+                preventDefault(session.targetEvent);
                 return ;
             }
 
