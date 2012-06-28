@@ -333,7 +333,7 @@ function setFooter(sl, ds) {
 }
 
 function preImgLoader(sl, ds) {
-    function preLoadImg(data, preloadEl) {
+    function preLoadImg(data) {
         if (data && data.image) {
             var img = new Image();
             img.src = data.image;
@@ -341,14 +341,14 @@ function preImgLoader(sl, ds) {
     }
     sl.on("next", function () {
         ds.queryNextForPreLoad(function (next1, next2){
-            preLoadImg(next1, preload1);
-            preLoadImg(next2, preload2);
+            preLoadImg(next1);
+            preLoadImg(next2);
         });
     });
     sl.on("prev", function () {
         ds.queryPrevForPreLoad(function (prev1, prev2){
-            preLoadImg(prev1, preload1);
-            preLoadImg(prev2, preload2);
+            preLoadImg(prev1);
+            preLoadImg(prev2);
         });
     });
 }
