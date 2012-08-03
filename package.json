@@ -1,0 +1,25 @@
+{
+    "name": "slide",
+    "author": {
+        "name": "Dong-il Kim"
+    },
+    "description": "Build remote sourece & ",
+    "homepage": "http://digit.daumcorp.com/eastkiki/slide",
+    "version": "1.0.2",
+    "dependencies": {
+        "grunt" : "~0.3.12",
+        "grunt-concat": "*",
+        "grunt-servicefarm": "git+http://dgit.co/eastkiki/grunt-servicefarm.git"
+    },
+    "devDependencies": {
+        "grunt" : "~0.3.12",
+        "grunt-concat": "*",
+        "grunt-servicefarm": "git+http://dgit.co/eastkiki/grunt-servicefarm.git"
+    },
+    "engines": { "node": ">= 0.6" },
+    "scripts":{
+        "test": "node build.js",
+        "build": "node build.js",
+        "start": "node build.js"
+    }
+}
