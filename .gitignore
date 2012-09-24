@@ -1,5 +1,7 @@
 /target
+/dist
 org.*
 .classpath
 .project
 /node_modules
+.settings/
