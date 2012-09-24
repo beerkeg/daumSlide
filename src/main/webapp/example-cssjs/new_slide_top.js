@@ -691,7 +691,7 @@ function setSlidePanels () {
         var ds = new slide.InfiniteDataSource(buildSlides(data));
         var sl = new slide.Slide(wrapper, ds, {
             containerId: slideName,
-            duration: 300,
+            duration: 500,
             PanelClass: slide.UlPanel
         });
         if (slide.isTransformEnabled || slide.isSwipeEnabled) {
@@ -732,7 +732,7 @@ function setSlidePanels () {
 
         var ob = null;
         sl.on("endDrag", function(session){
-            if (session.isSwipe()) {
+            if (session.isSwipe() || session.isFlick()) {
                 daum.Event.stopObserving(ob);
                 ob = daum.addEvent(wrapper, 'click', function preventClick(e) {
                     daum.Event.stopEvent(e);
@@ -742,13 +742,15 @@ function setSlidePanels () {
         sl.on("next",function(){setPagingAndTap();daum.Event.stopObserving(ob);});
         sl.on("prev",function(){setPagingAndTap();daum.Event.stopObserving(ob);});
         sl.on("cancel",function(){daum.Event.stopObserving(ob);});
+
+        return sl;
     }
 
     var mediaData = {};
     mediaData.news = DMT.json.news;
     mediaData.sports = DMT.json.sports;
     mediaData.enter = DMT.json.enter;
-    createSwipe("newsContents", mediaData, "news", [
+    var test = createSwipe("newsContents", mediaData, "news", [
         {id:"newsTitle", index: 0},
         {id:"sportsTitle", index: 4},
         {id:"enterTitle", index: 5}
@@ -793,4 +795,6 @@ function setSlidePanels () {
         {id:"saleTitle", index: 2},
         {id:"couponTitle", index: 4}
     ]);
+
+    return test;
 }

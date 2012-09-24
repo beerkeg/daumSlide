@@ -168,15 +168,15 @@ z-index: 30;
 
 
 </style>
-<script type="text/javascript" src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/gesture/gesture-1.0.3.min.js"></script>
+<!-- <script type="text/javascript" src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/gesture/gesture-1.0.3.min.js"></script>
 <script src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/ejohn/class-0.1.0.min.js"></script>
 <script type="text/javascript" src="js/datasource.js"></script>
 <script type="text/javascript" src="js/util.js"></script>
 <script type="text/javascript" src="js/panel.js"></script>
 <script type="text/javascript" src="js/container.js"></script>
 <script type="text/javascript" src="js/observable.js"></script>
-<script type="text/javascript" src="js/slide.js"></script>
-<!-- <script type="text/javascript" src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/slide/slide-1.0.1.min.js"></script> -->
+<script type="text/javascript" src="js/slide.js"></script> -->
+<script type="text/javascript" src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/slide/slide-1.0.2.min.js"></script>
 
 </head>
 <body>
@@ -245,7 +245,7 @@ var simpleSearchAPICallback = null;
 function simpleSearchAPIJsonp(callback) {
     simpleSearchAPICallback = callback;
     var jsonUrl = 'http://imgv.m.search.daum.net/mviewer/search?w=xml&m=mimage&q='
-                + '%C0%CC%B9%CE%C1%A4' + '&sidx=' + pageNum 
+                + '%C7%D1%C8%BF%C1%D6' + '&sidx=' + pageNum 
                 + '&lpp=9&SortType=totalMobile&SimilarYN=Y',
         url = 'http://uie.daum.net:8093/?url='+jsonUrl+'&callback=simpleJsonpCallback';
     

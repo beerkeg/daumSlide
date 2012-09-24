@@ -181,7 +181,7 @@ z-index: 30;
 }
 
 </style>
-<!-- 
+ 
 <script type="text/javascript" src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/gesture/gesture-1.0.3.min.js"></script>
 <script type="text/javascript" src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/ejohn/class-0.1.0.min.js"></script>
 <script type="text/javascript" src="js/datasource.js"></script>
@@ -190,8 +190,8 @@ z-index: 30;
 <script type="text/javascript" src="js/container.js"></script>
 <script type="text/javascript" src="js/observable.js"></script>
 <script type="text/javascript" src="js/slide.js"></script>
--->
-<script type="text/javascript" src="http://east.ftdev.daum.net/work/slide/build/slide.min.js"></script>
+
+<!-- <script type="text/javascript" src="http://east.ftdev.daum.net/work/slide/build/slide.min.js"></script> -->
 
 </head>
 <body>
@@ -218,8 +218,10 @@ var EventUtil = window.gesture.EventUtil;
 
 var simpleSearchAPICallback = null;
 function simpleSearchAPIJsonp(callback) {
-    simpleSearchAPICallback = callback;
-    var url = 'http://apis.daum.net/search/image?apikey=080a78bc84cc6b814fb365591b1d7d7fc26575b3&output=json&callback=simpleJsonpCallback&q=' + queryEl.value + '&pageno=' + pageNum;
+    simpleSearchAPICallback = callback; 
+    var url = 'http://apis.daum.net/search/image?q='+ escape(queryEl.value) +
+            '&output=json&callback=simpleJsonpCallback&pageno=' + pageNum +
+            '&apikey=0bdf91fedab0c293962cd90855358777e15944d8';
     var s = document.createElement("script");
     s.type = "text/javascript";
     s.src = url;
