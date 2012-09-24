@@ -1,4 +1,4 @@
-/*! slide - v1.0.2 - 2012-08-03
+/*! slide - v1.0.2 - 2012-08-09
 * http://digit.daumcorp.com/eastkiki/slide
 * Copyright (c) 2012 Dong-il Kim; Licensed  */
 
