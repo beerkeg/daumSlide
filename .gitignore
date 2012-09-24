@@ -5,3 +5,4 @@ org.*
 .project
 /node_modules
 .settings/
+pom.xml
