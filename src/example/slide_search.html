@@ -32,7 +32,7 @@ ul, li {
 }
 .panel {
     position: relative;  
-    background: url(http://m1.daumcdn.net/img-section/enter/common/loading.gif) 50% 50% no-repeat;  
+ /*   background: url(http://m1.daumcdn.net/img-section/enter/common/loading.gif) 50% 50% no-repeat;  */
 }
 .panel img {
     position: absolute;
@@ -154,6 +154,20 @@ z-index: 30;
     position: absolute;
     bottom:0;
 }
+#preload1 {
+    position: absolute;
+    top:0;
+    left:0;
+    width: 1px;
+    height: 1px;
+}
+#preload2 {
+    position: absolute;
+    top:0;
+    left:0;
+    width: 1px;
+    height: 1px;
+}
 
 #loading {
     position: absolute;
@@ -166,71 +180,32 @@ z-index: 30;
     display: none;
 }
 
-
 </style>
-<!-- <script type="text/javascript" src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/gesture/gesture-1.0.3.min.js"></script>
+ 
+<script type="text/javascript" src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/gesture/gesture-1.0.3.min.js"></script>
 <script src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/ejohn/class-0.1.0.min.js"></script>
-<script type="text/javascript" src="js/datasource.js"></script>
-<script type="text/javascript" src="js/util.js"></script>
-<script type="text/javascript" src="js/panel.js"></script>
-<script type="text/javascript" src="js/container.js"></script>
-<script type="text/javascript" src="js/observable.js"></script>
-<script type="text/javascript" src="js/slide.js"></script> -->
-<script type="text/javascript" src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/slide/slide-1.0.2.min.js"></script>
+<script type="text/javascript" src="../js/datasource.js"></script>
+<script type="text/javascript" src="../js/util.js"></script>
+<script type="text/javascript" src="../js/panel.js"></script>
+<script type="text/javascript" src="../js/container.js"></script>
+<script type="text/javascript" src="../js/observable.js"></script>
+<script type="text/javascript" src="../js/slide.js"></script>
+
+<!-- <script type="text/javascript" src="http://east.ftdev.daum.net/work/slide/build/slide.min.js"></script> -->
 
 </head>
 <body>
+<div id="searchBox">
+    <input type="text" id="query" value="girls generation" />
+    <button id="searchbtn" type="button">검색</button>
+</div>
+
 <div id="frameEl"></div>
-<button type="button" class="prevBtn" id="prevBtn">prev</button>
-<button type="button" class="nextBtn" id="nextBtn">next</button>
+<button type="button" id="prevBtn" class="prevBtn">prev</button>
+<button type="button" id="nextBtn" class="nextBtn">next</button>
 <div id="footer"></div>
 <div id="loading"></div>
 <script type="text/javascript">
-function getChildElements (el) {
-    var i = el.firstChild, a = [];
-    try{
-        do {
-            if (i.nodeType === 1){
-                a.push(i);
-            }
-        } while(i = i.nextSibling);
-    }catch(e){}
-    return a;
-}
-function getSameNameLength(node, name) {
-    var len = 0;
-    var cNodes = getChildElements(node);
-    for (var i=0,l=cNodes.length;i<l;i+=1){
-            if ( name === cNodes[i].nodeName ) {
-                len++;
-            }
-    }
-    return len;
-}
-function xmlToObject (xmlDocument) {
-    var root = xmlDocument.documentElement,
-    builder = function(node){
-        for (var obj = {}, cNodes = getChildElements(node), name, value, i=0,l=cNodes.length;i<l;i+=1){
-            name = cNodes[i].nodeName;
-            value = (getChildElements(cNodes[i]).length > 0) ? builder(cNodes[i]) : (cNodes[i].firstChild==null) ? '' : cNodes[i].firstChild.nodeValue;
-
-            if(obj[name] != undefined || getSameNameLength(node, name) > 1) {
-                if(obj[name] == undefined){
-                    obj[name] = [];
-                }
-                obj[name].push(value);
-            } else {
-                obj[name] = value;
-            }
-            for (var j=0;j<cNodes[i].attributes.length;j+=1) {
-                obj[name + '@' + cNodes[i].attributes[j].nodeName] = (cNodes[i].attributes[j].nodeValue||"").toString();
-            }
-        }
-        return obj; 
-    }
-    return builder(root);
-}
-
 var headTag = document.getElementsByTagName("head")[0],
     frameEl = document.getElementById("frameEl"),
     queryEl = document.getElementById("query"),
@@ -243,12 +218,10 @@ var EventUtil = window.gesture.EventUtil;
 
 var simpleSearchAPICallback = null;
 function simpleSearchAPIJsonp(callback) {
-    simpleSearchAPICallback = callback;
-    var jsonUrl = 'http://imgv.m.search.daum.net/mviewer/search?w=xml&m=mimage&q='
-                + '%C7%D1%C8%BF%C1%D6' + '&sidx=' + pageNum 
-                + '&lpp=9&SortType=totalMobile&SimilarYN=Y',
-        url = 'http://uie.daum.net:8093/?url='+jsonUrl+'&callback=simpleJsonpCallback';
-    
+    simpleSearchAPICallback = callback; 
+    var url = 'http://apis.daum.net/search/image?q='+ escape(queryEl.value) +
+            '&output=json&callback=simpleJsonpCallback&pageno=' + pageNum +
+            '&apikey=0bdf91fedab0c293962cd90855358777e15944d8';
     var s = document.createElement("script");
     s.type = "text/javascript";
     s.src = url;
@@ -264,6 +237,7 @@ function simpleJsonpCallback(data) {
 
 function loadInitialData(callback) {
     simpleSearchAPIJsonp(function (data) {
+        // 최초 데이터를 받아온 후, 이미지 슬라이드를 생성/초기화 한다.
         initSlide(data);
     });
 }
@@ -304,6 +278,7 @@ var ImageSearchDataSource = slide.DataSource.extend({
 
 // 이미지 슬라이드를 생성/초기화 해주는 함수.
 function initSlide(data) {
+    frameEl.style.display = "block";
     ImgManager.setClientSize(frameEl);
 
     // json데이터를 알맞은 형태로 파싱.
@@ -403,29 +378,26 @@ function setToggle(sl) {
 }
 
 function buildSlides(data) {
-    var doc = new DOMParser().parseFromString(data,'text/xml'),
-        xml = xmlToObject(doc),
-        items = xml.result,
+    var items = data.channel.item,
         arr = [];
     for (var i = 0, len = items.length; i < len; i++) {
         var item = items[i];
         arr.push({
-            image: item.org_img,
+            image: item.image,
             width: item.width,
             height: item.height,
             title: item.title,
             link: item.link,
             toHTML: function () {
                 var imgSize = ImgManager.resizeImg(this.width, this.height),
-                    imgOffset = ImgManager.getImgOffset(imgSize.width, imgSize.height),
-                    imgurl = "http://m1.daumcdn.net/thumb/T480x416/70/?fname="+ escape(this.image);
-                return '<img alt="' + escape(item.title) + '" src="' + imgurl + 
-                            '" width="' + imgSize.width + '" height="' + imgSize.height +
+                    imgOffset = ImgManager.getImgOffset(imgSize.width, imgSize.height);
+                return '<img alt="' + this.title + '" src="' + this.image + '" width="' + imgSize.width + '" height="' + imgSize.height +
                             '" data-width="' + item.width + '" data-height="' + item.height +
-                            '"style=position:absolute;top:' + imgOffset.top + 'px;left:' +imgOffset.left + 'px;" ' +
-                           'onload="onImgLoad(this);" ' +
-                           'onerror="onImgLoadError(this);" ' +
-                           'onabort="onImgLoadError(this);">';
+                            '"style=position:absolute;top:' + imgOffset.top + 'px;left:' + imgOffset.left + 'px;" ' +
+                            '>';
+                            // 'onload="d.onImgLoad(this);" ' +
+                            // 'onerror="d.onImgLoadError(this);" ' +
+                            // 'onabort="d.onImgLoadError(this);">';
             }
         });
     }
@@ -434,16 +406,14 @@ function buildSlides(data) {
 
 
 function createDesc (data) {
-    var title = this.unescapeHTML(data.title),
-        linktext = this.cutString(data.link, 37);
+    var title = unescapeHTML(data.title),
+        linktext = cutString(data.link, 37);
     return '<div class="wrap_desc" style="opacity: 0.7;" id="desc_field">' +
                 '<a href="'+data.link+'" class="tit" id="desc_title">'+ title +'</a>' +
-                '<span class="info" id="desc_info">'+data.width+' x '+data.height+'</span>' +
-                '<a href="'+data.link+'" id="desc_url" class="link_src">'+ linktext +'</a>' +
+                '<span class="info" id="desc_info">'+data.width+' x '+data.height+'</span><a href="'+data.link+'" id="desc_url" class="link_src">'+ linktext +'</a>' +
                 '<div class="wrap_btn">' +
                     '<a href="" class="left_wrap"><span class="prev">검색결과로 돌아가기</span></a>' +
-                    '<a id="desc_link" href="'+data.image+'" target="_blank" class="right_wrap">' +
-                        '<span class="bar"></span><span>원본 바로보기</span></a>' +
+                    '<a id="desc_link" href="'+data.image+'" target="_blank" class="right_wrap"><span class="bar"></span><span>원본 바로보기</span></a>' +
                 '</div></div>';
 }
 function unescapeHTML (text) {
@@ -451,28 +421,43 @@ function unescapeHTML (text) {
 }
 function cutString (text, length) {
     if (text.length > length) {
-        return text.substring(0,length-2) + ".."
+        return text.substring(0,length-2) + "..";
     } else {
         return text;
     }
 }
 
-
-
 (function main() {
-    EventUtil.listen(window, "load", function(e){
-        slide.hardwareAccelStyle += slide.isTransformEnabled ? '-webkit-transition-timing-function:linear;' : '';
+    EventUtil.listen(document.getElementById("searchbtn"), "click", function(){
+        document.getElementById("searchBox").style.display = "none";
         loadInitialData();
+    },false);
+    EventUtil.listen(window, "keypress", function(e){
+        if (e.keyCode === 13) {
+            document.getElementById("searchBox").style.display = "none";
+            loadInitialData();
+        }
+    });
+    EventUtil.listen(window, "load", function(e){
+        var qIndex = location.href.indexOf("q=");
+        if (qIndex > -1) {
+            query.value = location.href.substring(qIndex+2);
+            document.getElementById("searchBox").style.display = "none";
+            loadInitialData();
+        }
     });
 })();
 
-function onImgLoad (el) {
-    el.parentNode.style.background = "none";
-}
-function onImgLoadError (el) {
-    el.parentNode.style.background = "none";
-}
 
+var d= {};
+d.onImgLoad = function (el) {
+    el.parentNode.style.background = "none";
+};
+d.onImgLoadError = function (el) {
+    el.parentNode.style.background = "none";
+};
+
+// 화면에 맞게 이미지를 리사이즈 해주는 오브젝트.
 var ImgManager = {
     clientWidth: 0,
     clientHeight: 0,
@@ -511,6 +496,7 @@ var ImgManager = {
         return {left: parseInt((this.clientWidth + 10 - width) / 2), top: parseInt((this.clientHeight + 10 - height) / 2)};
     }
 };
+
 </script>
 
 </body>

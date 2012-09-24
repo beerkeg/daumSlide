@@ -12,7 +12,7 @@ module.exports = function(grunt) {
         ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */'
     },
     lint: {
-      files: ['grunt.js', 'src/main/webapp/js/*.js', 'src/main/webapp/test-js/*.js']
+      files: ['grunt.js', 'src/js/*.js', 'src/test-js/*.js']
     },
     concat: {
       dist: {
@@ -20,12 +20,12 @@ module.exports = function(grunt) {
           '<banner:meta.banner>',
           'http://m1.daumcdn.net/svc/attach/U0301/cssjs/ejohn/class-0.1.0.min.js',
           'http://m1.daumcdn.net/svc/attach/U0301/cssjs/gesture/gesture-1.0.3.js',
-          'src/main/webapp/js/datasource.js',
-          'src/main/webapp/js/util.js',
-          'src/main/webapp/js/panel.js',
-          'src/main/webapp/js/container.js',
-          'src/main/webapp/js/observable.js',
-          'src/main/webapp/js/slide.js'
+          'src/js/datasource.js',
+          'src/js/util.js',
+          'src/js/panel.js',
+          'src/js/container.js',
+          'src/js/observable.js',
+          'src/js/slide.js'
         ],
         dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.merged.js',
         separator: "\n\n"
