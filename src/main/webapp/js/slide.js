@@ -302,6 +302,11 @@
             this._super(frameEl, dataSource, option);
             this.defaultDuration = this.option.duration || 300;
             this.isInTransition = false;
+
+            var self = this;
+            this.container.onTransitionEnd(function transitionEnd () {
+                self.disableTransition();
+            });
         },
         slide: function (offset, callback) {
             var container = this.container;
