@@ -305,7 +305,9 @@
 
             var self = this;
             this.container.onTransitionEnd(function transitionEnd () {
-                self.disableTransition();
+                self.timeId = window.setTimeout(function disable(){
+                    self.disableTransition();
+                }, 50);
             });
         },
         slide: function (offset, callback) {
@@ -315,6 +317,7 @@
             
             var self = this;
             window.setTimeout(function slideEnd (){
+                window.clearTimeout(self.timeId);
                 self.disableTransition();
                 if (callback) {
                     callback();
