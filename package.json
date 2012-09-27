@@ -5,7 +5,7 @@
     },
     "description": "Slide Library using javascript & css3",
     "homepage": "http://digit.daumcorp.com/eastkiki/slide",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "dependencies": {
         "grunt" : "*",
         "grunt-concat": "*",
@@ -20,6 +20,6 @@
     "scripts":{
         "test": "node build.js",
         "build": "node build.js",
-        "start": "node build.js"
+        "start": "node start.js"
     }
 }
