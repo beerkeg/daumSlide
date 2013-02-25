@@ -13,20 +13,24 @@
      * 3d gpu 가속 여부를 사용할수 있는지 판단한다.
      */
     var ua = window.ua_result || util.userAgent();
+    var os = ua.os;
+    var browser = ua.browser;
+    var version = browser.version;
+
     var isTransformEnabled = exports.isTransformEnabled =  (function () {
         var isOverGingerBread = (function () {
-            if (ua.os.android) {
-                return ua.os.version.major > 2 || (ua.os.version.major === 2 && ua.os.version.minor >= 3);
+            if (browser.android) {
+                return version.major > 2 || (version.major === 2 && version.minor >= 3);
             }
             return false;
         })();
-        return !!(isOverGingerBread || ua.os.ios || ua.browser.safari || ua.browser.chrome);
+        return !!(isOverGingerBread || os.ios || browser.safari || browser.chrome);
     })();
     exports.hardwareAccelStyle = isTransformEnabled ? '-webkit-transform:translate3d(0,0,0);' : '';
 
     var isSwipeEnabled = exports.isSwipeEnabled =  (function () {
-        return (ua.os.android || ua.os.ios || ua.browser.safari || ua.browser.firefox || ua.browser.dolfin || ua.browser.opera ||
-                (ua.platform === "pc" && ua.browser.ie && ua.browser.version.major >= 8)) && !ua.browser.polaris;
+        return (os.android || os.ios || browser.safari || browser.firefox || browser.dolfin || browser.opera ||
+                (ua.platform === "pc" && browser.ie && version.major >= 8)) && !browser.polaris;
     })();
 
 
@@ -34,11 +38,11 @@
      * ics 4.0.3 이상 버젼 대응.
      */
     var isUsingClone = exports.isUsingClone =  (function () {
-        var isOverIcs4_0_3 = ua.os.android &&
-                (ua.os.version.major > 4 ||
-                (ua.os.version.major === 4 && ua.os.version.minor > 0) ||
-                (ua.os.version.major === 4 && ua.os.version.minor === 0 && ua.os.version.patch >= 3));
-        return !!(isOverIcs4_0_3 || ua.isDolfin);
+        var isOverIcs4_0_3 = browser.android &&
+                (version.major > 4 ||
+                (version.major === 4 && version.minor > 0) ||
+                (version.major === 4 && version.minor === 0 && version.patch >= 3));
+        return !!(isOverIcs4_0_3 || browser.dolfin);
     })();
 
     exports.onResized = function (el, callback) {

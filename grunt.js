@@ -9,7 +9,8 @@ module.exports = function(grunt) {
         '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
         '<%= pkg.homepage ? "* " + pkg.homepage + "\n" : "" %>' +
         '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
-        ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */'
+        ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */',
+      observer: 'slide.Observable = clay.Observable;'
     },
     lint: {
       files: ['grunt.js', 'src/js/*.js', 'src/test-js/*.js']
@@ -22,7 +23,6 @@ module.exports = function(grunt) {
           'src/js/init.js',
           'src/js/panel.js',
           'src/js/container.js',
-          'src/js/observable.js',
           'src/js/slide.js'
         ],
         dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.merged.js',

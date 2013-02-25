@@ -7,8 +7,8 @@
     var preventDefault = exports.preventDefault;
 
     var SLIDE_TRESHOLD = 0.1; // 10%
-    
-    var BasicSlide = exports.BasicSlide = slide.Observable.extend({
+    var Observable = slide.Observable || window.Observable;
+    var BasicSlide = exports.BasicSlide = Observable.extend({
         init: function (frameEl, dataSource, option) {
             this.frameEl = frameEl;
             this.container = null;
