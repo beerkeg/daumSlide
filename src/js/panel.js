@@ -9,8 +9,9 @@
          * 새로운 Panel을 생성/초기화 한다.
          * @param slide {Slide Class}
          */
-        init: function (slide) {
+        init: function (slide, option) {
             this.slide = slide;
+            this.option = option || {};
             this.el = this.createPanel(slide.pageWidth);
 
             var self = this;
@@ -23,9 +24,9 @@
          * @param width {Number}
          */
         createPanel: function (width) {
-            var panel = document.createElement("div");
+            var panel = document.createElement(this.option.tagName || "div");
 
-            panel.className = "panel";
+            panel.className = this.option.className || "panel";
             panel.style.cssText = 'height:100%;overflow:hidden;display:inline-block;' +
                                     exports.hardwareAccelStyle + 'width:' + width + 'px;';
             return panel;
@@ -47,16 +48,6 @@
         destroy: function () {
             this.slide = null;
             this.el = null;
-        }
-    });
-    var UlPanel = exports.UlPanel = Panel.extend({
-        createPanel: function (width) {
-            var panel = document.createElement("ul");
-
-            panel.className = "panel";
-            panel.style.cssText = 'height:100%;overflow:hidden;display:inline-block;' +
-                                    exports.hardwareAccelStyle + 'width:' + width + 'px;';
-            return panel;
         }
     });
 })(window.slide = (typeof slide === 'undefined') ? {} : slide);

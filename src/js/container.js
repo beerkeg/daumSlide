@@ -1,42 +1,27 @@
 /*jshint browser: true
 */
-/*global slide:true, Class: true, gesture: true*/
+/*global slide, Class, gesture, clay*/
 (function (exports) {
     'use strict';
-
-    var isTransformEnabled = exports.isTransformEnabled;
-    var isSwipeEnabled = exports.isSwipeEnabled;
-    var Panel = exports.Panel;
-
-    /**
-     * ics 4.0.3 이상 버젼 대응.
-     */
-    var isUsingClone = exports.isUsingClone =  (function () {
-        var ua = exports.userAgent(),
-            isOverIcs4_0_3 = ua.androidVersion.major > 4 ||
-                (ua.androidVersion.major === 4 && ua.androidVersion.minor > 0) ||
-                (ua.androidVersion.major === 4 && ua.androidVersion.minor === 0 && ua.androidVersion.patch >= 3);
-        return !!((ua.isAndroid && isOverIcs4_0_3) || ua.isDolfin);
-    })();
 
     var slideInstanceNum = 0;
     var PANEL_PREV = 0, PANEL_CURRENT = 1, PANEL_NEXT = 2;
     var BasicContainer= exports.BasicContainer = Class.extend({
         init: function (slide, option) {
             this.slide = slide;
-            this.option = option || {};
+            this.option = option && option.container ? option.container : {};
 
             this.el = this.createContainer(slide.pageWidth);
 
-            this.panel = this.initPanel(this.option.PanelClass || Panel);
+            this.setPanel(option && option.panel ? option.panel : {});
             this.bindEvents();
         },
         createContainer: function (width) {
             var container = document.createElement("div");
 
-            container.className = "slide";
-            if (this.option.containerId) {
-                container.id = this.option.containerId;
+            container.className = this.option.className || "slide";
+            if (this.option.id) {
+                container.id = this.option.id;
             } else {
                 slideInstanceNum += 1;
                 container.id = "slide-" + slideInstanceNum;
@@ -48,8 +33,11 @@
                 return "overflow:hidden;position:relative;top:0;left:0;" +
                         "width:" + width + "px;";
             },
-        initPanel: function (PanelClass) {
-            var panel = new PanelClass(this.slide);
+        setPanel: function (panelOption) {
+            this.panel = this.initPanel(panelOption);
+        },
+        initPanel: function (panelOption) {
+            var panel = new exports.Panel(this.slide, panelOption);
             this.el.appendChild(panel.el);
             return panel;
         },
@@ -74,31 +62,21 @@
         }
     });
     var MiddleContainer = exports.MiddleContainer = BasicContainer.extend({
-        /**
-         * 새로운 Container를 생성/초기화 한다.
-         * @param slide {Slide Class}
-         */
-        init: function (slide, option) {
-            this.slide = slide;
-            this.option = option || {};
-
-            this.el = this.createContainer(slide.pageWidth);
-
-            this.panels = [];
-            this.initPanels(this.option.PanelClass || Panel);
-            this.bindEvents();
-        },
         setContainerStyle: function (width) {
             return "overflow:hidden;position:relative;top:0;" + exports.hardwareAccelStyle +
                     "left:" + (-width) + "px;width:" + (width * 3) + "px;";
         },
+        setPanel: function (panelOption) {
+            this.panels = [];
+            this.initPanels(panelOption);
+        },
         /**
          * slide내에 존재하는 패널들을 생성/초기화 한다.
          */
-        initPanels: function (PanelClass) {
-            this.panels[PANEL_PREV] = this.initPanel(PanelClass);
-            this.panels[PANEL_CURRENT] = this.initPanel(PanelClass);
-            this.panels[PANEL_NEXT] = this.initPanel(PanelClass);
+        initPanels: function (panelOption) {
+            this.panels[PANEL_PREV] = this.initPanel(panelOption);
+            this.panels[PANEL_CURRENT] = this.initPanel(panelOption);
+            this.panels[PANEL_NEXT] = this.initPanel(panelOption);
         },
         /**
          * slide에 있는 패널들에 현재 인덱스 기준의 데이터 셋을 넣는다.
@@ -233,5 +211,5 @@
         }
     });
 
-    exports.Container = isUsingClone ? CloneAdvanceContainer : isTransformEnabled ? AdvanceContainer : isSwipeEnabled ? MiddleContainer : BasicContainer;
+    exports.Container = exports.isUsingClone ? CloneAdvanceContainer : exports.isTransformEnabled ? AdvanceContainer : exports.isSwipeEnabled ? MiddleContainer : BasicContainer;
 })(window.slide = (typeof slide === 'undefined') ? {} : slide);

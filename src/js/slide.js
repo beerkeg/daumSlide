@@ -4,10 +4,6 @@
 (function (exports) {
     'use strict';
 
-    var isTransformEnabled = exports.isTransformEnabled;
-    var isSwipeEnabled = exports.isSwipeEnabled;
-    var Container = exports.Container;
-    var onResized = exports.onResized;
     var preventDefault = exports.preventDefault;
 
     var SLIDE_TRESHOLD = 0.1; // 10%
@@ -30,7 +26,7 @@
          * wrapper 내부에 들어갈 mark up 구조를 설정한다.
          */
         initContainer: function () {
-            this.container = new Container(this, this.option);
+            this.container = new exports.Container(this, this.option);
             this.frameEl.innerHTML = '';
             this.frameEl.appendChild(this.container.el);
         },
@@ -51,7 +47,7 @@
             listener.onGestureEnd(function (session) {
                 return self.endDrag(session);
             });
-            onResized(this.frameEl, function (width, height) {
+            exports.onResized(this.frameEl, function (width, height) {
                 self.resize(width, height);
             });
         },
@@ -386,5 +382,5 @@
         }
     });
 
-    exports.Slide = isTransformEnabled ? AdvanceSlide : isSwipeEnabled ? MiddleSlide : BasicSlide;
+    exports.Slide = exports.isTransformEnabled ? AdvanceSlide : exports.isSwipeEnabled ? MiddleSlide : BasicSlide;
 })(window.slide = (typeof slide === 'undefined') ? {} : slide);

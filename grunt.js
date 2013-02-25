@@ -18,6 +18,19 @@ module.exports = function(grunt) {
       dist: {
         src: [
           '<banner:meta.banner>',
+          'src/js/datasource.js',
+          'src/js/init.js',
+          'src/js/panel.js',
+          'src/js/container.js',
+          'src/js/observable.js',
+          'src/js/slide.js'
+        ],
+        dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.merged.js',
+        separator: "\n\n"
+      },
+      standalone: {
+        src: [
+          '<banner:meta.banner>',
           'http://s1.daumcdn.net/svc/attach/U0301/cssjs/ejohn/class-0.1.0.min.js',
           'http://s1.daumcdn.net/svc/attach/U03/cssjs/gesture/gesture-1.0.4.js',
           'src/js/datasource.js',
@@ -27,7 +40,7 @@ module.exports = function(grunt) {
           'src/js/observable.js',
           'src/js/slide.js'
         ],
-        dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.merged.js',
+        dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.standalone.merged.js',
         separator: "\n\n"
       }
     },
@@ -35,6 +48,10 @@ module.exports = function(grunt) {
       dist: {
         src: ['<banner:meta.banner>', '<config:concat.dist.dest>'],
         dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.min.js'
+      },
+      standalone: {
+        src: ['<banner:meta.banner>', '<config:concat.standalone.dest>'],
+        dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.standalone.min.js'
       }
     },
     jshint: {
@@ -62,6 +79,14 @@ module.exports = function(grunt) {
       path_min:{
         src: "<config:min.dist.dest>",
         dest: "slide/<%= pkg.name %>-<%= pkg.version %>.min.js"
+      },
+      path_standalone_merged:{
+        src: "<config:concat.standalone.dest>",
+        dest: "slide/<%= pkg.name %>-<%= pkg.version %>.standalone.merged.js"
+      },
+      path_standalone_min:{
+        src: "<config:min.standalone.dest>",
+        dest: "slide/<%= pkg.name %>-<%= pkg.version %>.standalone.min.js"
       }
     }
   });

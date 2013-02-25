@@ -182,16 +182,17 @@ z-index: 30;
 
 </style>
  
-<!-- <script type="text/javascript" src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/gesture/gesture-1.0.3.min.js"></script>
-<script src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/ejohn/class-0.1.0.min.js"></script>
-<script type="text/javascript" src="../js/datasource.js"></script>
-<script type="text/javascript" src="../js/util.js"></script>
-<script type="text/javascript" src="../js/panel.js"></script>
-<script type="text/javascript" src="../js/container.js"></script>
-<script type="text/javascript" src="../js/observable.js"></script>
-<script type="text/javascript" src="../js/slide.js"></script> -->
-<script type="text/javascript" src="/dist/slide-1.1.0.standalone.merged.js"></script>
+<script type="text/javascript" src="//m1.daumcdn.net/svc/attach/U0301/cssjs/gesture/gesture-1.0.3.min.js"></script>
+<script type="text/javascript" src="//m1.daumcdn.net/svc/attach/U0301/cssjs/ejohn/class-0.1.0.min.js"></script>
+<script type="text/javascript" src="//m1.daumcdn.net/svc/original/U03/cssjs/userAgent/userAgent-1.0.9.js"></script>
+<script type="text/javascript">
+window.clay = window.clay || {};
+clay.ua = clay.ua || util.userAgent();
+</script>
+<script type="text/javascript" src="//jscode.cf.daum.net/js/event.js"></script>
+<script type="text/javascript" src="/dist/slide-1.1.0.merged.js"></script>
 
+<!-- <script type="text/javascript" src="http://east.ftdev.daum.net/work/slide/build/slide.min.js"></script> -->
 
 </head>
 <body>
@@ -265,6 +266,14 @@ var ImageSearchDataSource = slide.DataSource.extend({
     },
     queryNextForPreLoad: function (callback) {
         callback(this.data[this.index + 2] || null, this.data[this.index + 3] || null);
+    },
+    willQueryEndOfDataDelegate: function (callback) {
+        var self = this;
+        loadMoreData(function (data) {
+            var newSlides = buildSlides(data);
+            self.data = self.data.concat(newSlides);
+            callback(newSlides[0]);
+        });
     }
 });
 

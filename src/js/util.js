@@ -53,6 +53,17 @@
             !(ua.isPolaris || ua.isWinMobile);
     })();
 
+    /**
+     * ics 4.0.3 이상 버젼 대응.
+     */
+    var isUsingClone = exports.isUsingClone =  (function () {
+        var ua = exports.userAgent(),
+            isOverIcs4_0_3 = ua.androidVersion.major > 4 ||
+                (ua.androidVersion.major === 4 && ua.androidVersion.minor > 0) ||
+                (ua.androidVersion.major === 4 && ua.androidVersion.minor === 0 && ua.androidVersion.patch >= 3);
+        return !!((ua.isAndroid && isOverIcs4_0_3) || ua.isDolfin);
+    })();
+
     exports.onResized = function (el, callback) {
         var resizeEvent = 'onorientationchange' in window ? 'orientationchange' : 'resize',
             width = el.clientWidth, height = el.clientHeight;
