@@ -1,11 +1,12 @@
+
 <!DOCTYPE html>
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
-
-<title>slide example</title>
+<meta name="svcdomain" content="3ya.daum.net" />
+<title>Daum 게임</title>
 <style>
 html, body {
     height: 100%;
@@ -71,7 +72,7 @@ z-index: 30;
     left: 0px;
     z-index: 30;
     width: 100%;
-    height: 82px;
+    height: 67px;
     padding-top: 12px;
     border-top: 1px solid #434346;
     background-color: black;
@@ -168,24 +169,46 @@ z-index: 30;
 
 
 </style>
-<script type="text/javascript" src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/gesture/gesture-1.0.3.min.js"></script>
-<script src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/ejohn/class-0.1.0.min.js"></script>
-<script type="text/javascript" src="../js/datasource.js"></script>
-<script type="text/javascript" src="../js/util.js"></script>
-<script type="text/javascript" src="../js/panel.js"></script>
-<script type="text/javascript" src="../js/container.js"></script>
-<script type="text/javascript" src="../js/observable.js"></script>
-<script type="text/javascript" src="../js/slide.js"></script>
-<!-- <script type="text/javascript" src="http://m1.daumcdn.net/svc/original/U03/cssjs/slide/slide-1.0.5.min.js"></script> -->
+<script type="text/javascript" src="http://s1.daumcdn.net/svc/original/U0301/cssjs/jquery/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="http://m1.daumcdn.net/svc/original/U03/cssjs/slide/slide-1.0.5.min.js"></script>
 
 </head>
 <body>
 <div id="frameEl"></div>
-<button type="button" class="prevBtn" id="prevBtn">prev</button>
-<button type="button" class="nextBtn" id="nextBtn">next</button>
+<p id="mPrevBtn"><button type="button" class="prevBtn" id="prevBtn">prev</button></p>
+<p id="mNextBtn"><button type="button" class="nextBtn" id="nextBtn">next</button></p>
+<div id="ilist" style="display:none;">
+	<img src="http://i1.daumcdn.net/img-contents/event/promotion/130102_3k/m640/img_kkh1.jpg" alt="오늘 나 어때?" width="640" height="853" />
+	<img src="http://i1.daumcdn.net/img-contents/event/promotion/130102_3k/m640/img_kkh2.jpg" alt="오늘은 현화가 요리사!" width="640" height="480" />
+	<img src="http://i1.daumcdn.net/img-contents/event/promotion/130102_3k/m640/img_kkh3.jpg" alt="오빠~내 마음을 받아줘" width="640" height="853" />
+	<img src="http://i1.daumcdn.net/img-contents/event/promotion/130102_3k/m640/img_kkh4.jpg" alt="한 판 붙을까?" width="640" height="480" />
+	<img src="http://i1.daumcdn.net/img-contents/event/promotion/130102_3k/m640/img_kkh5.jpg" alt="나의 칼을 받아라" width="640" height="853" />
+	<img src="http://i1.daumcdn.net/img-contents/event/promotion/130102_3k/m640/img_kkh6.jpg" alt="수타의 유혹에 빠져봐" width="640" height="480" />
+	<img src="http://i1.daumcdn.net/img-contents/event/promotion/130102_3k/m640/img_kkh7.jpg" alt="불어라 삼야 바람!" width="640" height="853" />
+	<img src="http://i1.daumcdn.net/img-contents/event/promotion/130102_3k/m640/img_kkh8.jpg" alt="수타, 알고싶어?" width="640" height="853" />
+
+
+	<img src="http://i1.daumcdn.net/img-contents/event/promotion/130102_3k/m640/img_kkh9.jpg" alt="수타의 비밀이 궁금해?" width="640" height="853" />
+	<img src="http://i1.daumcdn.net/img-contents/event/promotion/130102_3k/m640/img_kkh10.jpg" alt="그녀의 아찔한 뒤태" width="640" height="853" />
+	<img src="http://i1.daumcdn.net/img-contents/event/promotion/130102_3k/m640/img_kkh11.jpg" alt="그녀의 통쾌한 수타!" width="640" height="853" />
+	<img src="http://i1.daumcdn.net/img-contents/event/promotion/130102_3k/m640/img_kkh12.jpg" alt="화끈한 손맛을 느껴라" width="640" height="853" />
+</div>
+
 <div id="footer"></div>
 <div id="loading"></div>
 <script type="text/javascript">
+var req = { }; 
+document.location.search.replace(/([^=&?]+)=([^&]+)/, function( param, name, val) {
+	req[name] = val
+});
+
+if ( parseInt(req['idx']) > 0 && parseInt(req['idx']) <= 11 )
+{
+	jQuery("#ilist").find("img").eq(parseInt(req['idx'])).prependTo("#ilist");
+}
+
+
+var main = 0;
 function getChildElements (el) {
     var i = el.firstChild, a = [];
     try{
@@ -207,75 +230,25 @@ function getSameNameLength(node, name) {
     }
     return len;
 }
-function xmlToObject (xmlDocument) {
-    var root = xmlDocument.documentElement,
-    builder = function(node){
-        for (var obj = {}, cNodes = getChildElements(node), name, value, i=0,l=cNodes.length;i<l;i+=1){
-            name = cNodes[i].nodeName;
-            value = (getChildElements(cNodes[i]).length > 0) ? builder(cNodes[i]) : (cNodes[i].firstChild==null) ? '' : cNodes[i].firstChild.nodeValue;
 
-            if(obj[name] != undefined || getSameNameLength(node, name) > 1) {
-                if(obj[name] == undefined){
-                    obj[name] = [];
-                }
-                obj[name].push(value);
-            } else {
-                obj[name] = value;
-            }
-            for (var j=0;j<cNodes[i].attributes.length;j+=1) {
-                obj[name + '@' + cNodes[i].attributes[j].nodeName] = (cNodes[i].attributes[j].nodeValue||"").toString();
-            }
-        }
-        return obj; 
-    }
-    return builder(root);
-}
-
-var headTag = document.getElementsByTagName("head")[0],
-    frameEl = document.getElementById("frameEl"),
+var frameEl = document.getElementById("frameEl"),
     queryEl = document.getElementById("query"),
     click = "ontouchstart" in window ? "touchstart" : "click",
     prevBtn = document.getElementById("prevBtn"),
     nextBtn = document.getElementById("nextBtn"),
-    footer = document.getElementById("footer"),
-    pageNum = 1;
+    footer = document.getElementById("footer");
+
 var EventUtil = window.gesture.EventUtil;
 
-var simpleSearchAPICallback = null;
-function simpleSearchAPIJsonp(callback) {
-    simpleSearchAPICallback = callback;
-    var jsonUrl = 'http://imgv.m.search.daum.net/mviewer/search?w=xml&m=mimage&q='
-                + '%C7%D1%C8%BF%C1%D6' + '&sidx=' + pageNum 
-                + '&lpp=9&SortType=totalMobile&SimilarYN=Y',
-        url = 'http://uie.daum.net:8093/?url='+jsonUrl+'&callback=simpleJsonpCallback';
-    
-    var s = document.createElement("script");
-    s.type = "text/javascript";
-    s.src = url;
-    s.charset = "utf-8";
-    headTag.appendChild(s);
-}
-function simpleJsonpCallback(data) {
-    headTag.removeChild(headTag.lastChild);
-    simpleSearchAPICallback(data);
-}
 
 
 
-function loadInitialData(callback) {
-    simpleSearchAPIJsonp(function (data) {
-        initSlide(data);
-    });
-}
 function loadMoreData(callback) {
-    pageNum += 1;
+
+    //pageNum += 1;
     // 돌돌이 보이기
-    showLoadingBar();
-    simpleSearchAPIJsonp(function (data) {
-        callback(data);
-        // 돌돌이 숨기기
-        hideLoadingBar();
-    });
+  //showLoadingBar();
+
 }
 var loading = document.getElementById("loading");
 function showLoadingBar() {
@@ -285,38 +258,26 @@ function hideLoadingBar() {
     loading.style.display = "none";
 }
 
-var ImageSearchDataSource = slide.DataSource.extend({
+var ImageSearchDataSource = slide.InfiniteDataSource.extend({
     queryPrevForPreLoad: function (callback) {
-        callback(this.data[this.index - 2] || null, this.data[this.index - 3] || null);
+    	jQuery("#mNextBtn").show();
+    	if( this.index <= 0){
+        	jQuery("#mPrevBtn").hide();
+    	}
+    	callback(this.data[this.index - 2] || null, this.data[this.index - 3] || null);
     },
     queryNextForPreLoad: function (callback) {
+    	jQuery("#mPrevBtn").show();
+    	if( this.index >= this.data.length-1){
+        	jQuery("#mNextBtn").hide();
+    	}
         callback(this.data[this.index + 2] || null, this.data[this.index + 3] || null);
     },
-    willQueryEndOfDataDelegate: function (callback) {
-        var self = this;
-        loadMoreData(function (data) {
-            var newSlides = buildSlides(data);
-            self.data = self.data.concat(newSlides);
-            callback(newSlides[0]);
-        });
+    willQueryFirstOfDataDelegate : function(callback){
+    	jQuery("#mPrevBtn").hide();
+        callback(this.data[this.index - 1] || null, this.data[this.index - 2] || null);
     }
 });
-
-(function () {
-    var ua = slide.userAgent();
-    var isGingerBread = !!(ua.androidVersion.major === 2 && ua.androidVersion.minor === 3);
-       
-    if (isGingerBread) {
-        slide.hardwareAccelStyle = '';
-        slide.Slide = slide.MiddleSlide.extend({
-            initContainer: function () {
-                this.container = new slide.MiddleContainer(this, this.option);
-                this.frameEl.innerHTML = '';
-                this.frameEl.appendChild(this.container.el);
-            }
-        });
-    }
-})();
 
 // 이미지 슬라이드를 생성/초기화 해주는 함수.
 function initSlide(data) {
@@ -348,6 +309,7 @@ function initSlide(data) {
 
     // pre 이미지 로딩 함수.
     preImgLoader(sl, ds);
+    main = 1;
 }
 
 function setButton(sl) {
@@ -419,33 +381,31 @@ function setToggle(sl) {
 }
 
 function buildSlides(data) {
-    var doc = new DOMParser().parseFromString(data,'text/xml'),
-        xml = xmlToObject(doc),
-        items = xml.result,
-        arr = [];
-    for (var i = 0, len = items.length; i < len; i++) {
-        var item = items[i];
-        arr.push({
-            image: item.org_img,
-            width: item.width,
-            height: item.height,
-            title: item.title,
-            link: item.link,
+	var arr = [];
+	
+	jQuery("#ilist").find("img").each(function(e, img){
+		arr.push({
+            image: img.src,
+            width: $(img).attr('width'),
+            height: $(img).attr('height'),
+            title: $(img).attr('alt'),
+            link: img.src.toString().replace(".png","_origin.jpg"),
             toHTML: function () {
                 var imgSize = ImgManager.resizeImg(this.width, this.height),
                     imgOffset = ImgManager.getImgOffset(imgSize.width, imgSize.height),
-                    imgurl = "http://m1.daumcdn.net/thumb/T480x416/70/?fname="+ escape(this.image);
-                return '<img alt="' + escape(item.title) + '" src="' + imgurl + 
+ 	                imgurl = this.image;
+                return '<img alt="' + escape($(img).attr('alt')) + '" src="' + imgurl + 
                             '" width="' + imgSize.width + '" height="' + imgSize.height +
-                            '" data-width="' + item.width + '" data-height="' + item.height +
+                            '" data-width="' + $(img).attr('width') + '" data-height="' + $(img).attr('height') +
                             '"style=position:absolute;top:' + imgOffset.top + 'px;left:' +imgOffset.left + 'px;" ' +
                            'onload="onImgLoad(this);" ' +
                            'onerror="onImgLoadError(this);" ' +
                            'onabort="onImgLoadError(this);">';
             }
-        });
-    }
-    return arr;
+		});		
+	});
+    console.log(arr);
+	return arr;
 }
 
 
@@ -454,11 +414,9 @@ function createDesc (data) {
         linktext = this.cutString(data.link, 37);
     return '<div class="wrap_desc" style="opacity: 0.7;" id="desc_field">' +
                 '<a href="'+data.link+'" class="tit" id="desc_title">'+ title +'</a>' +
-                '<span class="info" id="desc_info">'+data.width+' x '+data.height+'</span>' +
-                '<a href="'+data.link+'" id="desc_url" class="link_src">'+ linktext +'</a>' +
                 '<div class="wrap_btn">' +
-                    '<a href="" class="left_wrap"><span class="prev">검색결과로 돌아가기</span></a>' +
-                    '<a id="desc_link" href="'+data.image+'" target="_blank" class="right_wrap">' +
+                    '<a href="http://s1.gamecdn.net/pub/event/html/yamang/event_130110_mobile.html" class="left_wrap"><span class="prev"> 돌아가기</span></a>' +
+                    '<a id="desc_link" href="'+data.image.replace(".jpg","_origin.jpg")+'" target="_blank" class="right_wrap">' +
                         '<span class="bar"></span><span>원본 바로보기</span></a>' +
                 '</div></div>';
 }
@@ -478,7 +436,7 @@ function cutString (text, length) {
 (function main() {
     EventUtil.listen(window, "load", function(e){
         slide.hardwareAccelStyle += slide.isTransformEnabled ? '-webkit-transition-timing-function:linear;' : '';
-        loadInitialData();
+        initSlide();
     });
 })();
 
@@ -527,6 +485,8 @@ var ImgManager = {
         return {left: parseInt((this.clientWidth + 10 - width) / 2), top: parseInt((this.clientHeight + 10 - height) / 2)};
     }
 };
+
+
 </script>
 
 </body>

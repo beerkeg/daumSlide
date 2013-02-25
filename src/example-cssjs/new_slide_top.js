@@ -691,7 +691,7 @@ function setSlidePanels () {
         var ds = new slide.InfiniteDataSource(buildSlides(data));
         var sl = new slide.Slide(wrapper, ds, {
             containerId: slideName,
-            duration: 500,
+            duration: 300,
             PanelClass: slide.UlPanel
         });
         if (slide.isTransformEnabled || slide.isSwipeEnabled) {

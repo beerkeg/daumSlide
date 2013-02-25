@@ -123,7 +123,9 @@ ul, li {
     ];
 
     var wrapper = document.getElementById("wrapper");
-    var ds = new slide.InfiniteDataSource(slides);
+    //var ds = new slide.InfiniteDataSource(slides);
+    var ds = new slide.DataSource(slides);
+
     var sl = new slide.Slide(wrapper, ds);
 
     var clickEventName = 'ontouchstart' in window ? 'touchstart' : 'click';
