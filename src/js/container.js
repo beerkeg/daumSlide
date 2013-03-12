@@ -13,8 +13,9 @@
 
             this.el = this.createContainer(slide.pageWidth);
 
-            var Panel = option.panelClass || exports.Panel;
-            this.setPanel(option && option.panel ? option.panel : {}, Panel);
+            var panelOption = option && option.panel ? option.panel : {};
+            this.panelClass = option.panelClass;
+            this.setPanel(panelOption);
             this.bindEvents();
         },
         createContainer: function (width) {
@@ -34,11 +35,12 @@
                 return "overflow:hidden;position:relative;top:0;left:0;" +
                         "width:" + width + "px;";
             },
-        setPanel: function (panelOption, Panel) {
-            this.panel = this.initPanel(panelOption, Panel);
+        setPanel: function (panelOption) {
+            this.panel = this.initPanel(panelOption);
         },
-        initPanel: function (panelOption, Panel) {
-            var panel = new Panel(this.slide, panelOption);
+        initPanel: function (panelOption) {
+            var PanelClass = this.panelClass || exports.Panel;
+            var panel = new PanelClass(this.slide, panelOption);
             this.el.appendChild(panel.el);
             return panel;
         },
@@ -67,9 +69,9 @@
             return "overflow:hidden;position:relative;top:0;" + exports.hardwareAccelStyle +
                     "left:" + (-width) + "px;width:" + (width * 3) + "px;";
         },
-        setPanel: function (panelOption, Panel) {
+        setPanel: function (panelOption) {
             this.panels = [];
-            this.initPanels(panelOption, Panel);
+            this.initPanels(panelOption);
         },
         /**
          * slide내에 존재하는 패널들을 생성/초기화 한다.
