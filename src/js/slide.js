@@ -26,7 +26,7 @@
          * wrapper 내부에 들어갈 mark up 구조를 설정한다.
          */
         initContainer: function () {
-            var Container = this.oprion.containerClass || exports.Container;
+            var Container = this.option.containerClass || exports.Container;
             this.container = new Container(this, this.option);
             this.frameEl.innerHTML = '';
             this.frameEl.appendChild(this.container.el);
