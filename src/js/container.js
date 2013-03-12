@@ -67,9 +67,9 @@
             return "overflow:hidden;position:relative;top:0;" + exports.hardwareAccelStyle +
                     "left:" + (-width) + "px;width:" + (width * 3) + "px;";
         },
-        setPanel: function (panelOption) {
+        setPanel: function (panelOption, Panel) {
             this.panels = [];
-            this.initPanels(panelOption);
+            this.initPanels(panelOption, Panel);
         },
         /**
          * slide내에 존재하는 패널들을 생성/초기화 한다.
