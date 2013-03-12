@@ -41,9 +41,8 @@
      */
     var isTransformEnabled = exports.isTransformEnabled =  (function () {
         var ua = userAgent(),
-            isOverGingerBread = ua.androidVersion.major > 2 ||
-                (ua.androidVersion.major === 2 && ua.androidVersion.minor >= 3);
-        return !!((ua.isAndroid && isOverGingerBread) || ua.isIOS || ua.isSafari || ua.isDolfin);
+            isOverIcs = ua.androidVersion.major > 3;
+        return !!((ua.isAndroid && isOverIcs) || ua.isIOS || ua.isSafari);
     })();
     exports.hardwareAccelStyle = isTransformEnabled ? '-webkit-transform:translate3d(0,0,0);' : '';
 
@@ -61,7 +60,7 @@
             isOverIcs4_0_3 = ua.androidVersion.major > 4 ||
                 (ua.androidVersion.major === 4 && ua.androidVersion.minor > 0) ||
                 (ua.androidVersion.major === 4 && ua.androidVersion.minor === 0 && ua.androidVersion.patch >= 3);
-        return !!((ua.isAndroid && isOverIcs4_0_3) || ua.isDolfin);
+        return !!((ua.isAndroid && isOverIcs4_0_3));
     })();
 
     exports.onResized = function (el, callback) {
@@ -87,7 +86,7 @@
             }, 50);
         });
     };
-    
+
     exports.preventDefault = function (e) {
         var ev = e || window.event;
         if (ev.preventDefault) {
@@ -96,7 +95,7 @@
             ev.returnValue = false;
         }
     };
-    
+
     exports.stopPropagation = function (e) {
         var ev = e || window.event;
         if (ev.stopPropagation) {

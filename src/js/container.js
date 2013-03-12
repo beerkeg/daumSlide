@@ -13,7 +13,8 @@
 
             this.el = this.createContainer(slide.pageWidth);
 
-            this.setPanel(option && option.panel ? option.panel : {});
+            var Panel = option.panelClass || exports.Panel;
+            this.setPanel(option && option.panel ? option.panel : {}, Panel);
             this.bindEvents();
         },
         createContainer: function (width) {
@@ -33,11 +34,11 @@
                 return "overflow:hidden;position:relative;top:0;left:0;" +
                         "width:" + width + "px;";
             },
-        setPanel: function (panelOption) {
-            this.panel = this.initPanel(panelOption);
+        setPanel: function (panelOption, Panel) {
+            this.panel = this.initPanel(panelOption, Panel);
         },
-        initPanel: function (panelOption) {
-            var panel = new exports.Panel(this.slide, panelOption);
+        initPanel: function (panelOption, Panel) {
+            var panel = new Panel(this.slide, panelOption);
             this.el.appendChild(panel.el);
             return panel;
         },
@@ -183,13 +184,13 @@
             this.el.removeEventListener('webkitTransitionEnd', callback);
         }
     });
-    
+
     var CloneAdvanceContainer = exports.CloneAdvanceContainer = AdvanceContainer.extend({
         rearrangePanels: function (callback) {
             var cloneEl = this.el.cloneNode(true),
                 parent = this.el.parentNode;
             parent.replaceChild(cloneEl, this.el);
-            
+
             if (callback) {
                 callback();
             }

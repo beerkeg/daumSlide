@@ -26,7 +26,8 @@
          * wrapper 내부에 들어갈 mark up 구조를 설정한다.
          */
         initContainer: function () {
-            this.container = new exports.Container(this, this.option);
+            var Container = this.oprion.containerClass || exports.Container;
+            this.container = new Container(this, this.option);
             this.frameEl.innerHTML = '';
             this.frameEl.appendChild(this.container.el);
         },
@@ -123,7 +124,7 @@
             if (session.isScroll()) {
                 return;
             }
-            
+
             if (session.delta.x === 0 && session.delta.y === 0) {
                 this.emit("click");
                 return;
@@ -248,7 +249,7 @@
             if (session.isScroll()) {
                 return;
             }
-            
+
             if (session.delta.x === 0 && session.delta.y === 0) {
                 this.emit("click");
                 return;
@@ -310,7 +311,7 @@
             var container = this.container;
             this.enableTransition(this.duration);
             container.move(offset);
-            
+
             var self = this;
             window.setTimeout(function slideEnd (){
                 window.clearTimeout(self.timeId);
