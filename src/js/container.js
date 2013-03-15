@@ -77,9 +77,23 @@
          * slide내에 존재하는 패널들을 생성/초기화 한다.
          */
         initPanels: function (panelOption) {
-            this.panels[PANEL_PREV] = this.initPanel(panelOption);
-            this.panels[PANEL_CURRENT] = this.initPanel(panelOption);
-            this.panels[PANEL_NEXT] = this.initPanel(panelOption);
+            var panels = this.panels;
+            panels[PANEL_PREV] = this.initPanel(panelOption);
+            panels[PANEL_CURRENT] = this.initPanel(panelOption);
+            panels[PANEL_NEXT] = this.initPanel(panelOption);
+
+            this.setAriaHiddenPanels();
+        },
+        /**
+         * 웹접근성을 위한 코드.
+         * 현재 패널만 스크린 리더에서 읽도록 한다.
+         * 이전 패널과 이후 패널의 데이터를 스크린 리더에서 읽지 못하도록 막는다.
+         */
+        setAriaHiddenPanels: function () {
+            var panels = this.panels;
+            panels[PANEL_PREV].setAriaHidden(true);
+            panels[PANEL_CURRENT].setAriaHidden(false);
+            panels[PANEL_NEXT].setAriaHidden(true);
         },
         /**
          * slide에 있는 패널들에 현재 인덱스 기준의 데이터 셋을 넣는다.
@@ -129,16 +143,6 @@
             this.move(0);
             this.el.insertBefore(lastPanelEl, firstPanelEl);
             this.panels.unshift(panel);
-        },
-        /**
-         * 웹접근성을 위한 코드.
-         * 현재 패널만 스크린 리더에서 읽도록 한다.
-         * 이전 패널과 이후 패널의 데이터를 스크린 리더에서 읽지 못하도록 막는다.
-         */
-        setAriaHiddenPanels: function () {
-            panels[PANEL_PREV].setAriaHidden(true);
-            panels[PANEL_CURRENT].setAriaHidden(false);
-            panels[PANEL_NEXT].setAriaHidden(true);
         },
         /**
          * 주어진 offset 만큼 slide를 좌우 이동 시킨다.

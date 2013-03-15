@@ -690,9 +690,11 @@ function setSlidePanels () {
         var wrapper = $(elStr);
         var ds = new slide.InfiniteDataSource(buildSlides(data));
         var sl = new slide.Slide(wrapper, ds, {
-            containerId: slideName,
+            container : {
+            	id: slideName
+            },
             duration: 300,
-            PanelClass: slide.UlPanel
+            panelClass: slide.UlPanel
         });
         if (slide.isTransformEnabled || slide.isSwipeEnabled) {
             var pagenum = $$("#"+slideName+"Paging .paging_swipe")[0]; 
