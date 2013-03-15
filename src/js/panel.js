@@ -45,6 +45,14 @@
         setData: function (data) {
             this.el.innerHTML = data ? data.toHTML() : '&nbsp;';
         },
+        /**
+         * 웹접근성을 위한 코드.
+         * 스크린 리더에서 데이터를 읽을지 말지 결정한다.
+         * @param flag {Boolean} true면 스트린리더에서 데이터를 읽지 않는다.
+         */
+        setAriaHidden: function (flag) {
+            this.el.setAttribute("aria-hidden", flag);
+        },
         destroy: function () {
             this.slide = null;
             this.el = null;

@@ -131,6 +131,16 @@
             this.panels.unshift(panel);
         },
         /**
+         * 웹접근성을 위한 코드.
+         * 현재 패널만 스크린 리더에서 읽도록 한다.
+         * 이전 패널과 이후 패널의 데이터를 스크린 리더에서 읽지 못하도록 막는다.
+         */
+        setAriaHiddenPanels: function () {
+            panels[PANEL_PREV].setAriaHidden(true);
+            panels[PANEL_CURRENT].setAriaHidden(false);
+            panels[PANEL_NEXT].setAriaHidden(true);
+        },
+        /**
          * 주어진 offset 만큼 slide를 좌우 이동 시킨다.
          * css transition animation 없이 단순 이동
          * @param offset {Number} 이동시킬 거리 값

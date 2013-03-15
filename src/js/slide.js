@@ -175,6 +175,7 @@
             this.slide(movingOffset, function onMoveNextEnd() {
                 self.container.rearrangePanelsAfterNext();
                 self.preloadNextData();
+                self.container.setAriaHiddenPanels();
                 self.emit("next");
             });
         },
@@ -197,6 +198,7 @@
             this.slide(movingOffset, function onMovePrevEnd() {
                 self.container.rearrangePanelsAfterPrev();
                 self.preloadPrevData();
+                self.container.setAriaHiddenPanels();
                 self.emit("prev");
             });
         },
