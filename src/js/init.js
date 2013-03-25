@@ -44,25 +44,11 @@
     })();
 
     exports.onResized = function (el, callback) {
-        var resizeEvent = 'onorientationchange' in window ? 'orientationchange' : 'resize',
-            width = el.clientWidth, height = el.clientHeight;
-
-        function isSizeReallyChanged () {
-            return !(width === el.clientWidth && height === el.clientHeight);
-        }
-
-        exports.on(window, resizeEvent, function () {
-            var cnt = 0;
+        exports.on(window, 'resize', function () {
             setTimeout(function checkResize() {
-                if (isSizeReallyChanged()) {
-                    width = el.clientWidth;
+                var width = el.clientWidth,
                     height = el.clientHeight;
-                    callback(width, height);
-                } else {
-                    if (cnt++ < 20) {
-                        setTimeout(checkResize, 50);
-                    }
-                }
+                callback(width, height);
             }, 50);
         });
     };
