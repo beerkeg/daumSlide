@@ -44,7 +44,8 @@
     })();
 
     exports.onResized = function (el, callback) {
-        exports.on(window, 'resize', function () {
+        var resize = os.ios === true ? "orientationchange" : "resize";
+        exports.on(window, resize, function () {
             setTimeout(function checkResize() {
                 var width = el.clientWidth,
                     height = el.clientHeight;

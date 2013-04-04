@@ -36,18 +36,17 @@
         };
     };
 
+    var ua = userAgent();
     /**
      * 3d gpu 가속 여부를 사용할수 있는지 판단한다.
      */
     var isTransformEnabled = exports.isTransformEnabled =  (function () {
-        var ua = userAgent(),
-            isOverIcs = ua.androidVersion.major > 3;
+        var isOverIcs = ua.androidVersion.major > 3;
         return !!((ua.isAndroid && isOverIcs) || ua.isIOS || ua.isSafari);
     })();
     exports.hardwareAccelStyle = isTransformEnabled ? '-webkit-transform:translate3d(0,0,0);' : '';
 
     var isSwipeEnabled = exports.isSwipeEnabled =  (function () {
-        var ua = userAgent();
         return (ua.isAndroid || ua.isIOS || ua.isSafari || ua.isFirefox || ua.isDolfin || ua.isIe9 || ua.isIe8 || ua.isOpera) &&
             !(ua.isPolaris || ua.isWinMobile);
     })();
@@ -56,15 +55,15 @@
      * ics 4.0.3 이상 버젼 대응.
      */
     var isUsingClone = exports.isUsingClone =  (function () {
-        var ua = exports.userAgent(),
-            isOverIcs4_0_3 = ua.androidVersion.major > 4 ||
+        var isOverIcs4_0_3 = ua.androidVersion.major > 4 ||
                 (ua.androidVersion.major === 4 && ua.androidVersion.minor > 0) ||
                 (ua.androidVersion.major === 4 && ua.androidVersion.minor === 0 && ua.androidVersion.patch >= 3);
         return !!((ua.isAndroid && isOverIcs4_0_3));
     })();
 
     exports.onResized = function (el, callback) {
-        window.gesture.EventUtil.listen(window, "resize", function () {
+        var resize = ua.isIOS === true ? "orientationchange" : "resize";
+        window.gesture.EventUtil.listen(window, resize, function () {
             setTimeout(function checkResize() {
                 var width = el.clientWidth,
                     height = el.clientHeight;
