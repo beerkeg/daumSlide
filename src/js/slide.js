@@ -305,23 +305,31 @@
             var self = this;
             this.container.onTransitionEnd(function transitionEnd () {
                 self.timeId = window.setTimeout(function disable(){
-                    self.disableTransition();
+                    self.onSlideComplete();
                 }, 50);
             });
         },
         slide: function (offset, callback) {
+            this.onSlideStart(offset);
+
+            var self = this;
+            this.callback = callback;
+            window.setTimeout(function slideEnd (){
+                self.onSlideComplete();
+            }, this.duration + 30);
+        },
+        onSlideStart: function (offset) {
             var container = this.container;
             this.enableTransition(this.duration);
             container.move(offset);
-
-            var self = this;
-            window.setTimeout(function slideEnd (){
-                window.clearTimeout(self.timeId);
-                self.disableTransition();
-                if (callback) {
-                    callback();
-                }
-            }, this.duration + 30);
+        },
+        onSlideComplete: function () {
+            this.disableTransition();
+            if (this.callback) {
+                var callback = this.callback;
+                this.callback = null;
+                callback();
+            }
         },
         /**
          * Transition을 on한다.
@@ -335,6 +343,7 @@
          * Transition을 off한다.
          */
         disableTransition: function () {
+            window.clearTimeout(this.timeId);
             this.container.setTransitionDuration(0);
             this.isInTransition = false;
         },
