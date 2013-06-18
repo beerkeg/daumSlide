@@ -43,14 +43,50 @@
         return isOverIcs4_0_3;
     })();
 
-    exports.onResized = function (el, callback) {
-        var resize = os.ios === true ? "orientationchange" : "resize";
-        exports.on(window, resize, function () {
-            setTimeout(function checkResize() {
-                var width = el.clientWidth,
-                    height = el.clientHeight;
-                callback(width, height);
-            }, 50);
-        });
-    };
+    function isOverAndroidHoneycomb() {
+        return !!(ua.browser.android && parseInt(ua.browser.version.major, 10) > 3);
+    }
+    function isAndroidIcs() {
+        return !!(ua.browser.android && ua.browser.version.major === "4" && ua.browser.version.minor === "0");
+    }
+
+    var availMatchMedia = (typeof window.matchMedia === "function" && isOverAndroidHoneycomb()) ? true : false,
+        availOrientationChange = ("onorientationchange" in window && !ua.os.android && ua.platform !== "pc") ? true : false;
+
+    function fixbugOnMediaMatch() {
+        var style = document.createElement("style");
+        style.innerHTML = "@media all and (orientation:portrait){.f{}}@media all and (orientation:landscape){.f{}}";
+        document.getElementsByTagName("head")[0].appendChild(style);
+    }
+
+    function checkResize(el, callback) {
+        setTimeout(function(){
+            var width = el.clientWidth,
+                height = el.clientHeight;
+            callback(width, height);
+        }, 50);
+    }
+    exports.onResized = function () {
+        if (availMatchMedia) {
+            if (isAndroidIcs()) {
+                fixbugOnMediaMatch();
+            }
+            var mql = window.matchMedia("(orientation: landscape)");
+
+            return function (el, callback) {
+                mql.addListener(function(){
+                    checkResize(el, callback);
+                });
+            };
+        } else {
+            var resizeEvent = availOrientationChange ? "orientationchange" : "resize";
+
+            return function (el, callback) {
+                window.gesture.EventUtil.listen(window, resizeEvent, function () {
+                    checkResize(el, callback);
+                });
+            };
+        }
+    }();
+
 })(window.slide = (typeof slide === 'undefined') ? {} : slide);
