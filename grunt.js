@@ -32,7 +32,7 @@ module.exports = function(grunt) {
         src: [
           '<banner:meta.banner>',
           'http://s1.daumcdn.net/svc/attach/U0301/cssjs/ejohn/class-0.1.0.min.js',
-          'http://s1.daumcdn.net/svc/attach/U03/cssjs/gesture/gesture-1.0.4.js',
+          'http://s1.daumcdn.net/svc/attach/U03/cssjs/gesture/gesture-1.0.5.js',
           'src/js/datasource.js',
           'src/js/util.js',
           'src/js/panel.js',

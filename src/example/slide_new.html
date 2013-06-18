@@ -38,6 +38,13 @@ ul, li {
     position: absolute;
     top: 0;
 }
+#delBtn {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    top: 0;
+    left: 45%;
+}
 .prevBtn, .nextBtn {
     position: absolute;
     top: 45%;
@@ -183,7 +190,7 @@ z-index: 30;
 </style>
  
 
-<script type="text/javascript" src="/dist/slide-1.1.9.standalone.merged.js"></script>
+<script type="text/javascript" src="/dist/slide-1.1.15.standalone.merged.js"></script>
 
 <!-- <script type="text/javascript" src="http://east.ftdev.daum.net/work/slide/build/slide.min.js"></script> -->
 
@@ -195,6 +202,7 @@ z-index: 30;
 </div>
 
 <div id="frameEl"></div>
+<button type="button" id="delBtn" class="delBtn">del</button>
 <button type="button" id="prevBtn" class="prevBtn">prev</button>
 <button type="button" id="nextBtn" class="nextBtn">next</button>
 <div id="footer"></div>
@@ -204,6 +212,7 @@ var headTag = document.getElementsByTagName("head")[0],
     frameEl = document.getElementById("frameEl"),
     queryEl = document.getElementById("query"),
     click = "ontouchstart" in window ? "touchstart" : "click",
+    delBtn = document.getElementById("delBtn"),
     prevBtn = document.getElementById("prevBtn"),
     nextBtn = document.getElementById("nextBtn"),
     footer = document.getElementById("footer"),
@@ -314,11 +323,19 @@ function initSlide(data) {
 }
 
 function setButton(sl) {
-    EventUtil.listen(prevBtn, click, function(){
+    function prevSlide(){
         sl.prev();
-    }, false);
-    EventUtil.listen(nextBtn, click, function(){
+    }
+    function nextSlide(){
         sl.next();
+    }
+    EventUtil.listen(prevBtn, click, prevSlide, false);
+    EventUtil.listen(nextBtn, click, nextSlide, false);
+    EventUtil.listen(delBtn, click, function delSlide(){
+        EventUtil.unListen(delBtn, click, delSlide, false);
+        EventUtil.unListen(prevBtn, click, prevSlide, false);
+        EventUtil.unListen(nextBtn, click, nextSlide, false);
+        sl.destroy();
     }, false);
 }
 

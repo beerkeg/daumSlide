@@ -151,7 +151,8 @@
             this.frameEl.innerHTML = '';
             this.frameEl = null;
 
-            delete this.listeners;
+            this.listener.destroy();
+            delete this.listener;
             this.dataSource = null;
         }
     });
