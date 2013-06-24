@@ -44,10 +44,10 @@
     })();
 
     function isOverAndroidHoneycomb() {
-        return !!(ua.browser.android && parseInt(ua.browser.version.major, 10) > 3);
+        return !!(ua.os.android && parseInt(ua.os.version.major, 10) > 3);
     }
     function isAndroidIcs() {
-        return !!(ua.browser.android && ua.browser.version.major === "4" && ua.browser.version.minor === "0");
+        return !!(ua.os.android && ua.os.version.major === "4" && ua.os.version.minor === "0");
     }
 
     var availMatchMedia = (typeof window.matchMedia === "function" && isOverAndroidHoneycomb()) ? true : false,
