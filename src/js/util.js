@@ -123,7 +123,9 @@
         setTimeout(function(){
             var width = el.clientWidth,
                 height = el.clientHeight;
-            callback(width, height);
+            if (width > 0 && height > 0) {
+                callback(width, height);
+            }
         }, 50);
     }
     exports.onResized = function () {
