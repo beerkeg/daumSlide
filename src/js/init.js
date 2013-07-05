@@ -4,7 +4,7 @@
 (function (exports) {
     'use strict';
 
-    var event = clay.event || daumtools.event;
+    var event = window.clay ? clay.event : daumtools.event;
     exports.on = event.on;
     exports.preventDefault = event.preventDefault;
     exports.stopPropagation = event.stopPropagation;
