@@ -6,3 +6,5 @@ org.*
 /node_modules
 .settings/
 pom.xml
+.idea
+*.iml

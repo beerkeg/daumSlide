@@ -1,12 +1,13 @@
 /*jshint browser: true
 */
-/*global slide, Class, gesture, clay, util*/
+/*global slide:true, Class, gesture, clay, util, daumtools*/
 (function (exports) {
     'use strict';
 
-    exports.on = clay.event.on;
-    exports.preventDefault = clay.event.preventDefault;
-    exports.stopPropagation = clay.event.stopPropagation;
+    var event = clay.event || daumtools.event;
+    exports.on = event.on;
+    exports.preventDefault = event.preventDefault;
+    exports.stopPropagation = event.stopPropagation;
     /**
      * 3d gpu 가속 여부를 사용할수 있는지 판단한다.
      */
