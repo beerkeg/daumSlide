@@ -1,8 +1,10 @@
 /*jshint browser: true
 */
-/*global slide:true, Class: true, gesture: true*/
+/*global slide:true, Class: true, gesture: true, daumtools*/
 (function (exports) {
     'use strict';
+
+    exports.Observable = window.Observable || window.daumtools.Observable;
 
     var userAgent = exports.userAgent = function (ua) {
         ua = (ua || window.navigator.userAgent).toString();

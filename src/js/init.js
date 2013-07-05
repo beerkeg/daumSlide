@@ -8,6 +8,9 @@
     exports.on = event.on;
     exports.preventDefault = event.preventDefault;
     exports.stopPropagation = event.stopPropagation;
+
+    exports.Observable = window.Observable || window.daumtools.Observable;
+
     /**
      * 3d gpu 가속 여부를 사용할수 있는지 판단한다.
      */

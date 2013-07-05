@@ -5,15 +5,19 @@
     },
     "description": "Slide Library using javascript & css3",
     "homepage": "http://digit.daumcorp.com/eastkiki/slide",
-    "version": "1.1.20",
+    "version": "1.1.21",
     "devDependencies": {
-        "grunt" : "<0.4",
-        "grunt-concat": "*",
-        "grunt-servicefarm": "git+http://dgit.co/eastkiki/grunt-servicefarm.git"
+        "grunt" : "~0.4.1",
+        "grunt-cli": "*",
+        "grunt-contrib-concat": "*",
+        "grunt-contrib-jshint": "~0.3.0",
+        "grunt-contrib-uglify": "*",
+        "grunt-remotefile": "*",
+        "grunt-daum-servicefarm": "git+http://dgit.co/eastkiki/grunt-daum-servicefarm.git"
     },
     "engines": { "node": ">= 0.6" },
     "scripts":{
-        "test": "node build.js",
+        "remote": "node remote.js",
         "build": "node build.js",
         "start": "node server.js"
     }
