@@ -7,19 +7,21 @@
     exports.Observable = window.Observable || window.daumtools.Observable;
 
     var userAgent = exports.userAgent = function (ua) {
-        ua = (ua || window.navigator.userAgent).toString();
+        ua = (ua || window.navigator.userAgent).toLowerCase();
         return {
             ua: ua,
-            isIe8: !!(ua.match(/msie 8/i)),
-            isIe9: !!(ua.match(/msie 9/i)),
-            isPolaris: !!(ua.match(/polaris/i)),
-            isOpera: !!(ua.match(/opera/i)),
-            isWinMobile: !!(ua.match(/windows ce/i) || ua.match(/windows mobile/i)),
-            isFirefox: !!(ua.match(/firefox/i)),
-            isAndroid: !!(ua.match(/android/i)),
-            isDolfin: !!(ua.match(/dolfin/i)),
-            isIOS: !!(ua.match(/like mac os x./i)),
-            isSafari: !!(!ua.match(/mobile/i) && ua.match(/safari/i)),
+            isIe8: /msie 8/.test(ua),
+            isIe9: /msie 9/.test(ua),
+            isIe10: /msie 10/.test(ua),
+            isIe11: /trident\/7.0/.test(ua),
+            isPolaris: /polaris/.test(ua),
+            isOpera: /opera/.test(ua),
+            isWinMobile: /windows (ce||mobile)/.test(ua),
+            isFirefox: /firefox/.test(ua),
+            isAndroid: /android/.test(ua),
+            isDolfin: /dolfin/.test(ua),
+            isIOS: /like mac os x./.test(ua),
+            isSafari: (!/mobile/.test(ua) && /safari/.test(ua)),
             isPc: function () {
                 if (ua.match(/linux|windows (nt|98)|macintosh/) && !ua.match(/android|mobile|polaris|lgtelecom|uzard|natebrowser|ktf;|skt;/)) {
                     return true;
@@ -28,7 +30,7 @@
             }(),
             androidVersion: function() {
                 var major = 1, minor = 0, patch = 0, versions,
-                    matches = / android ([0-9\.]+);/i.exec(ua);
+                    matches = /android ([0-9\.]+);/i.exec(ua);
                 if (matches && matches.length === 2) {
                     versions = matches[1].split('.');
                     major = parseInt(versions[0], 10);
@@ -55,7 +57,7 @@
     exports.hardwareAccelStyle = isTransformEnabled ? '-webkit-transform:translate3d(0,0,0);' : '';
 
     var isSwipeEnabled = exports.isSwipeEnabled =  (function () {
-        return (ua.isAndroid || ua.isIOS || ua.isSafari || ua.isFirefox || ua.isDolfin || ua.isIe9 || ua.isIe8 || ua.isOpera) &&
+        return (ua.isAndroid || ua.isIOS || ua.isSafari || ua.isFirefox || ua.isDolfin || ua.isIe11 || ua.isIe10 || ua.isIe9 || ua.isIe8 || ua.isOpera) &&
             !(ua.isPolaris || ua.isWinMobile);
     })();
 
