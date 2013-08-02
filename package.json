@@ -5,7 +5,7 @@
     },
     "description": "Slide Library using javascript & css3",
     "homepage": "http://digit.daumcorp.com/eastkiki/slide",
-    "version": "1.1.21",
+    "version": "1.1.22",
     "devDependencies": {
         "grunt" : "~0.4.1",
         "grunt-cli": "*",

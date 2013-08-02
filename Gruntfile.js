@@ -77,7 +77,7 @@ module.exports = function(grunt) {
       },
       uses_defaults: ['Gruntfile.js', 'src/js/*.js', 'src/test-js/*.js']
     },
-      daum_servicefarm: {
+    daum_servicefarm: {
       path_merged:{
         src: "<%= concat.dist.dest %>",
         dest: "slide/<%= pkg.name %>-<%= pkg.version %>.merged.js"
