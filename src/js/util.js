@@ -16,7 +16,7 @@
             isIe11: /trident\/7.0/.test(ua),
             isPolaris: /polaris/.test(ua),
             isOpera: /opera/.test(ua),
-            isWinMobile: /windows (ce||mobile)/.test(ua),
+            isWinMobile: /windows (ce|mobile)/.test(ua),
             isFirefox: /firefox/.test(ua),
             isAndroid: /android/.test(ua),
             isDolfin: /dolfin/.test(ua),
