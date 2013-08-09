@@ -63,7 +63,7 @@
         document.getElementsByTagName("head")[0].appendChild(style);
     }
 
-    function checkResize(el, callback) {
+    exports.checkResize = function(el, callback) {
         setTimeout(function(){
             var width = el.clientWidth,
                 height = el.clientHeight;
@@ -71,7 +71,7 @@
                 callback(width, height);
             }
         }, 50);
-    }
+    };
     exports.onResized = function () {
         if (availMatchMedia) {
             if (isAndroidIcs()) {
@@ -81,7 +81,7 @@
 
             return function (el, callback) {
                 mql.addListener(function(){
-                    checkResize(el, callback);
+                    exports.checkResize(el, callback);
                 });
             };
         } else {
@@ -89,7 +89,7 @@
 
             return function (el, callback) {
                 window.gesture.EventUtil.listen(window, resizeEvent, function () {
-                    checkResize(el, callback);
+                    exports.checkResize(el, callback);
                 });
             };
         }
