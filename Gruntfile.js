@@ -12,6 +12,14 @@ module.exports = function(grunt) {
         ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */'
     },
     remotefile: {
+      event: {
+        url: 'http://s1.daumcdn.net/svc/original/U03/cssjs/jscode/event-0.1.4.js',
+        dest: 'dist/dependency/event.js'
+      },
+      ua_parser: {
+        url: 'http://s1.daumcdn.net/svc/original/U03/cssjs/userAgent/userAgent-1.0.14.js',
+        dest: 'dist/dependency/ua_parser.js'
+      },
       gesture: {
         url: 'http://s1.daumcdn.net/svc/attach/U03/cssjs/gesture/gesture-1.0.5.js',
         dest: 'dist/dependency/gesture.js'
@@ -37,9 +45,11 @@ module.exports = function(grunt) {
       standalone: {
         src: [
           '<banner:meta.banner>',
-          'dist/dependency/gesture.js',
-          'dist/dependency/observable.js',
-          'src/js/util.js',
+          '<%= remotefile.event.dest %>',
+          '<%= remotefile.ua_parser.dest %>',
+          '<%= remotefile.gesture.dest %>',
+          '<%= remotefile.observable.dest %>',
+          'src/js/init.js',
           'src/js/datasource.js',
           'src/js/panel.js',
           'src/js/container.js',

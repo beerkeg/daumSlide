@@ -1,10 +1,10 @@
 /*jshint browser: true
 */
-/*global slide:true, Class, gesture, clay, util, daumtools*/
+/*global slide:true, Class, gesture, clay, util, daumtools, dongtl*/
 (function (exports) {
     'use strict';
 
-    var event = window.clay ? clay.event : daumtools.event;
+    var event = window.clay ? clay.event : window.dongtl ? dongtl.event : daumtools.event;
     exports.on = event.on;
     exports.preventDefault = event.preventDefault;
     exports.stopPropagation = event.stopPropagation;
