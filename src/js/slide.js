@@ -7,7 +7,7 @@
     var preventDefault = exports.preventDefault;
 
     var SLIDE_TRESHOLD = 0.1; // 10%
-    var BasicSlide = exports.BasicSlide = exports.Observable.extend({
+    exports.basicSlideObj = {
         init: function (frameEl, dataSource, option) {
             this.frameEl = frameEl;
             this.container = null;
@@ -154,8 +154,8 @@
             delete this.listener;
             this.dataSource = null;
         }
-    });
-    var MiddleSlide = exports.MiddleSlide = BasicSlide.extend({
+    };
+    exports.middleSlideObj = {
         /**
          * 데이터 소스로부터 데이터를 받아서 슬라이드에 보여준다.
          */
@@ -294,9 +294,9 @@
             isPrevThreshold: function (session) {
                 return this.container.getWidth() * SLIDE_TRESHOLD < session.delta.x;
             }
-    });
+    };
 
-    var AdvanceSlide = exports.AdvanceSlide = MiddleSlide.extend({
+    exports.advanceSlideObj = {
         init: function (frameEl, dataSource, option) {
             this._super(frameEl, dataSource, option);
             this.defaultDuration = this.option.duration || 300;
@@ -392,7 +392,5 @@
             this.duration = duration || this.defaultDuration;
             this._super();
         }
-    });
-
-    exports.Slide = exports.isTransformEnabled ? AdvanceSlide : exports.isSwipeEnabled ? MiddleSlide : BasicSlide;
+    };
 })(window.slide = (typeof slide === 'undefined') ? {} : slide);

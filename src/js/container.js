@@ -6,7 +6,7 @@
 
     var slideInstanceNum = 0;
     var PANEL_PREV = 0, PANEL_CURRENT = 1, PANEL_NEXT = 2;
-    var BasicContainer= exports.BasicContainer = Class.extend({
+    exports.basicContainerObj = {
         init: function (slide, option) {
             this.slide = slide;
             this.option = option && option.container ? option.container : {};
@@ -63,8 +63,8 @@
             this.panel.destroy();
             this.panel = null;
         }
-    });
-    var MiddleContainer = exports.MiddleContainer = BasicContainer.extend({
+    };
+    exports.middleContainerObj = {
         setContainerStyle: function (width) {
             return "overflow:hidden;position:relative;top:0;" + exports.hardwareAccelStyle +
                     "left:" + (-width) + "px;width:" + (width * 3) + "px;";
@@ -169,8 +169,8 @@
             this.panels[2].destroy();
             delete this.panels;
         }
-    });
-    var AdvanceContainer = exports.AdvanceContainer = MiddleContainer.extend({
+    };
+    exports.advanceContainerObj = {
         /**
          * 주어진 offset 만큼 slide를 좌우 이동 시킨다.
          * @param offset {Number} 이동시킬 거리 값
@@ -199,9 +199,9 @@
         offTransitionEnd: function (callback) {
             this.el.removeEventListener('webkitTransitionEnd', callback);
         }
-    });
+    };
 
-    var CloneAdvanceContainer = exports.CloneAdvanceContainer = AdvanceContainer.extend({
+    exports.cloneAdvanceContainerObj = {
         rearrangePanels: function (callback) {
             var cloneEl = this.el.cloneNode(true),
                 parent = this.el.parentNode;
@@ -226,7 +226,5 @@
                 self._super(prev);
             });
         }
-    });
-
-    exports.Container = exports.isUsingClone ? CloneAdvanceContainer : exports.isTransformEnabled ? AdvanceContainer : exports.isSwipeEnabled ? MiddleContainer : BasicContainer;
+    };
 })(window.slide = (typeof slide === 'undefined') ? {} : slide);

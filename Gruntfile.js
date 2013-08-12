@@ -34,10 +34,12 @@ module.exports = function(grunt) {
         src: [
           '<banner:meta.banner>',
           'src/js/init.js',
+          'src/js/resize.js',
           'src/js/datasource.js',
           'src/js/panel.js',
           'src/js/container.js',
-          'src/js/slide.js'
+          'src/js/slide.js',
+          'src/js/progressive.js'
         ],
         dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.merged.js',
         separator: "\n\n"
@@ -50,10 +52,12 @@ module.exports = function(grunt) {
           '<%= remotefile.gesture.dest %>',
           '<%= remotefile.observable.dest %>',
           'src/js/init.js',
+          'src/js/resize.js',
           'src/js/datasource.js',
           'src/js/panel.js',
           'src/js/container.js',
-          'src/js/slide.js'
+          'src/js/slide.js',
+          'src/js/progressive.js'
         ],
         dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.standalone.merged.js',
         separator: "\n\n"
