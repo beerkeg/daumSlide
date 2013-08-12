@@ -691,22 +691,24 @@ function setSlidePanels () {
         var ds = new slide.InfiniteDataSource(buildSlides(data));
         var sl = new slide.Slide(wrapper, ds, {
             container : {
-            	id: slideName
+                id: slideName
             },
-            duration: 300,
-            panelClass: slide.UlPanel
+            panel : {
+                tagName: "ul"
+            },
+            duration: 300
         });
         if (slide.isTransformEnabled || slide.isSwipeEnabled) {
             var pagenum = $$("#"+slideName+"Paging .paging_swipe")[0]; 
         } else {
-        	var pagenum = $$("#"+slideName+"Paging .page_no")[0]; 
+            var pagenum = $$("#"+slideName+"Paging .page_no")[0]; 
         }
         var area = $(slideName+"Area");
         var home = $(slideName+"Home");
 
         function setPagingAndTap () {
             ds.queryCurrent(function (data) {
-            	setPageNumber(pagenum, data.index, ds.data.length);
+                setPageNumber(pagenum, data.index, ds.data.length);
                 setCurrentTab(area, home, homeBtn[slideName], data.type);
             });
         }
@@ -716,11 +718,11 @@ function setSlidePanels () {
             for(var i=0,len = tabs.length;i<len;i++) { 
                 (function (id, index) {
                     daum.addEvent(id, "click", function(e){
-			            ds.setCurrentIndex(index);
+                        ds.setCurrentIndex(index);
                         sl.show();
                         setPagingAndTap();
                         daum.Event.stopEvent(e);
-			        });
+                    });
                 })(tabs[i].id, tabs[i].index);
             }
         }
@@ -779,8 +781,8 @@ function setSlidePanels () {
     funData.telzone = DMT.json.telzone;
     var funDataArr = [];
     if($("gameTitle")) {
-    	funDataArr.push({id:"gameTitle", index: 0});
-	}
+        funDataArr.push({id:"gameTitle", index: 0});
+    }
     funDataArr.push({id:"comicTitle", index: 1});
     funDataArr.push({id:"movieTitle", index: 2});
     funDataArr.push({id:"musicTitle", index: 3});

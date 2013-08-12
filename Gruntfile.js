@@ -113,6 +113,37 @@ module.exports = function(grunt) {
         src: "<%= uglify.standalone.dest %>",
         dest: "slide/<%= pkg.name %>-<%= pkg.version %>.standalone.min.js"
       }
+    },
+    markdown: {
+      options: {
+        preCompile: function(src, context) {},
+        postCompile: function(src, context) {},
+        templateContext: {},
+        markdownOptions: {
+          gfm: true,
+          highlight: "manual",
+          codeLines: {
+            before: '<span>',
+            after: '</span>'
+          }
+        }
+      },
+      slide_1_1: {
+        src: ['docs/slide-1.1.md'],
+        dest: 'src/documents/slide-1.1.html'
+      },
+      slide_1_0: {
+        src: ['docs/slide-1.0.md'],
+        dest: 'src/documents/slide-1.0.html'
+      }
+    },
+    bulldoc: {
+      options: {
+        templateDir: "../node_modules/grunt-bulldoc/templates/flatdoc/template"
+      },
+      example: {
+        files: { 'docs/result/': 'docs/' }
+      }
     }
   });
 
@@ -122,6 +153,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
+
+  grunt.loadNpmTasks('grunt-markdown');
+  grunt.loadNpmTasks('grunt-bulldoc');
 
   // Default task.
   grunt.registerTask('remote', ['remotefile']);

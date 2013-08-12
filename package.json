@@ -1,24 +1,29 @@
 {
-    "name": "slide",
-    "author": {
-        "name": "HTML5 tech team, Daum corp"
-    },
-    "description": "Slide Library using javascript & css3",
-    "homepage": "http://digit.daumcorp.com/eastkiki/slide",
-    "version": "1.2.0",
-    "devDependencies": {
-        "grunt" : "~0.4.1",
-        "grunt-cli": "*",
-        "grunt-contrib-concat": "*",
-        "grunt-contrib-jshint": "~0.3.0",
-        "grunt-contrib-uglify": "*",
-        "grunt-remotefile": "*",
-        "grunt-daum-servicefarm": "git+http://dgit.co/eastkiki/grunt-daum-servicefarm.git"
-    },
-    "engines": { "node": ">= 0.6" },
-    "scripts":{
-        "remote": "node remote.js",
-        "build": "node build.js",
-        "start": "node server.js"
-    }
+  "name": "slide",
+  "author": {
+    "name": "HTML5 tech team, Daum corp"
+  },
+  "description": "Slide Library using javascript & css3",
+  "homepage": "http://digit.daumcorp.com/eastkiki/slide",
+  "version": "1.2.0",
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-cli": "*",
+    "grunt-contrib-concat": "*",
+    "grunt-contrib-jshint": "~0.3.0",
+    "grunt-contrib-uglify": "*",
+    "grunt-remotefile": "*",
+    "grunt-daum-servicefarm": "git+http://dgit.co/eastkiki/grunt-daum-servicefarm.git",
+    "grunt-markdown": "~0.4.0",
+    "grunt-bulldoc": "~0.1.1",
+    "markdown": "~0.5.0"
+  },
+  "engines": {
+    "node": ">= 0.6"
+  },
+  "scripts": {
+    "remote": "node remote.js",
+    "build": "node build.js",
+    "start": "node server.js"
+  }
 }

@@ -2,8 +2,8 @@
 <html>
 <head>
 <meta charset="utf-8">
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="sh.css">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/sh.css">
 <title>Slide Library</title>
 </head>
 <body>
@@ -666,16 +666,16 @@ function setToggle(sl) {
 
 # 추가 Example <span><a href="#" class="mark">#</a></span>
 
-1. [slide_search.html](http://uie.daum.net/mobile_guide/slide/slide_search.html)
-2. [slide_search2.html](http://uie.daum.net/mobile_guide/slide/slide_search2.html)
-3. [slide_media.html](http://uie.daum.net/mobile_guide/slide/slide_media.html)
-4. [new_top.html](http://uie.daum.net/mobile_guide/slide/new_top.html)
+1. [slide_search.html](../example/slide_search.html)
+2. [slide_search2.html](../example/slide_search2.html)
+3. [slide_media.html](../example/slide_media.html)
+4. [new_top.html](../example/new_top.html)
 
 
 
 </div>
-<script src="sh_main.js"></script>
-<script src="sh_javascript.min.js"></script>
+<script src="assets/sh_main.js"></script>
+<script src="assets/sh_javascript.min.js"></script>
 <script>highlight(undefined, undefined, 'pre');</script>
 </body>
 </html>
