@@ -9,7 +9,7 @@
 <body>
 <header>
 
-# Slide Library
+# Slide Library - v1.0 이하
 
 </header>
 <div id="toc">

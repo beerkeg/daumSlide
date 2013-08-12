@@ -1,39 +1,26 @@
-var http = require("http"),
-    url = require("url"),
-    path = require("path"),
-    fs = require("fs"),
-    port = process.argv[2] || 9009;
+var express = require('express'),
+    http = require('http'),
+    path = require('path');
 
-var exists = fs.exists || path.exists;
-http.createServer(function(request, response) {
-    var uri = url.parse(request.url).pathname,
-        filename = path.join(process.cwd(), uri);
+var app = express();
 
-    fs.exists(filename, function(exists) {
-        if(!exists) {
-            response.writeHead(404, {"Content-Type": "text/plain"});
-            response.write("404 Not Found\n");
-            response.end();
-            return ;
-        }
+// all environments
+app.set('port', process.env.HTTP_PORT || 9009);
+app.use(express.favicon());
+app.use(express.bodyParser());
+app.use(express.methodOverride());
+app.use(app.router);
+app.use(express.static(path.join(__dirname, 'src')));
 
-        if (fs.statSync(filename).isDirectory()) {
-            filename += 'src/index.html';
-        }
+// development only
+if ('development' == app.get('env')) {
+  app.use(express.errorHandler());
+}
 
-        fs.readFile(filename, "binary", function(err, file) {
-            if(err) {
-                response.writeHead(500, {"Content-Type": "text/plain"});
-                response.write(err + "\n");
-                response.end();
-                return;
-            }
+app.get('/', function (req, res) {
+    res.redirect('/index.html');
+});
 
-            response.writeHead(200);
-            response.write(file, "binary");
-            response.end();
-        });
-    });
-}).listen(parseInt(port, 10));
-
-console.log("Static file server running at\n  => http://localhost:" + port + "/\nCTRL + C to shutdown");
+http.createServer(app).listen(app.get('port'), function(){
+  console.log('Express server listening on port ' + app.get('port'));
+});
