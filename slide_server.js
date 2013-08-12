@@ -5,7 +5,7 @@ var express = require('express'),
 var app = express();
 
 // all environments
-app.set('port', process.env.HTTP_PORT || 9009);
+app.set('port', process.env.PORT || 9009);
 app.use(express.favicon());
 app.use(express.bodyParser());
 app.use(express.methodOverride());
