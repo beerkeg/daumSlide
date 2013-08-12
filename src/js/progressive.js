@@ -23,6 +23,8 @@
         return !!(isOverIcs || os.ios || browser.safari || browser.chrome);
     })();
     exports.hardwareAccelStyle = isTransformEnabled ? '-webkit-transform:translate3d(0,0,0);' : '';
+    // transition-timing-function 적용. (default: ease)
+    // exports.hardwareAccelStyle += exports.isTransformEnabled ? '-webkit-transition-timing-function:linear;' : '';
 
     var isSwipeEnabled = exports.isSwipeEnabled =  (function () {
         return (os.android || os.ios || browser.safari || browser.firefox || browser.dolfin || browser.opera ||
