@@ -88,6 +88,11 @@ module.exports = function(grunt) {
         browser: true
       },
       globals: {
+        slide: true,
+        clay: true,
+        daumtools: true,
+        dongtl: true,
+        gesture: true
       },
       uses_defaults: ['Gruntfile.js', 'src/js/*.js', 'src/test-js/*.js']
     },

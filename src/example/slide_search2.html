@@ -168,15 +168,7 @@ z-index: 30;
 
 
 </style>
-<script type="text/javascript" src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/gesture/gesture-1.0.3.min.js"></script>
-<script src="http://m1.daumcdn.net/svc/attach/U0301/cssjs/ejohn/class-0.1.0.min.js"></script>
-<script type="text/javascript" src="../js/datasource.js"></script>
-<script type="text/javascript" src="../js/util.js"></script>
-<script type="text/javascript" src="../js/panel.js"></script>
-<script type="text/javascript" src="../js/container.js"></script>
-<script type="text/javascript" src="../../dist/dependency/observable.js"></script>
-<script type="text/javascript" src="../js/slide.js"></script>
-<!-- <script type="text/javascript" src="http://m1.daumcdn.net/svc/original/U03/cssjs/slide/slide-1.0.5.min.js"></script> -->
+<script type="text/javascript" src="http://m1.daumcdn.net/svc/original/U03/cssjs/slide/slide-1.2.0.standalone.min.js"></script>
 
 </head>
 <body>
@@ -303,8 +295,8 @@ var ImageSearchDataSource = slide.DataSource.extend({
 });
 
 (function () {
-    var ua = slide.userAgent();
-    var isGingerBread = !!(ua.androidVersion.major === 2 && ua.androidVersion.minor === 3);
+    var ua = slide.ua;
+    var isGingerBread = !!(ua.os.version.major === 2 && ua.os.version.minor === 3);
        
     if (isGingerBread) {
         slide.hardwareAccelStyle = '';
