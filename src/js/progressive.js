@@ -28,7 +28,7 @@
 
     var isSwipeEnabled = exports.isSwipeEnabled =  (function () {
         return (os.android || os.ios || browser.safari || browser.firefox || browser.dolfin || browser.opera ||
-                (ua.platform === "pc" && browser.ie && browserVersion.major >= 8)) && !browser.polaris;
+                (ua.platform === "pc" && browser.msie && browserVersion.major >= 8)) && !browser.polaris;
     })();
 
     /**
