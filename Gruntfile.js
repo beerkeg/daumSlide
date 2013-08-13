@@ -7,9 +7,10 @@ module.exports = function(grunt) {
     meta: {
       banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
         '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
-        '<%= pkg.homepage ? "* " + pkg.homepage + "\n" : "" %>' +
-        '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
-        ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */'
+        '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %> */\n',
+      standalone_banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> (standalone) - ' +
+        '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
+        '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %> */\n'
     },
     remotefile: {
       event: {
@@ -31,8 +32,10 @@ module.exports = function(grunt) {
     },
     concat: {
       dist: {
+        options: {
+          banner: '<%= meta.banner %>'
+        },
         src: [
-          '<banner:meta.banner>',
           'src/js/init.js',
           'src/js/resize.js',
           'src/js/datasource.js',
@@ -45,6 +48,9 @@ module.exports = function(grunt) {
         separator: "\n\n"
       },
       standalone: {
+        options: {
+          banner: '<%= meta.standalone_banner %>'
+        },
         src: [
           '<banner:meta.banner>',
           '<%= remotefile.event.dest %>',
@@ -65,11 +71,17 @@ module.exports = function(grunt) {
     },
     uglify: {
       dist: {
-        src: ['<banner:meta.banner>', '<%= concat.dist.dest %>'],
+        options: {
+          banner: '<%= meta.banner %>'
+        },
+        src: ['<%= concat.dist.dest %>'],
         dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.min.js'
       },
       standalone: {
-        src: ['<banner:meta.banner>', '<%= concat.standalone.dest %>'],
+        options: {
+          banner: '<%= meta.standalone_banner %>'
+        },
+        src: ['<%= concat.standalone.dest %>'],
         dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.standalone.min.js'
       }
     },

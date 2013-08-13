@@ -5,7 +5,7 @@
   },
   "description": "Slide Library using javascript & css3",
   "homepage": "http://digit.daumcorp.com/eastkiki/slide",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "devDependencies": {
     "express": "~3.3.5",
     "grunt": "~0.4.1",
@@ -23,5 +23,11 @@
     "remote": "node remote.js",
     "build": "node build.js",
     "start": "node slide_server.js"
-  }
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/daumcorp/ua_parser/blob/master/LICENSE"
+    }
+  ]
 }
