@@ -14,14 +14,11 @@
 	function isOverAndroidHoneycomb() {
         return !!(os.android && parseInt(osVersion.major, 10) > 3);
     }
-    function isAndroidIcs() {
-        return !!(os.android && osVersion.major === "4" && osVersion.minor === "0");
-    }
-
+    
     var availMatchMedia = (typeof window.matchMedia === "function" && isOverAndroidHoneycomb()) ? true : false,
         availOrientationChange = ("onorientationchange" in window && !os.android && ua.platform !== "pc") ? true : false;
 
-    function fixbugOnMediaMatch() {
+    function fixbugOnMatchMedia() {
         var style = document.createElement("style");
         style.innerHTML = "@media all and (orientation:portrait){.f{}}@media all and (orientation:landscape){.f{}}";
         document.getElementsByTagName("head")[0].appendChild(style);
@@ -38,9 +35,7 @@
     };
     exports.onResized = function () {
         if (availMatchMedia) {
-            if (isAndroidIcs()) {
-                fixbugOnMediaMatch();
-            }
+            fixbugOnMatchMedia();
             var mql = window.matchMedia("(orientation: landscape)");
 
             return function (el, callback) {
