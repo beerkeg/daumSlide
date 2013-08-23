@@ -76,6 +76,7 @@
             });
         },
             nextSlide: function () {
+                this.emit("before:next");
                 this.dataSource.next();
                 this.show();
                 this.emit("next");
@@ -95,6 +96,7 @@
             });
         },
             prevSlide: function () {
+                this.emit("before:prev");
                 this.dataSource.prev();
                 this.show();
                 this.emit("prev");
@@ -171,7 +173,7 @@
         nextSlide: function () {
             var self = this,
                 movingOffset = -1 * this.pageWidth;
-
+            self.emit("before:next");
             this.slide(movingOffset, function onMoveNextEnd() {
                 self.container.rearrangePanelsAfterNext();
                 self.preloadNextData();
@@ -195,6 +197,7 @@
         prevSlide: function () {
             var self = this,
                 movingOffset = this.pageWidth;
+            self.emit("before:prev");
             this.slide(movingOffset, function onMovePrevEnd() {
                 self.container.rearrangePanelsAfterPrev();
                 self.preloadPrevData();
@@ -241,6 +244,7 @@
             if (session.isSwipe()) {
                 preventDefault(session.targetEvent);
                 this.container.move(session.delta.x / 2);
+                this.emit("drag", session);
             }
         },
         /**

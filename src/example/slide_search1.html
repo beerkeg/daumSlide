@@ -338,6 +338,15 @@ function setFooter(sl, ds) {
             ev.returnValue = false;
         }
     });
+    sl.on("drag", function (session){
+        console.log(session);
+    });
+    sl.on("before:next", function (){
+        console.log("before:next");
+    });
+    sl.on("before:prev", function (){
+        console.log("before:prev");
+    });
 
     sl.on("next", setDesc);
     sl.on("prev", setDesc);
