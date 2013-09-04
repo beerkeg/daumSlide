@@ -155,6 +155,34 @@
             this.listener.destroy();
             delete this.listener;
             this.dataSource = null;
+        },
+        /**
+         * 제스처가 왼쪽으로 일정 거리이상 혹은 빠르게 움직였을 경우에 true
+         * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
+         */
+        isNextSwipe: function (session) {
+            return session.isLeft() && (this.isNextThreshold(session) || session.isFlick());
+        },
+        /**
+         * 제스처가 왼쪽으로 일정 거리이상 움직였을 경우에 true
+         * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
+         */
+        isNextThreshold: function (session) {
+            return this.container.getWidth() * -1 * SLIDE_TRESHOLD > session.delta.x;
+        },
+        /**
+         * 제스처가 오른쪽으로 일정 거리이상 혹은 빠르게 움직였을 경우에 true
+         * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
+         */
+        isPrevSwipe: function (session) {
+            return session.isRight() && (this.isPrevThreshold(session) || session.isFlick());
+        },
+        /**
+         * 제스처가 오른쪽으로 일정 거리이상 움직였을 경우에 true
+         * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
+         */
+        isPrevThreshold: function (session) {
+            return this.container.getWidth() * SLIDE_TRESHOLD < session.delta.x;
         }
     };
     exports.middleSlideObj = {
@@ -269,35 +297,7 @@
                 this.cancel();
             }
             this.emit("endDrag", session);
-        },
-            /**
-             * 제스처가 왼쪽으로 일정 거리이상 혹은 빠르게 움직였을 경우에 true
-             * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
-             */
-            isNextSwipe: function (session) {
-                return session.isLeft() && (this.isNextThreshold(session) || session.isFlick());
-            },
-            /**
-             * 제스처가 왼쪽으로 일정 거리이상 움직였을 경우에 true
-             * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
-             */
-            isNextThreshold: function (session) {
-                return this.container.getWidth() * -1 * SLIDE_TRESHOLD > session.delta.x;
-            },
-            /**
-             * 제스처가 오른쪽으로 일정 거리이상 혹은 빠르게 움직였을 경우에 true
-             * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
-             */
-            isPrevSwipe: function (session) {
-                return session.isRight() && (this.isPrevThreshold(session) || session.isFlick());
-            },
-            /**
-             * 제스처가 오른쪽으로 일정 거리이상 움직였을 경우에 true
-             * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
-             */
-            isPrevThreshold: function (session) {
-                return this.container.getWidth() * SLIDE_TRESHOLD < session.delta.x;
-            }
+        }
     };
 
     exports.advanceSlideObj = {
