@@ -12,6 +12,14 @@ module.exports = function(grunt) {
         '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
         '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %> */\n'
     },
+    extension_meta: {
+      pc_slide: {
+        banner: '/*! pc_slide - v<%= extension_meta.pc_slide.version %> - ' +
+                '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
+                '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %> */\n',
+        version: '0.1.0'
+      }
+    },
     remotefile: {
       event: {
         url: 'http://s1.daumcdn.net/svc/original/U03/cssjs/jscode/event-0.1.4.js',
@@ -67,6 +75,13 @@ module.exports = function(grunt) {
         ],
         dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.standalone.merged.js',
         separator: "\n\n"
+      },
+      pc_slide: {
+        options: {
+          banner: '<%= extension_meta.pc_slide.banner %>'
+        },
+        src: ['src/extensions/pc_slide/pc_slide.js'],
+        dest: 'dist/pc_slide-<%= extension_meta.pc_slide.version %>.merged.js'
       }
     },
     uglify: {
@@ -83,6 +98,13 @@ module.exports = function(grunt) {
         },
         src: ['<%= concat.standalone.dest %>'],
         dest: 'dist/<%= pkg.name %>-<%= pkg.version %>.standalone.min.js'
+      },
+      pc_slide: {
+        options: {
+          banner: '<%= extension_meta.pc_slide.banner %>'
+        },
+        src: ['<%= concat.pc_slide.dest %>'],
+        dest: 'dist/pc_slide-<%= extension_meta.pc_slide.version %>.min.js'
       }
     },
     jshint: {
@@ -124,6 +146,14 @@ module.exports = function(grunt) {
       path_standalone_min:{
         src: "<%= uglify.standalone.dest %>",
         dest: "slide/<%= pkg.name %>-<%= pkg.version %>.standalone.min.js"
+      },
+      pc_slide_merged: {
+        src: "<%= concat.pc_slide.dest %>",
+        dest: "slide/extensions/pc_slide-<%= extension_meta.pc_slide.version %>.merged.js"
+      },
+      pc_slide_min: {
+        src: "<%= uglify.pc_slide.dest %>",
+        dest: "slide/extensions/pc_slide-<%= extension_meta.pc_slide.version %>.min.js"
       }
     }
   });
@@ -137,6 +167,18 @@ module.exports = function(grunt) {
 
   // Default task.
   grunt.registerTask('remote', ['remotefile']);
-  grunt.registerTask('default', ['remotefile', 'jshint', 'concat', 'uglify', 'daum_servicefarm']);
+
+  grunt.registerTask('concat_slide', ['concat:dist', 'concat:standalone']);
+  grunt.registerTask('uglify_slide', ['uglify:dist', 'uglify:standalone']);
+  grunt.registerTask('daum_servicefarm_slide', [
+    'daum_servicefarm:path_merged',
+    'daum_servicefarm:path_min',
+    'daum_servicefarm:path_standalone_merged',
+    'daum_servicefarm:path_standalone_min'
+  ]);
+  grunt.registerTask('default', ['remotefile', 'jshint', 'concat_slide', 'uglify_slide', 'daum_servicefarm_slide']);
+
+  //extensions
+  grunt.registerTask('pc_slide', ['jshint', 'concat:pc_slide', 'uglify:pc_slide', 'daum_servicefarm:pc_slide_merged', 'daum_servicefarm:pc_slide_min']);
 
 };

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<title>slide example</title>
+<style>
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow:hidden;
+    background-color: #333;
+}
+ul, li {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+#wrapper {
+    width: 100%;
+    height:100%;
+    overflow:hidden;
+    background-color: #333;
+    position: relative;
+}
+.slide {
+    height:100%;
+}
+.panel {
+    position: relative;    
+    background: url(http://m1.daumcdn.net/img-section/enter/common/loading.gif) 50% 50% no-repeat;
+}
+.btn {
+    position: absolute;
+    top: 45%;
+    width: 58px;
+    height: 58px;
+    overflow: hidden;
+    background-color: black;
+    z-index: 2000;
+    cursor: pointer;
+    border: 1px solid #464646;
+    text-align: center;
+    opacity: 0.6; 
+}
+#prev-button {
+    left: 10px;
+}
+#next-button{
+    right: 10px;
+}
+.btn .ico {
+    width: 16px;
+    height: 30px;
+    overflow: hidden;
+    margin: 16px auto 0 auto;
+    background: url(http://i1.daumcdn.net/img-section/enter/common/pv_icon1.png) 0 -30px no-repeat;
+}
+#next-button .ico {
+    background-position: 0 -60px;
+    width: 13px;
+    margin-left: 24px;
+}
+
+#header {
+    width: 100%;
+    z-index: 999;
+    position: absolute;
+    top:0;
+}
+
+#footer {
+    width: 100%;
+    z-index: 999;
+    position: absolute;
+    bottom:0;
+}
+
+#title-wrap {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 9999;
+    width: 100%;
+    display: none;
+    background-color: black;
+    color: white;
+    text-align: center;
+    letter-spacing: -1px;
+}
+#title-wrap .inner {
+    margin: 13px;
+}
+#title-wrap .title {
+    font: bold 16px dotum;
+    color: white;
+    text-decoration: none;
+}
+#title-wrap .bar {
+    padding: 0 9px;
+    font-size: 14px;
+    color: #2E2F2A;
+    position: relative;
+    top: -2px;
+}
+#title-wrap .link {
+    color: #9AF;
+    font-size: 12px;
+    position: relative;
+    top: -2px;
+}
+#title-wrap .ico {
+    padding: 0 0 0 3px;
+}
+#title-wrap .ico span {
+    position: relative;
+    top: 7px;
+    padding: 0 0 0 5px;
+    background: url(http://i1.daumcdn.net/img-section/enter/common/pv_icon1.png) 0 -90px no-repeat;
+    overflow: hidden;
+}
+
+div.ps-caption {
+    background: black;
+    color: #9AF;
+    font: bold 14px dotum;
+    text-align: center;
+    width: 100%!important;
+    z-index: 9999!important;
+}
+.ps-caption-content {
+    padding: 13px;
+    display: block;
+}
+.ps-caption-content .count {
+    color: white;
+    font-size: 12px;
+    font-weight: normal;
+    padding-left: 3px;
+}
+.ps-caption-content .count em {
+    color: #9AF;
+    font-style: normal;
+    font-size: 12px;
+}
+#close-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 70px;
+    border-left: 1px solid #2F2F2F;
+    cursor: pointer;
+    text-align: center;
+    background-color: black;
+}
+#close-button .ico {
+    width: 25px;
+    height: 23px;
+    overflow: hidden;
+    margin: 10px auto 0 auto;
+    background: url(http://i1.daumcdn.net/img-section/enter/common/pv_icon1.png) 0 0 no-repeat;
+}
+</style>
+</head>
+<body>
+<div id="wrapper"></div>
+<div id="header">
+    <div class="ps-caption" style="left: 0px; position: absolute; overflow-x: hidden; overflow-y: hidden; z-index: 1000; top: 0px; width: 1078px; opacity: 0.8; display: block; ">
+        <div class="ps-caption-content"><span class="ps-title" id="ps-title"></span><span class="count" id="count"></span></div>
+        <div id="close-button"><div class="ico"></div></div>
+    </div>
+</div>
+<div id="prev-button" class="btn"><div class="ico"></div></div>
+<div id="next-button" class="btn"><div class="ico"></div></div>
+<div id="footer"></div>
+<script type="text/javascript">
+var pageInfo = {
+        initPage: 2, 
+        initIndex: 30,
+        numPerPage: 32,
+        nextPage: 3,
+        prevPage: 1,
+        getApiUrl: function (pageNum, callbackName) {
+            return 'http://media.daum.net/export/json/3165a129029c43ea8078217ae6ed99a2?photoId=2797&newsId=&page='
+                + pageNum +'&countPerPage='+ this.numPerPage +'&callback=' + callbackName;
+        }
+    };
+</script>
+<!-- <script type="text/javascript" src="../../../dist/dependency/ua_parser.js"></script>
+<script type="text/javascript" src="../../../dist/dependency/event.js"></script>
+<script type="text/javascript" src="../../../dist/dependency/gesture.js"></script>
+<script type="text/javascript" src="../../../dist/dependency/observable.js"></script>
+<script type="text/javascript" src="../../js/init.js"></script>
+<script type="text/javascript" src="../../js/resize.js"></script>
+<script type="text/javascript" src="../../js/datasource.js"></script>
+<script type="text/javascript" src="../../js/panel.js"></script>
+<script type="text/javascript" src="../../js/container.js"></script>
+<script type="text/javascript" src="../../js/slide.js"></script>
+<script type="text/javascript" src="../../js/progressive.js"></script> -->
+
+<script type="text/javascript" src="http://m1.daumcdn.net/svc/original/U03/cssjs/slide/slide-1.2.2.standalone.min.js"></script>
+<script type="text/javascript" src="http://s1.daumcdn.net/svc/original/U03/cssjs/animation/animation-0.2.5.merged.js"></script>
+<script type="text/javascript" src="../../extensions/pc_slide/pc_slide-0.1.0.js"></script>
+
+<script type="text/javascript" src="../../example-cssjs/slide_media.js"></script>
+
+</body>
+</html>
