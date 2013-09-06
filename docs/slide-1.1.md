@@ -509,7 +509,7 @@ sl.off("cancel", onCancel);
     + \#frameEl 고정값, .slide 에 100%
     + \#frameEl 미지정, .slide에 고정값
 
-[slide_simpleSearch.html](http://east.ftdev.daum.net/sl/slide_simpleSearch.html)
+[slide_simpleSearch.html](http://slide.dev.daum.net/src/example/slide_simpleSearch.html)
 
 ~~~~~~~
 <!DOCTYPE html>
@@ -530,7 +530,7 @@ html, body {height: 100%; width: 100%; margin: 0; padding: 0; overflow:hidden; b
 .nextBtn {right: 10px;}
 #footer {width: 100%; z-index: 999; position: absolute; bottom:0; background-color: #000; color: #fff;}
 </style>
-<script type="text/javascript" src="http://east.ftdev.daum.net/work/slide/build/slide.min.js"></script>
+<script type="text/javascript" src="http://m1.daumcdn.net/svc/original/U03/cssjs/slide/slide-1.2.2.standalone.min.js"></script>
 </head>
 <body>
 <div id="frameEl"></div>
