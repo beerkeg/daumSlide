@@ -5,7 +5,7 @@
     'use strict';
 
     // event library
-    var eventUtil = window.clay ? clay.event : window.dongtl ? dongtl.event : daumtools.event;
+    var eventUtil = window.daumtools ? daumtools.event : window.clay ? clay.event : dongtl.event;
     if (eventUtil) {
         exports.on = eventUtil.on;
         exports.off = eventUtil.off;
