@@ -5,14 +5,15 @@
     'use strict';
 
     // event library
-    var eventUtil = window.daumtools ? daumtools.event : window.clay ? clay.event : dongtl.event;
-    if (eventUtil) {
+    try {
+        var eventUtil = window.daumtools.event;
         exports.on = eventUtil.on;
         exports.off = eventUtil.off;
         exports.preventDefault = eventUtil.preventDefault;
         exports.stopPropagation = eventUtil.stopPropagation;
-    } else {
-        new Error("Not found : event util");
+
+    } catch(e) {
+        throw new Error("Not found : daumtools event");
     }
 
     // class & observable library
