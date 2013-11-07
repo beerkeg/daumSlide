@@ -10,7 +10,6 @@
     var availOrientationChange = ("onorientationchange" in window && !os.android && ua.platform !== "pc") ? true : false;
 
     exports.onResized = function () {
-        var resizeEvent = availOrientationChange ? "orientationchange" : "resize";
         var width = 0, height = 0;
 
         return function (el, callback) {
@@ -18,22 +17,29 @@
                 return !(width === el.clientWidth && height === el.clientHeight);
             }
 
-            window.gesture.EventUtil.listen(window, resizeEvent, function () {
-                var cnt = 0;
-                setTimeout(function _checkResize() {
-                    if (isSizeReallyChanged()) {
-                        width = el.clientWidth;
-                        height = el.clientHeight;
+            var isOrientationChange = false, isResize = false;
+            function checkResize() {
+                if ((isOrientationChange || !availOrientationChange) &&
+                    isResize && isSizeReallyChanged()) {
+                    width = el.clientWidth;
+                    height = el.clientHeight;
+                    callback(width, height);
+                }
+            }
 
-                        if(width > 0 && height > 0) {
-                            callback(width, height);
-                        }
-                    } else {
-                        if (cnt++ < 20) {
-                            setTimeout(_checkResize, 50);
-                        }
-                    }
-                }, 50);
+            exports.on(window, 'orientationchange', function() {
+                isOrientationChange = true;
+                checkResize();
+            });
+
+            exports.on(window, 'resize', function() {
+                isResize = true;
+                checkResize();
+                window.setTimeout(function() {
+                    checkResize();
+                    isOrientationChange = false;
+                    isResize = false;
+                }, 200);
             });
         };
     }();
