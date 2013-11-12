@@ -7,7 +7,7 @@
 
 	var ua = exports.ua;
     var os = ua.os;
-    var availOrientationChange = ("onorientationchange" in window && !os.android && ua.platform !== "pc") ? true : false;
+    var availOrientationChange = ("onorientationchange" in window && ua.platform !== "pc") ? true : false;
 
     exports.onResized = function () {
         var width = 0, height = 0;
