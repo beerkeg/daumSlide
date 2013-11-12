@@ -13,14 +13,14 @@
         var width = 0, height = 0;
 
         return function (el, callback) {
-            function isSizeReallyChanged () {
+            function isChanged () {
                 return !(width === el.clientWidth && height === el.clientHeight);
             }
 
             var isOrientationChange = false, isResize = false;
             function checkResize() {
                 if ((isOrientationChange || !availOrientationChange) &&
-                    isResize && isSizeReallyChanged()) {
+                    isResize && isChanged()) {
                     width = el.clientWidth;
                     height = el.clientHeight;
                     callback(width, height);
