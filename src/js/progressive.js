@@ -16,7 +16,8 @@
     var isTransformEnabled = exports.isTransformEnabled =  (function () {
         var isOverIcs = (function () {
             if (browser.android) {
-                return browserVersion.major > 3;
+                var major = parseInt(browserVersion.major, 10);
+                return major > 3;
             }
             return false;
         })();
