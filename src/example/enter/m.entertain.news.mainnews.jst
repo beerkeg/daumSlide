@@ -1,0 +1,26 @@
+<%
+	var titleLen = 52;
+	var summaryLen = 62;
+	if (! obj.imageUrl) {
+		titleLen = 76;
+		summaryLen = 100;
+	}
+%>
+<li>
+	<a href="/v/<%=obj.newsId%>" class="link_news">
+		<% if (obj.imageUrl) { %>
+		<span class="thumb_news">
+			<img src="<%=Util.getPhotoUrl(obj.imageUrl, "F180x180")%>" class="thumb_img"
+				 width="90" height="90" alt="<%=_.escape(obj.title)%>">
+			<span class="frame_g"></span>
+		</span>
+		<% } %>
+		<span class="cont_news">
+			<strong class="tit_news"><%=Util.removeBrackets(obj.title)%></strong>
+			<span class="txt_news"><%=Util.removeBrackets(obj.summary)%></span>
+			<span class="info_news">
+				<span class="ico_ent ico_clock"></span><%=DateUtil.whenWritten(DateUtil.dateFormat(obj.regDt), true)%><span class="txt_bar">&nbsp;|&nbsp;</span><%=obj.cpKorName%>
+			</span>
+		</span>
+	</a>
+</li>

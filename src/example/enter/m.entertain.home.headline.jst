@@ -1,0 +1,9 @@
+<%
+	var headlineClass = "cont_headline ";
+	if (obj.headlineType == "pc") headlineClass += "news_type1";
+	else if (obj.headlineType == "mobile1") headlineClass += "news_type3";
+	else headlineClass += "news_type2";
+%>
+<div class="<%=headlineClass%>">
+	<%=obj.html%>
+</div>
