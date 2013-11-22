@@ -35,10 +35,13 @@
      * ics 4.0.3 이상 버젼 대응.
      */
     var isUsingClone = exports.isUsingClone =  (function () {
+        var major = parseInt(browserVersion.major, 10);
+        var minor = parseInt(browserVersion.minor, 10);
+        var patch = parseInt(browserVersion.patch, 10);
         var isOverIcs4_0_3 = browser.android &&
-                (browserVersion.major > 4 ||
-                (browserVersion.major === 4 && browserVersion.minor > 0) ||
-                (browserVersion.major === 4 && browserVersion.minor === 0 && browserVersion.patch >= 3));
+                (major > 4 ||
+                (major === 4 && minor > 0) ||
+                (major === 4 && minor === 0 && patch >= 3));
         return isOverIcs4_0_3;
     })();
 
