@@ -1,14 +1,18 @@
-/*jshint browser: true
-*/
-/*global slide:true, Class: true, gesture: true*/
+/* jshint browser: true */
+/* global slide:true, Class: true, gesture: true */
 (function (exports) {
     'use strict';
 
+    /**
+     * 새로운 Panel을 생성/초기화 한다.
+     *
+     * @class Panel
+     * @constructor Panel
+     * @extends Class
+     * @param slide {Object} slide Class
+     * @param option {Object} option values
+     */
     var Panel = exports.Panel = Class.extend({
-        /*!
-         * 새로운 Panel을 생성/초기화 한다.
-         * @param slide {Slide Class}
-         */
         init: function (slide, option) {
             this.slide = slide;
             this.option = option || {};
@@ -21,6 +25,8 @@
         },
         /**
          * panel Element를 생성/초기화 한다.
+         *
+         * @method createPanel
          * @param width {Number}
          */
         createPanel: function (width) {
@@ -33,6 +39,8 @@
         },
         /**
          * panel Element의 넓이를 바꾼다.
+         *
+         * @method setWidth 
          * @param width {Number}
          */
         setWidth: function (width) {
@@ -40,6 +48,8 @@
         },
         /**
          * panel Element에 data를 넣는다.
+         *
+         * @method setData        
          * @param data {HTMLElement}
          */
         setData: function (data) {
@@ -48,11 +58,18 @@
         /**
          * 웹접근성을 위한 코드.
          * 스크린 리더에서 데이터를 읽을지 말지 결정한다.
+         *
+         * @method setAriaHidden
          * @param flag {Boolean} true면 스트린리더에서 데이터를 읽지 않는다.
          */
         setAriaHidden: function (flag) {
             this.el.setAttribute("aria-hidden", flag);
         },
+        /**
+         * 해당 클래스의 인스턴스 삭제시 할당된 오브젝트들을 destroy 시킨다.
+         *
+         * @method destroy
+         */
         destroy: function () {
             this.slide = null;
             this.el = null;

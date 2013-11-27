@@ -155,7 +155,59 @@ module.exports = function(grunt) {
         src: "<%= uglify.pc_slide.dest %>",
         dest: "slide/extensions/pc_slide-<%= extension_meta.pc_slide.version %>.min.js"
       }
+    },
+    yuidoc: {
+      // sublime: {
+      //     name: 'daumtools',
+      //     description: 'daumtools : daum javascript library',
+      //     version: '<%= pkg.version %>',
+      //     url: 'http://digit.daumcorp.com/html5tech/daumtools',
+      //     options: {
+      //         tabtospace: 4,
+      //         paths: 'src/js',
+      //         themedir: 'themes/daumtools_sublime',
+      //         outdir: 'docs',
+      //         helpers: ["themes/daumtools_sublime/helper/if_eq.js"]
+      //     }
+      // }
+      bootstrap: {
+        name: '<%= pkg.title || pkg.name %>',
+        description: '<%= pkg.description%>',
+        version: '<%= pkg.version %>',
+        url: '<%= pkg.homepage %>',
+        options: {
+          tabtospace: 4,
+          paths: 'src/js',
+          themedir: 'themes/daumtools_bootstrap',
+          outdir: 'docs/api',
+          helpers: ["themes/daumtools_bootstrap/helpers/helpers.js"]
+        }
+      }
+    },
+    markdown: {
+      slide: {
+        options: {
+          template: 'src/docs/template/template.jst'
+        },
+        files: [
+          {
+            expand: true,
+            cwd: 'src/docs',
+            src: ['*.md'],
+            dest: 'docs/example',
+            ext: '.html'
+          }
+        ]
+      }
     }
+    // docco: {
+    //   slide: {
+    //     src: ['src/example-cssjs/slide_simplesearch.js'],
+    //     options: {
+    //       output: 'docs/docco'
+    //     }
+    //   }
+    // }
   });
 
   // Load local tasks.
@@ -164,6 +216,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-yuidoc');
+  grunt.loadNpmTasks('grunt-docco2');
+  grunt.loadNpmTasks('grunt-markdown');
 
   // Default task.
   grunt.registerTask('remote', ['remotefile']);
@@ -176,7 +231,8 @@ module.exports = function(grunt) {
     'daum_servicefarm:path_standalone_merged',
     'daum_servicefarm:path_standalone_min'
   ]);
-  grunt.registerTask('default', ['remotefile', 'jshint', 'concat_slide', 'uglify_slide', 'daum_servicefarm_slide']);
+  grunt.registerTask('default', ['remotefile', 'jshint', 'concat_slide', 'uglify_slide', 'daum_servicefarm_slide', 'docs']);
+  grunt.registerTask('docs', ['yuidoc', 'markdown']);
 
   //extensions
   grunt.registerTask('pc_slide', ['jshint', 'concat:pc_slide', 'uglify:pc_slide', 'daum_servicefarm:pc_slide_merged', 'daum_servicefarm:pc_slide_min']);
