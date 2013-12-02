@@ -1,4 +1,41 @@
-## slide.Datasource 
+<div id="toc">
+    <h2>Table of Contents</h2>
+    <ul>
+        <li>
+            <a href="#slide.datasource">slide.datasource</a>
+            <ul>
+                <li><a href="#willqueryfirstofdata">willQueryFirstOfData</a></li>
+                <li><a href="#willqueryendofdata">willQueryEndOfData</a></li>
+                <li><a href="#setcurrentindex">setCurrentIndex</a></li>
+                <li><a href="#addnextdata">addNextData</a></li>
+                <li><a href="#addprevdata">addPrevData</a></li>
+                <li><a href="#querycurrentset">queryCurrentSet</a></li>
+                <li><a href="#queryprev">queryPrev</a></li>
+                <li><a href="#querycurrent">queryCurrent</a></li>
+                <li><a href="#querynext">queryNext</a></li>
+                <li><a href="#destroy">destroy</a></li>
+            </ul>
+        </li>
+        <li><a href="#slide.slide">slide.slide</a>
+            <ul>
+                <li><a href="#destroy-1">destroy</a></li>
+                <li><a href="#on">on</a></li>
+                <li><a href="#off">off</a></li>
+                <li><a href="#event-resize">Event:resize</a></li>
+                <li><a href="#event-startdrag">Event:startDrag</a></li>
+                <li><a href="#event-enddrag">Event:enddrag</a></li>
+                <li><a href="#event-click">Event:click</a></li>
+                <li><a href="#event-next">Event:next</a></li>
+                <li><a href="#event-prev">Event:prev</a></li>
+                <li><a href="#event-cancel">Event:cancel</a></li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+# Api
+
+## slide.Datasource
 
 slide에서 보여줄 데이터를 관리하는 Class.
 
@@ -37,7 +74,7 @@ var item = {
     `item` 오브젝트 내부에 필수적으로 있어야 하는 함수.
 
 
-### willQueryFirstOfData 
+### willQueryFirstOfData
 
 `DataSource` 내의 데이터가 가장 처음일 경우에 실행되는 함수를 지정한다.
 
@@ -50,7 +87,7 @@ ds.willQueryFirstOfData(function loadPrevData () {
 ```
 
 
-### willQueryEndOfData 
+### willQueryEndOfData
 
 `DataSource` 내의 데이터가 가장 끝일 경우에 실행되는 함수를 지정한다.
 
@@ -62,7 +99,7 @@ ds.willQueryEndOfData(function loadNextData () {
 });
 ```
 
-### setCurrentIndex 
+### setCurrentIndex
 
 datasource 의 현재 index를 설정한다.
 
@@ -70,7 +107,7 @@ datasource 의 현재 index를 설정한다.
 ds.setCurrentIndex(index);
 ```
 
-### addNextData 
+### addNextData
 
 `DataSource` 의 `data` 뒤에 데이터를 추가한다.
 
@@ -82,7 +119,7 @@ ds.addNextData(items);
 ```
 
 
-### addPrevData 
+### addPrevData
 
 `DataSource` 의 `data` 앞에 데이터를 추가한다.
 
@@ -96,7 +133,7 @@ ds.addPrevData(items);
 ```
 
 
-### queryCurrentSet 
+### queryCurrentSet
 
 datasource의 현재 인덱스를 기준으로 이전, 현재, 다음 데이터 set을 받아온다.
 
@@ -109,7 +146,7 @@ ds.queryCurrentSet(function (set) {
 ```
 
 
-### queryPrev 
+### queryPrev
 
 datasource의 현재 인덱스를 기준으로 바로 이전 데이터를 받아온다.
 
@@ -119,7 +156,7 @@ ds.queryPrev(function (prev) {
 });
 ```
 
-### queryCurrent 
+### queryCurrent
 
 datasource의 현재 인덱스의 데이터를 받아온다.
 
@@ -129,7 +166,7 @@ ds.queryCurrent(function (current) {
 });
 ```
 
-### queryNext 
+### queryNext
 
 datasource의 현재 인덱스를 기준으로 바로 이전 데이터를 받아온다.
 
@@ -140,7 +177,7 @@ ds.queryNext(function (next) {
 ```
 
 
-### destroy 
+### destroy
 
 datasource를 제거한다.
 
@@ -149,7 +186,7 @@ ds.destroy();
 delete ds;
 ```
 
-## slide.Slide 
+## slide.Slide
 
 `DataSource` 로부터 데이터를 가져와 화면상에 보이는 것을 관리하는 Class.
 
@@ -163,7 +200,7 @@ var ds = new slide.DataSource(items);
 var option = {
         container: {
             id: String,         // default = "slide-" + Number
-            className: String   // default = "slide"
+            className: String   // default = slide
         },
         panel: {
             tagName: String,    // default = div
@@ -182,67 +219,32 @@ var option = {
 
 ### ds {Class DataSource}
 
-`Slide` 에서 보여줄 데이터를 관리하는 Class.
+`Slide` 에서 보여줄 데이터를 관리하는 `DataSource` Class의 Instance.
 
 ### option {Object}
 
-`Slide` 초기화시 사용할 옵션값들. 미지정된 옵션값은 디폴트 값으로 대체 사용.
+`Slide` 초기화 시 사용할 옵션 값들. 미지정된 옵션 값은 디폴트 값으로 대체 사용.
 
++ container 
+    + id {String}
+        + 생성되는 `Container` Element 의 id를 지정.
+        + 디폴트로 slide-{Number} 숫자값이 증가 1부터 차례대로 증가하며 생성.
+            + (ex) slide-1, slide-2 ...
+    + className {String} default=slide
+        + 생성되는 `Container` Element 의 class를 지정.
++ panel 
+    + tagName {String} default=div
+        + 생성되는 `Panel` Element 의 tagName을 지정.
+    + className {String} default=panel
+        + 생성되는 `Panel` Element 의 class를 지정.
++ duration {Number} default=300(ms)
+    + Slide의 트랜지션시 적용되는 duration값을 지정.
++ panelClass {Class `Panel`} default=`slide.Panel`
+    + 생성되는 Panel Class를 지정.
++ containerClass {Class `Container`} default=`slide.Container`
+    + 생성되는 Container Class를 지정.
 
-#### container
-
-##### id {String}
-
-+ 생성되는 `Container` Element 의 id를 지정.
-
-+ 디폴트로 slide-{Number} 숫자값이 증가 1부터 차례대로 증가하며 생성.
-
-    + (ex) slide-1, slide-2 ...
-
-##### className {String}
-
-+ 생성되는 `Container` Element 의 class를 지정.
-
-+ 디폴트로 slide 가 부여.
-
-
-#### panel
-
-##### tagName {String}
-
-+ 생성되는 `Panel` Element 의 tagName을 지정.
-
-+ 디폴트로 div 로 생성.
-
-##### className {String}
-
-+ 생성되는 `Panel` Element 의 class를 지정.
-
-+ 디폴트로 panel 가 부여.
-
-        
-#### duration {Number}
-
-+ Slide의 트랜지션시 적용되는 duration값을 지정.
-
-+ 디폴트로 300 값이 적용.
-
-
-#### panelClass {Class `Panel`}
-
-+ 생성되는 Panel Class를 지정.
-
-+ 디폴트로 Panel Class로 지정. 
-
-#### containerClass {Class `Container`}
-
-+ 생성되는 Container Class를 지정.
-
-+ 디폴트로 Container Class로 지정. 
-
-
-
-### destroy 
+### destroy
 
 `Slide` 를 제거한다.
 
@@ -253,7 +255,7 @@ delete sl;
 
 
 
-### on 
+### on
 
 Slide 동작시 발생하는 이벤트 등록 함수.
 
@@ -270,14 +272,14 @@ Slide 동작시 발생하는 이벤트 등록 함수.
 sl.on(EventType, callback);
 ```
 
-### off 
+### off
 Slide 동작시 발생하는 이벤트 제거 함수.
 
 ```javascript
 sl.off(EventType, callback);
 ```
 
-### Event:resize 
+### Event:resize
 
 브라우져 화면의 resize 이벤트 발생시 발생하는 이벤트.
 
@@ -288,7 +290,7 @@ sl.on("resize", function onResize() {
 sl.off("resize", onResize);
 ```
 
-### Event:startDrag 
+### Event:startDrag
 
 frameEl내에서 mouse down or touchstart 이벤트 발생 시 발생하는 이벤트.
 
@@ -299,7 +301,7 @@ sl.on("startDrag", function onStartDrag() {
 sl.off("startDrag", onStartDrag);
 ```
 
-### Event:endDrag 
+### Event:endDrag
 
 frameEl내에서 mouse up or touchend 이벤트 발생 시 발생하는 이벤트.
 
@@ -310,7 +312,7 @@ sl.on("endDrag", function onEndDrag() {
 sl.off("endDrag", onEndDrag);
 ```
 
-### Event:click 
+### Event:click
 
 frameEl내에서 클릭 동작시 (mousemove 혹은 touchmove 이벤트가 발생안한 상태) 발생하는 이벤트.
 
@@ -321,7 +323,7 @@ sl.on("click", function onClick() {
 sl.off("click", onClick);
 ```
 
-### Event:next 
+### Event:next
 
 slide가 다음 화면으로 넘어갔을 때 발생하는 이벤트.
 
@@ -332,7 +334,7 @@ sl.on("next", function onNext() {
 sl.off("next", onNext);
 ```
 
-### Event:prev 
+### Event:prev
 
 slide가 이전 화면으로 넘어갔을 때 발생하는 이벤트.
 
@@ -343,7 +345,7 @@ sl.on("prev", function onPrev() {
 sl.off("prev", onPrev);
 ```
 
-### Event:cancel 
+### Event:cancel
 
 slide가 다음 혹은 이전으로 가지 못하고 다시 원래의 화면으로 돌아올 때 발생하는 이벤트.
 

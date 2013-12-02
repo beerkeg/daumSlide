@@ -1,3 +1,5 @@
+# Usage - Quick Start (init 순서)
+
 ### 1. slide가 동작할  frame element를 지정한다. 
 
 ```javascript

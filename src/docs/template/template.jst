@@ -12,7 +12,7 @@ html {
 }
 
 body {
-  font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Verdana, Tahoma, sans-serif;
+  font-family: "맑은 고딕", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Verdana, Tahoma, sans-serif;
     font-size: 14px;
   line-height: 180%;
   color: black;
@@ -35,6 +35,11 @@ a {
       background: none;
       color: #b950b7;
     }
+
+header a, header a:visited, header a:hover, header a:focus {
+    color: #480;
+    text-decoration: none;
+} 
 
 #changelog #gtoc {
   display: none;
@@ -132,12 +137,12 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 header h1 {
-  font-family: Georgia, FreeSerif, Times, serif;
-  font-size: 30px;
-  font-weight: normal;
+  font-family: dotum, Georgia, FreeSerif, Times, serif;
+  font-size: 50px;
+  font-weight: bold;
   line-height: 36px;
   color: #480;
-  margin: 15px 0 11px;
+  margin: 15px 0;
   border-bottom: none;
   padding-bottom: 0;
 }
@@ -145,13 +150,13 @@ header h1 {
 h1 {
   font-size: 29px;
   line-height: 33px;
-  margin: 3em 0 15px;
+  margin: 2em 0 15px;
   padding-bottom: 0.5em;
   border-bottom: 1px solid #ccc;
 }
 
 #toc + h1 {
-  margin-top:1em;
+  margin-top:1.5em;
   padding-top:0;
 }
 
@@ -533,12 +538,32 @@ a.anchor {
 .sh_sourceCode .sh_comment {
   color: green;
 }
+
+.go-top {
+    position: fixed;
+    bottom: 2em;
+    right: 2em;
+    text-decoration: none;
+    color: #FFF;
+    background-color: rgba(0, 0, 0, 0.3);
+    font-size: 12px;
+    padding: 1em;
+    border-radius: 8px;
+}
+.go-top a, .go-top a:visited {
+    text-decoration: none;
+    color: #FFF;
+}
     </style>
 </head>
 <body>
+    <header>
+        <h1><a href="index.html">Slide</a></h1>
+    </header>
     <div id="apicontent">
         <%=content%>
     </div>
+    <div class="go-top"><a href="#">Go Top</a></div>
     <script type="text/javascript">
         if(!this.sh_languages)this.sh_languages={};var sh_requests={};function sh_isEmailAddress(url){if(/^mailto:/.test(url))return false;return url.indexOf("@")!==-1}function sh_setHref(tags,numTags,inputString){var url=inputString.substring(tags[numTags-2].pos,tags[numTags-1].pos);if(url.length>=2&&(url.charAt(0)==="<"&&url.charAt(url.length-1)===">"))url=url.substr(1,url.length-2);if(sh_isEmailAddress(url))url="mailto:"+url;tags[numTags-2].node.href=url}
 function sh_konquerorExec(s){var result=[""];result.index=s.length;result.input=s;return result}
