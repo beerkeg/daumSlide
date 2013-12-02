@@ -17,10 +17,11 @@
      * orientation 이벤트로만 리사이즈를 체크한다.
      */
     exports.onResized = function () {
-        var prevWidth = 0, prevHeight = 0;
         var resizeEvent = availOrientationChange ? 'orientationchange' : 'resize';
 
         return function (el, callback) {
+            var prevWidth = el.clientWidth;
+            var prevHeight = el.clientHeight;
             function isChanged (width, height) {
                 return !(prevWidth === width && prevHeight === height);
             }
