@@ -5,6 +5,10 @@
     'use strict';
 
     var preventDefault = exports.preventDefault;
+    var ua = exports.ua;
+    var os = ua.os;
+    var availOrientationChange = ("onorientationchange" in window && ua.platform !== "pc") ? true : false;
+    var resizeEvent = availOrientationChange ? 'orientationchange' : 'resize';
 
     var SLIDE_TRESHOLD = 0.1; // 10%
 
@@ -60,6 +64,18 @@
          * @method bindEvents
          */
         bindEvents: function () {
+            this.bindGesture();
+            this.onResized();
+
+            /**
+             * ios webapp : 다른 탭에서 orientation 발생시 제대로 사이즈 체크 안되는 버그가 존재.
+             *              현재 탭으로 복귀시 발생하는 visivlityChange 이벤트 발생(ios7 이상)시 강제로 리사이즈 체크.
+             */
+            if (os.ios && parseInt(os.version.major, 10) > 6) {
+                this.onVisibilityChange();
+            }
+        },
+        bindGesture: function () {
             var GESTURE_THRESHOLD = 0,
                 self = this;
 
@@ -73,9 +89,50 @@
             listener.onGestureEnd(function (session) {
                 return self.endDrag(session);
             });
-            exports.onResized(this.frameEl, function (width, height) {
-                self.resize(width, height);
+        },
+        onResized: function () {
+            this.prevWidth = this.frameEl.clientWidth;
+            this.prevHeight = this.frameEl.clientHeight;
+            var self = this;
+            exports.on(window, resizeEvent, function () {
+                self.checkAndResizeSlideFrame();
             });
+        },
+        onVisibilityChange: function () {
+            var hidden, visibilityChange;
+            if (typeof document.hidden !== "undefined") {
+                hidden = "hidden";
+                visibilityChange = "visibilitychange";
+            } else if (typeof document.webkitHidden !== "undefined") {
+                hidden = "webkitHidden";
+                visibilityChange = "webkitvisibilitychange";
+            }
+
+            var self = this;
+            exports.on(document, visibilityChange, function handleVisibilityChange() {
+                if (!document[hidden]) {
+                    self.checkAndResizeSlideFrame();
+                }
+            });
+        },
+        checkAndResizeSlideFrame: function () {
+            var cnt = 0;
+            var self = this;
+            function checkResize() {
+                var width = self.frameEl.clientWidth;
+                var height = self.frameEl.clientHeight;
+                if(self.isChangedSize(width, height)) {
+                    self.resize(width, height);
+                } else if(os.android === true && cnt < 10) {
+                    cnt++;
+                    window.setTimeout(checkResize, 100);
+                }
+            }
+
+            checkResize();
+        },
+        isChangedSize: function (width, height) {
+            return !(this.prevWidth === width && this.prevHeight === height);
         },
         /**
          * 데이터 소스로부터 데이터를 받아서 슬라이드에 보여준다.
@@ -195,6 +252,11 @@
          * @param height {Number} frame element의 height 실제크기
          */
         resize: function (width, height) {
+            width = width || this.frameEl.clientWidth;
+            height = height || this.frameEl.clientHeight;
+
+            this.prevWidth = width;
+            this.prevHeight = height;
             this.setWrapperSize(width, height);
             this.emit("resize", width, height);
         },
