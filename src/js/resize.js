@@ -1,6 +1,6 @@
 /*jshint browser: true
 */
-/*global slide:true*/
+/*global slide:true, log:true, alert:true*/
 
 (function (exports) {
 	'use strict';
@@ -10,40 +10,57 @@
     var availOrientationChange = ("onorientationchange" in window && ua.platform !== "pc") ? true : false;
 
     /**
-     * android: orientation > resize
-     * ios    : resize > orientation 순으로 이벤트가 발생된다.
-     * ios의 경우, resize eventHandler가 많을 경우
-     * orientation event가 지연(200ms 이상)되기 때문에,
-     * orientation 이벤트로만 리사이즈를 체크한다.
+     * android 4.1 이하: 기본 브라우져의 경우 orientation이벤트 발생시 사이즈 변경이 제때 이루어 지지 않아 변경될때까지 체크 로직 추가.
      */
     exports.onResized = function () {
-        var prevWidth = 0, prevHeight = 0;
         var resizeEvent = availOrientationChange ? 'orientationchange' : 'resize';
 
         return function (el, callback) {
+            var prevWidth = el.clientWidth;
+            var prevHeight = el.clientHeight;
+
             function isChanged (width, height) {
                 return !(prevWidth === width && prevHeight === height);
             }
 
-            exports.on(window, resizeEvent, function() {
+            function enterResize() {
                 var cnt = 0;
                 function checkResize() {
                     var width = el.clientWidth;
                     var height = el.clientHeight;
-
                     if(isChanged(width, height)) {
                         prevWidth = width;
                         prevHeight = height;
                         callback(width, height);
-
-                    } else if(cnt < 10) {
+                    } else if(os.android === true && cnt < 10) {
                         cnt++;
-                        setTimeout(checkResize, 100);
+                        window.setTimeout(checkResize, 100);
                     }
                 }
 
                 checkResize();
-            });
+            }
+            exports.on(window, resizeEvent, enterResize);
+            
+            /**
+             * ios webapp : 다른 탭에서 orientation 발생시 제대로 사이즈 체크 안되는 버그가 존재.
+             *              현재 탭으로 복귀시 발생하는 visivlityChange 이벤트 발생(ios7 이상)시 강제로 리사이즈 체크.
+             */
+            if (os.ios && parseInt(os.version.major, 10) > 6) {
+                var hidden, visibilityChange;
+                if (typeof document.hidden !== "undefined") {
+                    hidden = "hidden";
+                    visibilityChange = "visibilitychange";
+                } else if (typeof document.webkitHidden !== "undefined") {
+                    hidden = "webkitHidden";
+                    visibilityChange = "webkitvisibilitychange";
+                }
+                exports.on(document, visibilityChange, function handleVisibilityChange() {
+                    if (!document[hidden]) {
+                        enterResize();
+                    }
+                });
+            }
         };
     }();
 }(window.slide = (typeof slide === 'undefined') ? {} : slide));

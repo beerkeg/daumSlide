@@ -8,5 +8,5 @@ org.*
 pom.xml
 .idea
 *.iml
-/docs/
+docs/
 themes/
