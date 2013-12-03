@@ -45,7 +45,6 @@ module.exports = function(grunt) {
         },
         src: [
           'src/js/init.js',
-          'src/js/resize.js',
           'src/js/datasource.js',
           'src/js/panel.js',
           'src/js/container.js',
@@ -66,7 +65,6 @@ module.exports = function(grunt) {
           '<%= remotefile.gesture.dest %>',
           '<%= remotefile.observable.dest %>',
           'src/js/init.js',
-          'src/js/resize.js',
           'src/js/datasource.js',
           'src/js/panel.js',
           'src/js/container.js',
