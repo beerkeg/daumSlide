@@ -8,3 +8,5 @@ org.*
 pom.xml
 .idea
 *.iml
+docs/
+themes/
