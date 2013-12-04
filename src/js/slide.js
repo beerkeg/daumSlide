@@ -7,6 +7,12 @@
     var preventDefault = exports.preventDefault;
     var ua = exports.ua;
     var os = ua.os;
+    var isDoingCheckSize = function () {
+        return os.android === true;
+    }();
+    var isBindingVisibilityChange = function () {
+        return os.ios === true && parseInt(os.version.major, 10) > 6;
+    }();
     var availOrientationChange = ("onorientationchange" in window && ua.platform !== "pc") ? true : false;
     var resizeEvent = availOrientationChange ? 'orientationchange' : 'resize';
 
@@ -42,6 +48,7 @@
             this.option = option || {};
 
             this.pageWidth = this.frameEl.clientWidth;
+            this.pageHeight = this.frameEl.clientHeight;
 
             this.initContainer();
             this.show();
@@ -71,10 +78,15 @@
              * ios webapp : 다른 탭에서 orientation 발생시 제대로 사이즈 체크 안되는 버그가 존재.
              *              현재 탭으로 복귀시 발생하는 visivlityChange 이벤트 발생(ios7 이상)시 강제로 리사이즈 체크.
              */
-            if (os.ios && parseInt(os.version.major, 10) > 6) {
+            if (isBindingVisibilityChange) {
                 this.onVisibilityChange();
             }
         },
+        /**
+         * slide 에 gesture event(mouse or touch event)를 bind 시킨다.
+         *
+         * @method bindGesture
+         */
         bindGesture: function () {
             var GESTURE_THRESHOLD = 0,
                 self = this;
@@ -90,14 +102,22 @@
                 return self.endDrag(session);
             });
         },
+        /**
+         * slide 에 resize event를 bind 시킨다.
+         *
+         * @method onResized
+         */
         onResized: function () {
-            this.prevWidth = this.frameEl.clientWidth;
-            this.prevHeight = this.frameEl.clientHeight;
             var self = this;
             exports.on(window, resizeEvent, function () {
                 self.checkAndResizeSlideFrame();
             });
         },
+        /**
+         * slide 에 visibilitychange event를 bind 시킨다.
+         *
+         * @method onVisibilityChange
+         */
         onVisibilityChange: function () {
             var hidden, visibilityChange;
             if (typeof document.hidden !== "undefined") {
@@ -115,6 +135,11 @@
                 }
             });
         },
+        /**
+         * slide Frame 의 사이즈를 확인해서 변경시에는 리사이즈 시킨다.
+         *
+         * @method checkAndResizeSlideFrame
+         */
         checkAndResizeSlideFrame: function () {
             var cnt = 0;
             var self = this;
@@ -123,7 +148,7 @@
                 var height = self.frameEl.clientHeight;
                 if(self.isChangedSize(width, height)) {
                     self.resize(width, height);
-                } else if(os.android === true && cnt < 10) {
+                } else if(isDoingCheckSize && cnt < 10) {
                     cnt++;
                     window.setTimeout(checkResize, 100);
                 }
@@ -131,8 +156,14 @@
 
             checkResize();
         },
+        /**
+         * slide Frame 의 사이즈가 변경되었는지 확인한다.
+         *
+         * @method isChangedSize
+         * @return {Boolean} 사이즈 변경시 true, 사이즈 미변경시 false.
+         */
         isChangedSize: function (width, height) {
-            return !(this.prevWidth === width && this.prevHeight === height);
+            return !(this.pageWidth === width && this.pageHeight === height);
         },
         /**
          * 데이터 소스로부터 데이터를 받아서 슬라이드에 보여준다.
@@ -255,8 +286,6 @@
             width = width || this.frameEl.clientWidth;
             height = height || this.frameEl.clientHeight;
 
-            this.prevWidth = width;
-            this.prevHeight = height;
             this.setWrapperSize(width, height);
             this.emit("resize", width, height);
         },
@@ -266,8 +295,9 @@
          * @method setWrapperSize
          * @param width {Number} frame element의 실제 width 크기
          */
-        setWrapperSize: function (width) {
+        setWrapperSize: function (width, height) {
             this.pageWidth = width;
+            this.pageHeight = height;
         },
         /**
          * 해당 클래스의 인스턴스 삭제시 할당된 오브젝트들을 destroy 시킨다.
