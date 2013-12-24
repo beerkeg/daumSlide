@@ -10,3 +10,4 @@ pom.xml
 *.iml
 docs/
 themes/
+src/example/sports/

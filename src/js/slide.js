@@ -7,9 +7,6 @@
     var preventDefault = exports.preventDefault;
     var ua = exports.ua;
     var os = ua.os;
-    var isDoingCheckSize = function () {
-        return os.android === true;
-    }();
     var isBindingVisibilityChange = function () {
         return os.ios === true && parseInt(os.version.major, 10) > 6;
     }();
@@ -148,9 +145,10 @@
                 var height = self.frameEl.clientHeight;
                 if(self.isChangedSize(width, height)) {
                     self.resize(width, height);
-                } else if(isDoingCheckSize && cnt < 10) {
+                } else if(cnt < 5) {
                     cnt++;
-                    window.setTimeout(checkResize, 100);
+                    window.clearTimeout(self.resizeCheckTimeId);
+                    self.resizeCheckTimeId = window.setTimeout(checkResize, 200);
                 }
             }
 
