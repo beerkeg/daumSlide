@@ -22,12 +22,12 @@ ul, li {
 }
 #wrapper {
     margin: 0 auto;
-    width: 300px;
+    width: 100%;
     height:100%;
     /*overflow:hidden;*/
     background-color: #000;
     position: relative;
-    border: solid 1px #0f0;
+    /*border: solid 1px #0f0;*/
 }
 .slide {
     height: 100%;
@@ -39,8 +39,8 @@ ul, li {
 
 .panel img {
     position: relative;
-    width:200px;
-    height:200px;
+    width:100%;
+    height:100%;
     /*top: 10%;*/
 }
 
@@ -90,13 +90,16 @@ ul, li {
 
 
 </style>
+<script type="text/javascript" src="../../dist/dependency/ua_parser.js"></script>
+<script type="text/javascript" src="../../dist/dependency/event.js"></script>
 <script type="text/javascript" src="../../dist/dependency/gesture.js"></script>
 <script type="text/javascript" src="../../dist/dependency/observable.js"></script>
+<script type="text/javascript" src="../js/init.js"></script>
 <script type="text/javascript" src="../js/datasource.js"></script>
-<script type="text/javascript" src="../js/util.js"></script>
 <script type="text/javascript" src="../js/panel.js"></script>
 <script type="text/javascript" src="../js/container.js"></script>
 <script type="text/javascript" src="../js/slide.js"></script>
+<script type="text/javascript" src="../js/progressive.js"></script>
 
 </head>
 <body>
@@ -113,12 +116,12 @@ ul, li {
     }
 
     var slides = [
-        createSlide('<img alt="image1" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic01.jpg" width="300" height="213">'),
-        createSlide('<img alt="image2" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic02.jpg" width="300" height="164">'),
-        createSlide('<img alt="image3" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic03.jpg" width="300" height="213">'),
-        createSlide('<img alt="image4" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic04.jpg" width="147" height="220">'),
-        createSlide('<img alt="image5" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic05.jpg" width="300" height="213">'),
-        createSlide('<img alt="image6" src="http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic06.jpg" width="165" height="220">')
+        createSlide('<img alt="image1" src="http://cfile252.uf.daum.net/image/1351004E4F9E026D2AF64C" width="300" height="213">'),
+        createSlide('<img alt="image2" src="http://cfile257.uf.daum.net/image/14606F404F378867024137" width="300" height="164">'),
+        createSlide('<img alt="image3" src="http://cfile299.uf.daum.net/image/2245653E52C8D9A71B4654" width="300" height="213">'),
+        createSlide('<img alt="image4" src="http://cfile268.uf.daum.net/image/177E85484FA3750214C555" width="147" height="220">'),
+        createSlide('<img alt="image5" src="http://cfile258.uf.daum.net/image/170AC3484FA37503062663" width="300" height="213">'),
+        createSlide('<img alt="image6" src="http://cfile245.uf.daum.net/image/117CAB484FA3750416BF81" width="165" height="220">')
     ];
 
     var wrapper = document.getElementById("wrapper");
