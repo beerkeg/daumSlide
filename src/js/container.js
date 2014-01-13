@@ -55,7 +55,7 @@
          * @return container {HTMLElement} container element
          */
         setContainerStyle: function (width) {
-            return "overflow:hidden;position:relative;top:0;left:0;" +
+            return "position:relative;top:0;left:0;" +
                     "width:" + width + "px;";
         },
         /**
@@ -134,7 +134,7 @@
      */
     exports.middleContainerObj = {
         setContainerStyle: function (width) {
-            return "overflow:hidden;position:relative;top:0;" + exports.hardwareAccelStyle +
+            return "position:relative;top:0;" + exports.hardwareAccelStyle +
                     "left:" + (-width) + "px;width:" + (width * 3) + "px;";
         },
         setPanel: function (panelOption) {
