@@ -326,14 +326,6 @@ function setFooter(sl, ds) {
         });
     }
     setDesc();
-    sl.on("startDrag", function (session) {
-        var ev = session.targetEvent;
-        if(ev.preventDefault){
-            ev.preventDefault();
-        } else {
-            ev.returnValue = false;
-        }
-    });
 
     sl.on("next", setDesc);
     sl.on("prev", setDesc);
