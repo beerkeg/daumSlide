@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src\js\container.js - slide</title>
+    <link rel="shortcut icon" type="image/ico" href="../assets/favicon.ico">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="http://s1.daumcdn.net/svc/original/U03/cssjs/bootstrap/3.0.2/bootstrap-journal.min.css">
+    <link href="../assets/vendor/prism/prism-okadia.css" rel="stylesheet" />
+        <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <style type="text/css">
+        
+    </style>
+</head>
+<body class="language-javascript">
+<div id="wrap">
+    <div class="navbar navbar-default" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">slide</a>
+            </div>
+            <p class="navbar-text navbar-right">API Docs for Version: <b>1.2.12</b></p>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+            <div>
+    <h3>APIs</h3>
+    <div id="sidebar">
+        <ul id="main-nav" class="nav nav-pills">
+            <li class="active"><a href="#modules" data-toggle="tab">Modules</a></li>
+            <li class=""><a href="#classes" data-toggle="tab">Classes</a></li>  
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active" id="modules">
+                <div id="api-modules" class="list-group">
+                    
+                        <a class="list-group-item" href="../modules/slide.html">slide</a>
+                    
+                </div>
+            </div>
+            <div class="tab-pane" id="classes">
+                <div id="api-classes" class="list-group">
+                    
+                        <a class="list-group-item" href="../classes/AdvanceContainer.html">AdvanceContainer</a>
+                    
+                        <a class="list-group-item" href="../classes/AdvanceSlide.html">AdvanceSlide</a>
+                    
+                        <a class="list-group-item" href="../classes/BasicContainer.html">BasicContainer</a>
+                    
+                        <a class="list-group-item" href="../classes/BasicSlide.html">BasicSlide</a>
+                    
+                        <a class="list-group-item" href="../classes/Class.html">Class</a>
+                    
+                        <a class="list-group-item" href="../classes/CloneAdvanceContainer.html">CloneAdvanceContainer</a>
+                    
+                        <a class="list-group-item" href="../classes/DataSource.html">DataSource</a>
+                    
+                        <a class="list-group-item" href="../classes/gesture.html">gesture</a>
+                    
+                        <a class="list-group-item" href="../classes/InfiniteDataSource.html">InfiniteDataSource</a>
+                    
+                        <a class="list-group-item" href="../classes/MiddleContainer.html">MiddleContainer</a>
+                    
+                        <a class="list-group-item" href="../classes/MiddleSlide.html">MiddleSlide</a>
+                    
+                        <a class="list-group-item" href="../classes/Observable.html">Observable</a>
+                    
+                        <a class="list-group-item" href="../classes/Panel.html">Panel</a>
+                    
+                        <a class="list-group-item" href="../classes/slide.html">slide</a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+            </div>
+            <div class="col-md-9">
+                <!--     <div id="options-form" class="pull-right">
+        Show:
+            <label for="api-show-inherited" class="checkbox-inline">
+                <input type="checkbox" id="api-show-inherited" checked>
+                Inherited
+            </label>
+            <label for="api-show-protected" class="checkbox-inline">
+                <input type="checkbox" id="api-show-protected">
+                Protected
+            </label>
+        
+            <label for="api-show-private" class="checkbox-inline">
+                <input type="checkbox" id="api-show-private">
+                Private
+            </label>
+        
+            <label for="api-show-deprecated" class="checkbox-inline">
+                <input type="checkbox" id="api-show-deprecated">
+                Deprecated
+            </label>
+    </div>
+
+ -->
+                <div class="apidocs row">
+                    <div id="docs-main">
+                        <div class="content">
+                            <div class="page-header">
+    <h1>src\js\container.js <small>File</small></h1>
+</div>
+
+<div class="file">
+    <pre id="codeBlock" class="line-numbers">
+    	<code class="language-javascript">
+/*jshint browser: true
+*/
+/*global slide, Class, gesture, clay*/
+(function (exports) {
+    &#x27;use strict&#x27;;
+
+    var slideInstanceNum = 0;
+    var PANEL_PREV = 0, PANEL_CURRENT = 1, PANEL_NEXT = 2;
+    /**
+     * #### 새로운 Container를 생성/초기화 한다.
+     *
+     * @class BasicContainer
+     * @extends Class
+     * @constructor BasicContainer
+     * @param slide {Object} slide Class
+     * @param option {Object} option values
+     */
+    exports.basicContainerObj = {
+        init: function (slide, option) {
+            this.slide = slide;
+            this.option = option &amp;&amp; option.container ? option.container : {};
+
+            this.el = this.createContainer(slide.pageWidth);
+
+            var panelOption = option &amp;&amp; option.panel ? option.panel : {};
+            this.panelClass = option.panelClass;
+            this.setPanel(panelOption);
+            this.bindEvents();
+        },
+        /**
+         * 새로운 Container를 생성/초기화 한다.
+         *
+         * @method createContainer
+         * @param width {String | Number} Slide Frame의 width 값
+         * @return container {HTMLElement} container element
+         */
+        createContainer: function (width) {
+            var container = document.createElement(&quot;div&quot;);
+
+            container.className = this.option.className || &quot;slide&quot;;
+            if (this.option.id) {
+                container.id = this.option.id;
+            } else {
+                slideInstanceNum += 1;
+                container.id = &quot;slide-&quot; + slideInstanceNum;
+            }
+            container.style.cssText = this.setContainerStyle(width);
+            return container;
+        },
+        /**
+         * 새로운 Container를 생성/초기화 한다.
+         *
+         * @method createContainer
+         * @param width {String | Number} Slide Frame의 width 값
+         * @return container {HTMLElement} container element
+         */
+        setContainerStyle: function (width) {
+            return &quot;position:relative;top:0;left:0;&quot; +
+                    &quot;width:&quot; + width + &quot;px;&quot;;
+        },
+        /**
+         * 컨테이너에서 조절할 하나의 패널을 설정한다.
+         *
+         * @method setPanel
+         * @param panelOption {Object} panel을 설정할때 필요한 panel 옵션 값
+         */
+        setPanel: function (panelOption) {
+            this.panel = this.initPanel(panelOption);
+        },
+        /**
+         * 하나의 패널을 생성/초기화 한다.
+         *
+         * @method initPanel
+         * @param panelOption {Object} panel을 설정할때 필요한 panel 옵션 값
+         * @return panel {PanelClass} 생성/초기화한 PanelClass Instance
+         */
+        initPanel: function (panelOption) {
+            var PanelClass = this.panelClass || exports.Panel;
+            var panel = new PanelClass(this.slide, panelOption);
+            this.el.appendChild(panel.el);
+            return panel;
+        },
+        /**
+         * 이벤트를 설정한다.
+         * 슬라이드의 frame 크기가 resize 될 경우에 대한 콜백함수 추가.
+         *
+         * @method bindEvents
+         */
+        bindEvents: function () {
+            var self = this;
+            this.slide.on(&#x27;resize&#x27;, function (width) {
+                self.setSlideSize(width);
+            });
+        },
+        /**
+         * 슬라이드의 frame 크기가 resize 될 경우에 컨테이너의 사이즈를 frame 사이즈와 같게 변경해준다.
+         *
+         * @method setSlideSize
+         * @param width {String | Number} frame width size
+         */
+        setSlideSize: function (width) {
+            this.el.style.width = width + &#x27;px&#x27;;
+        },
+        /**
+         * 현재 container의 width 사이즈를 얻어온다.
+         *
+         * @method getWidth
+         * @return width {Number} container element width size
+         */
+        getWidth: function () {
+            return this.el.clientWidth;
+        },
+        /**
+         * 해당 클래스의 인스턴스 삭제시 할당된 오브젝트들을 destroy 시킨다.
+         *
+         * @method destroy
+         */
+        destroy: function () {
+            this.slide = null;
+            this.el = null;
+
+            this.panel.destroy();
+            this.panel = null;
+        }
+    };
+    /**
+     * #### 새로운 Container를 생성/초기화 한다.
+     *
+     * @class MiddleContainer
+     * @extends BasicContainer
+     * @constructor MiddleContainer
+     * @param slide {Object} slide Class
+     * @param option {Object} option values
+     */
+    exports.middleContainerObj = {
+        setContainerStyle: function (width) {
+            return &quot;position:relative;top:0;&quot; + exports.hardwareAccelStyle +
+                    &quot;left:&quot; + (-width) + &quot;px;width:&quot; + (width * 3) + &quot;px;&quot;;
+        },
+        setPanel: function (panelOption) {
+            this.panels = [];
+            this.initPanels(panelOption);
+        },
+        /**
+         * slide내에 존재하는 패널들을 생성/초기화 한다.
+         *
+         * @method initPanels
+         * @param panelOption {Object} panel들을 생성하는데 필요한 옵션 값
+         */
+        initPanels: function (panelOption) {
+            var panels = this.panels;
+            panels[PANEL_PREV] = this.initPanel(panelOption);
+            panels[PANEL_CURRENT] = this.initPanel(panelOption);
+            panels[PANEL_NEXT] = this.initPanel(panelOption);
+
+            this.setAriaHiddenPanels();
+        },
+        /**
+         * 웹접근성을 위한 코드.
+         * 현재 패널만 스크린 리더에서 읽도록 한다.
+         * 이전 패널과 이후 패널의 데이터를 스크린 리더에서 읽지 못하도록 막는다.
+         *
+         * @method setAriaHiddenPanels
+         */
+        setAriaHiddenPanels: function () {
+            var panels = this.panels;
+            panels[PANEL_PREV].setAriaHidden(true);
+            panels[PANEL_CURRENT].setAriaHidden(false);
+            panels[PANEL_NEXT].setAriaHidden(true);
+        },
+        /**
+         * slide에 있는 패널들에 현재 인덱스 기준의 데이터 셋을 넣는다.
+         *
+         * @method setData
+         * @param set {Object} HTMLElement 데이터 셋
+         */
+        setData: function (set) {
+            var panels = this.panels;
+            panels[PANEL_PREV].setData(set.prev);
+            panels[PANEL_CURRENT].setData(set.current);
+            panels[PANEL_NEXT].setData(set.next);
+        },
+        /**
+         * 마지막 패널에 next 데이터를 넣는다.
+         *
+         * @method setNextData
+         * @param next {HTMLElement} 다음 데이터
+         */
+        setNextData: function (next) {
+            this.panels[PANEL_NEXT].setData(next);
+        },
+        /**
+         * 첫번째 패널에 prev 데이터를 넣는다.
+         *
+         * @method setPrevData
+         * @param prev {HTMLElement} 이전 데이터
+         */
+        setPrevData: function (prev) {
+            this.panels[PANEL_PREV].setData(prev);
+        },
+        /**
+         * next 이후 패널들을 재정렬한다.
+         * 첫번째 패널을 마지막으로 옮긴다.
+         *
+         * @method rearrangePanelsAfterNext
+         */
+        rearrangePanelsAfterNext: function () {
+            var panel = this.panels.shift(),
+                firstPanelEl = panel.el;
+            this.el.removeChild(firstPanelEl);
+            this.move(0);
+            this.el.appendChild(firstPanelEl);
+            this.panels.push(panel);
+        },
+        /**
+         * prev 이후 패널들을 재정렬한다.
+         * 마지막 패널을 첫번째로 옮긴다.
+         *
+         * @method rearrangePanelsAfterPrev
+         */
+        rearrangePanelsAfterPrev: function () {
+            var panel = this.panels.pop(),
+                lastPanelEl = panel.el,
+                firstPanelEl = this.panels[0].el;
+            this.el.removeChild(lastPanelEl);
+            this.move(0);
+            this.el.insertBefore(lastPanelEl, firstPanelEl);
+            this.panels.unshift(panel);
+        },
+        /**
+         * 주어진 offset 만큼 slide를 좌우 이동 시킨다.
+         * css transition animation 없이 단순 이동
+         *
+         * @method move
+         * @param offset {Number} 이동시킬 거리 값
+         */
+        move: function (offset) {
+            this.el.style.left = (offset - this.slide.pageWidth) + &#x27;px&#x27;;
+        },
+        /**
+         * 변경된 slide size 와 offset 을 다시 설정한다.
+         *
+         * @method setSlideSize
+         * @param width {String | Number}
+         */
+        setSlideSize: function (width) {
+            this.el.style.width = (width * 3) + &#x27;px&#x27;;
+            this.el.style.left = (-width) + &#x27;px&#x27;;
+        },
+        /**
+         * 해당 클래스의 인스턴스 삭제시 할당된 오브젝트들을 destroy 시킨다.
+         *
+         * @method destroy
+         */
+        destroy: function () {
+            this.slide = null;
+            this.el = null;
+
+            this.panels[0].destroy();
+            this.panels[1].destroy();
+            this.panels[2].destroy();
+            delete this.panels;
+        }
+    };
+    /**
+     * #### 새로운 Container를 생성/초기화 한다.
+     *
+     * @class AdvanceContainer
+     * @extends MiddleContainer
+     * @constructor AdvanceContainer
+     * @param slide {Object} slide Class
+     * @param option {Object} option values
+     */
+    exports.advanceContainerObj = {
+        /**
+         * 주어진 offset 만큼 slide를 좌우 이동 시킨다.
+         *
+         * @method move
+         * @param offset {Number} 이동시킬 거리 값
+         */
+        move: function (offset) {
+            this.el.style.webkitTransform = &#x27;translate3d(&#x27; + offset + &#x27;px, 0, 0)&#x27;;
+        },
+        /**
+         * 해당 slide(컨테이너 Element) 의 transitionDuration을 설정한다.
+         *
+         * @method setTransitionDuration
+         * @param duration {Number}
+         */
+        setTransitionDuration: function (duration) {
+            this.el.style.webkitTransitionDuration = duration + &#x27;ms&#x27;;
+        },
+        /**
+         * 해당 콜백을 onwebkitTransitionEnd 에 등록한다.
+         *
+         * @method onTransitionEnd
+         * @param callback {function} TransitionEnd 이벤트 발생시 동작할 callback 함수 
+         */
+        onTransitionEnd: function (callback) {
+            this.el.addEventListener(&#x27;webkitTransitionEnd&#x27;, callback);
+        },
+        /**
+         * 해당 콜백을 onwebkitTransitionEnd 에서 제거한다.
+         *
+         * @method offTransitionEnd
+         * @param callback {function} 제거할 callback function
+         */
+        offTransitionEnd: function (callback) {
+            this.el.removeEventListener(&#x27;webkitTransitionEnd&#x27;, callback);
+        }
+    };
+    /**
+     * #### 새로운 Container를 생성/초기화 한다.
+     * AdvanceContainer를 상속받아 기본적으로 비슷하게 동작하나,
+     * 패널 재배열시 임시적으로 컨테이너의 클론을 보여주었다가
+     * 패널이 재배열 된 후에 클론을 삭제하는 동작이 추가됨.
+     *
+     * @class CloneAdvanceContainer
+     * @extends AdvanceContainer
+     * @constructor CloneAdvanceContainer
+     * @param slide {Object} slide Class
+     * @param option {Object} option values
+     */
+    exports.cloneAdvanceContainerObj = {
+        /**
+         * panel을 재배치 하기 전에 해당 컨테이너의 클론을 만들어 보여주었다가 패널이 재배치 된 이후에 클론을 제거 한다.
+         *
+         * @method showTemporaryClone
+         * @param callback {Function} 클론이 보여지는 동안 동작할 callback 함수
+         */
+        showTemporaryClone: function (callback) {
+            var cloneEl = this.el.cloneNode(true),
+                parent = this.el.parentNode;
+            parent.replaceChild(cloneEl, this.el);
+
+            if (callback) {
+                callback();
+            }
+
+            parent.replaceChild(this.el, cloneEl);
+            cloneEl = null;
+        },
+        /**
+         * next 이후 패널들을 재정렬한다.
+         * 첫번째 패널을 마지막으로 옮긴다.
+         *
+         * @method rearrangePanelsAfterNext
+         */
+        rearrangePanelsAfterNext: function () {
+            var self = this;
+            this.showTemporaryClone(function () {
+                self._super();
+            });
+        },
+        /**
+         * prev 이후 패널들을 재정렬한다.
+         * 마지막 패널을 첫번째로 옮긴다.
+         *
+         * @method rearrangePanelsAfterPrev
+         */
+        rearrangePanelsAfterPrev: function () {
+            var self = this;
+            this.showTemporaryClone(function () {
+                self._super();
+            });
+        }
+    };
+})(window.slide = (typeof slide === &#x27;undefined&#x27;) ? {} : slide);
+
+		</code>
+    </pre>
+</div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="footer">
+    <div class="container">
+        <p class="text-muted credit">@Daum HTML5 기술팀.</p>
+    </div>
+</div>
+<script type="text/javascript" src="http://s1.daumcdn.net/svc/original/U03/cssjs/jquery/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="http://s1.daumcdn.net/svc/original/U03/cssjs/bootstrap/3.0.2/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../assets/js/main.js"></script>
+<script type="text/javascript" src="../assets/vendor/prism/prism-okadia.js"></script>
+<script type="text/javascript"></script>
+</body>
+</html>

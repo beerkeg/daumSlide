@@ -1,0 +1,2104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>CloneAdvanceContainer - slide</title>
+    <link rel="shortcut icon" type="image/ico" href="../assets/favicon.ico">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="http://s1.daumcdn.net/svc/original/U03/cssjs/bootstrap/3.0.2/bootstrap-journal.min.css">
+    <link href="../assets/vendor/prism/prism-okadia.css" rel="stylesheet" />
+        <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <style type="text/css">
+        
+    </style>
+</head>
+<body class="language-javascript">
+<div id="wrap">
+    <div class="navbar navbar-default" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">slide</a>
+            </div>
+            <p class="navbar-text navbar-right">API Docs for Version: <b>1.2.12</b></p>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+            <div>
+    <h3>APIs</h3>
+    <div id="sidebar">
+        <ul id="main-nav" class="nav nav-pills">
+            <li class=""><a href="#modules" data-toggle="tab">Modules</a></li>
+            <li class="active"><a href="#classes" data-toggle="tab">Classes</a></li>  
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane" id="modules">
+                <div id="api-modules" class="list-group">
+                    
+                        <a class="list-group-item active" href="../modules/slide.html">slide</a>
+                    
+                </div>
+            </div>
+            <div class="tab-pane active" id="classes">
+                <div id="api-classes" class="list-group">
+                    
+                        <a class="list-group-item" href="../classes/AdvanceContainer.html">AdvanceContainer</a>
+                    
+                        <a class="list-group-item" href="../classes/AdvanceSlide.html">AdvanceSlide</a>
+                    
+                        <a class="list-group-item" href="../classes/BasicContainer.html">BasicContainer</a>
+                    
+                        <a class="list-group-item" href="../classes/BasicSlide.html">BasicSlide</a>
+                    
+                        <a class="list-group-item" href="../classes/Class.html">Class</a>
+                    
+                        <a class="list-group-item active" href="../classes/CloneAdvanceContainer.html">CloneAdvanceContainer</a>
+                    
+                        <a class="list-group-item" href="../classes/DataSource.html">DataSource</a>
+                    
+                        <a class="list-group-item" href="../classes/gesture.html">gesture</a>
+                    
+                        <a class="list-group-item" href="../classes/InfiniteDataSource.html">InfiniteDataSource</a>
+                    
+                        <a class="list-group-item" href="../classes/MiddleContainer.html">MiddleContainer</a>
+                    
+                        <a class="list-group-item" href="../classes/MiddleSlide.html">MiddleSlide</a>
+                    
+                        <a class="list-group-item" href="../classes/Observable.html">Observable</a>
+                    
+                        <a class="list-group-item" href="../classes/Panel.html">Panel</a>
+                    
+                        <a class="list-group-item" href="../classes/slide.html">slide</a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+            </div>
+            <div class="col-md-9">
+                <!--     <div id="options-form" class="pull-right">
+        Show:
+            <label for="api-show-inherited" class="checkbox-inline">
+                <input type="checkbox" id="api-show-inherited" checked>
+                Inherited
+            </label>
+            <label for="api-show-protected" class="checkbox-inline">
+                <input type="checkbox" id="api-show-protected">
+                Protected
+            </label>
+        
+            <label for="api-show-private" class="checkbox-inline">
+                <input type="checkbox" id="api-show-private">
+                Private
+            </label>
+        
+            <label for="api-show-deprecated" class="checkbox-inline">
+                <input type="checkbox" id="api-show-deprecated">
+                Deprecated
+            </label>
+    </div>
+
+ -->
+                <div class="apidocs row">
+                    <div id="docs-main">
+                        <div class="content">
+                            <div class="page-header">
+    <h1>CloneAdvanceContainer <small>Class</small></h1>
+</div>
+
+<div class="well well-small">
+    
+
+    
+        <div class="extends">
+            Extends <a href="..\classes\AdvanceContainer.html" class="crosslink">AdvanceContainer</a>
+        </div>
+    
+
+    
+        <div class="foundat">
+            Defined in: <a href="../files/src_js_container.js.html#l312"><code>src\js\container.js:312</code></a>
+        </div>
+    
+
+    
+        
+            Module: <a href="../modules/slide.html">slide</a>
+        
+    
+
+    
+</div>
+
+
+
+<div class="well well-small">
+    <h4 id="-container-">새로운 Container를 생성/초기화 한다.</h4>
+<p>AdvanceContainer를 상속받아 기본적으로 비슷하게 동작하나,
+패널 재배열시 임시적으로 컨테이너의 클론을 보여주었다가
+패널이 재배열 된 후에 클론을 삭제하는 동작이 추가됨.</p>
+
+</div>
+
+
+    <div class="constructor">
+        <h2>Constructor</h2>
+        <div id="method_CloneAdvanceContainer" class="method item">
+    
+    <h3 class="name"><code>CloneAdvanceContainer</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>slide</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>option</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="/../files/src_js_container.js.html#l312"><code>src\js\container.js:312</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">slide</code>
+                        <span class="type">Object</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>slide Class</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">option</code>
+                        <span class="type">Object</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>option values</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+    </div>
+
+
+<div>
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#index">Index</a></li>
+
+        
+            <li><a data-toggle="tab" href="#methods">Methods</a></li>
+        
+        
+        
+        
+    </ul>
+
+    <div class="tab-content">
+        <div id="index" class="tab-pane active">
+            <h2 class="off-left">Item Index</h2>
+
+            
+                <div class="index-section methods">
+                    <h3>Methods</h3>
+
+                    <ul class="index-list methods extends">
+                        
+                            <li class="index-item method inherited">
+                                <a href="#" data-tabid="#methods" data-anchor="#method_bindEvents" data-tablink="bindEvents">bindEvents</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited inherited">
+                                <a href="#" data-tabid="#methods" data-anchor="#method_createContainer" data-tablink="createContainer">createContainer</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited inherited">
+                                <a href="#" data-tabid="#methods" data-anchor="#method_destroy" data-tablink="destroy">destroy</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
+                                <a href="#" data-tabid="#methods" data-anchor="#method_extend" data-tablink="extend">extend</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
+                                <a href="#" data-tabid="#methods" data-anchor="#method_getWidth" data-tablink="getWidth">getWidth</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
+                                <a href="#" data-tabid="#methods" data-anchor="#method_initPanel" data-tablink="initPanel">initPanel</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
+                                <a href="#" data-tabid="#methods" data-anchor="#method_initPanels" data-tablink="initPanels">initPanels</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited inherited">
+                                <a href="#" data-tabid="#methods" data-anchor="#method_move" data-tablink="move">move</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
+                                <a href="#" data-tabid="#methods" data-anchor="#method_offTransitionEnd" data-tablink="offTransitionEnd">offTransitionEnd</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
+                                <a href="#" data-tabid="#methods" data-anchor="#method_onTransitionEnd" data-tablink="onTransitionEnd">onTransitionEnd</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
+                                <a href="#" data-tabid="#methods" data-anchor="#method_rearrangePanelsAfterNext" data-tablink="rearrangePanelsAfterNext">rearrangePanelsAfterNext</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
+                                <a href="#" data-tabid="#methods" data-anchor="#method_rearrangePanelsAfterPrev" data-tablink="rearrangePanelsAfterPrev">rearrangePanelsAfterPrev</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
+                                <a href="#" data-tabid="#methods" data-anchor="#method_setAriaHiddenPanels" data-tablink="setAriaHiddenPanels">setAriaHiddenPanels</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
+                                <a href="#" data-tabid="#methods" data-anchor="#method_setData" data-tablink="setData">setData</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
+                                <a href="#" data-tabid="#methods" data-anchor="#method_setNextData" data-tablink="setNextData">setNextData</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
+                                <a href="#" data-tabid="#methods" data-anchor="#method_setPanel" data-tablink="setPanel">setPanel</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
+                                <a href="#" data-tabid="#methods" data-anchor="#method_setPrevData" data-tablink="setPrevData">setPrevData</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited inherited">
+                                <a href="#" data-tabid="#methods" data-anchor="#method_setSlideSize" data-tablink="setSlideSize">setSlideSize</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
+                                <a href="#" data-tabid="#methods" data-anchor="#method_setTransitionDuration" data-tablink="setTransitionDuration">setTransitionDuration</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
+                                <a href="#" data-tabid="#methods" data-anchor="#method_showTemporaryClone" data-tablink="showTemporaryClone">showTemporaryClone</a>
+
+                                
+                                
+                            </li>
+                        
+                    </ul>
+                </div>
+            
+
+            
+
+            
+
+            
+        </div>
+
+        
+            <div id="methods" class="tab-pane">
+                <h2 class="off-left">Methods</h2>
+
+                
+                    <div id="method_bindEvents" class="method item inherited">
+    
+    <h3 class="name"><code>bindEvents</code></h3>
+
+    
+        <span class="paren">()</span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="..\classes\BasicContainer.html#method_bindEvents">BasicContainer</a>:
+            
+        
+        
+        <a href="/../files/src_js_container.js.html#l83"><code>src\js\container.js:83</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>이벤트를 설정한다.
+슬라이드의 frame 크기가 resize 될 경우에 대한 콜백함수 추가.</p>
+
+    </div>
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_createContainer" class="method item inherited">
+    
+    <h3 class="name"><code>createContainer</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>width</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+        <span class="returns-inline">
+            <span class="type">HTMLElement</span>
+        </span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            <p>Inherited from
+            <a href="..\classes\BasicContainer.html#method_createContainer">
+                BasicContainer
+            </a>
+            
+            but overwritten in
+            
+        
+        
+        <a href="/../files/src_js_container.js.html#l30"><code>src\js\container.js:30</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>새로운 Container를 생성/초기화 한다.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">width</code>
+                        <span class="type">String | Number</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Slide Frame의 width 값</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                
+                    
+                        <span class="type">HTMLElement</span>:
+                    
+                    <p>container  container element</p>
+
+                
+            </div>
+        </div>
+    
+
+    
+</div>
+
+                
+                    <div id="method_destroy" class="method item inherited">
+    
+    <h3 class="name"><code>destroy</code></h3>
+
+    
+        <span class="paren">()</span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            <p>Inherited from
+            <a href="..\classes\BasicContainer.html#method_destroy">
+                BasicContainer
+            </a>
+            
+            but overwritten in
+            
+        
+        
+        <a href="/../files/src_js_container.js.html#l250"><code>src\js\container.js:250</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>해당 클래스의 인스턴스 삭제시 할당된 오브젝트들을 destroy 시킨다.</p>
+
+    </div>
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_extend" class="method item inherited">
+    
+    <h3 class="name"><code>extend</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>object</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+        <span class="returns-inline">
+            <span class="type"><a href="..\classes\Class.html" class="crosslink">Class</a></span>
+        </span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="..\classes\Class.html#method_extend">Class</a>:
+            
+        
+        
+        <a href="/../files/src_js_init.js.html#l62"><code>src\js\init.js:62</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>상속 기능을 갖는 클래스를 생성한다.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">object</code>
+                        <span class="type">Object</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>클래스로 생성할 객체</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                
+                    
+                        <span class="type"><a href="..\classes\Class.html" class="crosslink">Class</a></span>:
+                    
+                    <p>상속을 받아 새롭게 생성된 Class 객체</p>
+
+                
+            </div>
+        </div>
+    
+
+    
+</div>
+
+                
+                    <div id="method_getWidth" class="method item inherited">
+    
+    <h3 class="name"><code>getWidth</code></h3>
+
+    
+        <span class="paren">()</span>
+    
+
+    
+        <span class="returns-inline">
+            <span class="type">Number</span>
+        </span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="..\classes\BasicContainer.html#method_getWidth">BasicContainer</a>:
+            
+        
+        
+        <a href="/../files/src_js_container.js.html#l104"><code>src\js\container.js:104</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>현재 container의 width 사이즈를 얻어온다.</p>
+
+    </div>
+
+    
+
+    
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                
+                    
+                        <span class="type">Number</span>:
+                    
+                    <p>width  container element width size</p>
+
+                
+            </div>
+        </div>
+    
+
+    
+</div>
+
+                
+                    <div id="method_initPanel" class="method item inherited">
+    
+    <h3 class="name"><code>initPanel</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>panelOption</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+        <span class="returns-inline">
+            <span class="type">PanelClass</span>
+        </span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="..\classes\BasicContainer.html#method_initPanel">BasicContainer</a>:
+            
+        
+        
+        <a href="/../files/src_js_container.js.html#l70"><code>src\js\container.js:70</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>하나의 패널을 생성/초기화 한다.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">panelOption</code>
+                        <span class="type">Object</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>panel을 설정할때 필요한 panel 옵션 값</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                
+                    
+                        <span class="type">PanelClass</span>:
+                    
+                    <p>panel  생성/초기화한 PanelClass Instance</p>
+
+                
+            </div>
+        </div>
+    
+
+    
+</div>
+
+                
+                    <div id="method_initPanels" class="method item inherited">
+    
+    <h3 class="name"><code>initPanels</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>panelOption</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="..\classes\MiddleContainer.html#method_initPanels">MiddleContainer</a>:
+            
+        
+        
+        <a href="/../files/src_js_container.js.html#l144"><code>src\js\container.js:144</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>slide내에 존재하는 패널들을 생성/초기화 한다.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">panelOption</code>
+                        <span class="type">Object</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>panel들을 생성하는데 필요한 옵션 값</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_move" class="method item inherited">
+    
+    <h3 class="name"><code>move</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>offset</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            <p>Inherited from
+            <a href="..\classes\MiddleContainer.html#method_move">
+                MiddleContainer
+            </a>
+            
+            but overwritten in
+            
+        
+        
+        <a href="/../files/src_js_container.js.html#l275"><code>src\js\container.js:275</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>주어진 offset 만큼 slide를 좌우 이동 시킨다.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">offset</code>
+                        <span class="type">Number</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>이동시킬 거리 값</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_offTransitionEnd" class="method item inherited">
+    
+    <h3 class="name"><code>offTransitionEnd</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>callback</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="..\classes\AdvanceContainer.html#method_offTransitionEnd">AdvanceContainer</a>:
+            
+        
+        
+        <a href="/../files/src_js_container.js.html#l302"><code>src\js\container.js:302</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>해당 콜백을 onwebkitTransitionEnd 에서 제거한다.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">callback</code>
+                        <span class="type">Function</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>제거할 callback function</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_onTransitionEnd" class="method item inherited">
+    
+    <h3 class="name"><code>onTransitionEnd</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>callback</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="..\classes\AdvanceContainer.html#method_onTransitionEnd">AdvanceContainer</a>:
+            
+        
+        
+        <a href="/../files/src_js_container.js.html#l293"><code>src\js\container.js:293</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>해당 콜백을 onwebkitTransitionEnd 에 등록한다.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">callback</code>
+                        <span class="type">Function</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>TransitionEnd 이벤트 발생시 동작할 callback 함수</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_rearrangePanelsAfterNext" class="method item">
+    
+    <h3 class="name"><code>rearrangePanelsAfterNext</code></h3>
+
+    
+        <span class="paren">()</span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            <p>Inherited from
+            <a href="..\classes\MiddleContainer.html#method_rearrangePanelsAfterNext">
+                MiddleContainer
+            </a>
+            
+            but overwritten in
+            
+        
+        
+        <a href="/../files/src_js_container.js.html#l343"><code>src\js\container.js:343</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>next 이후 패널들을 재정렬한다.
+첫번째 패널을 마지막으로 옮긴다.</p>
+
+    </div>
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_rearrangePanelsAfterPrev" class="method item">
+    
+    <h3 class="name"><code>rearrangePanelsAfterPrev</code></h3>
+
+    
+        <span class="paren">()</span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            <p>Inherited from
+            <a href="..\classes\MiddleContainer.html#method_rearrangePanelsAfterPrev">
+                MiddleContainer
+            </a>
+            
+            but overwritten in
+            
+        
+        
+        <a href="/../files/src_js_container.js.html#l355"><code>src\js\container.js:355</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>prev 이후 패널들을 재정렬한다.
+마지막 패널을 첫번째로 옮긴다.</p>
+
+    </div>
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_setAriaHiddenPanels" class="method item inherited">
+    
+    <h3 class="name"><code>setAriaHiddenPanels</code></h3>
+
+    
+        <span class="paren">()</span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="..\classes\MiddleContainer.html#method_setAriaHiddenPanels">MiddleContainer</a>:
+            
+        
+        
+        <a href="/../files/src_js_container.js.html#l158"><code>src\js\container.js:158</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>웹접근성을 위한 코드.
+현재 패널만 스크린 리더에서 읽도록 한다.
+이전 패널과 이후 패널의 데이터를 스크린 리더에서 읽지 못하도록 막는다.</p>
+
+    </div>
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_setData" class="method item inherited">
+    
+    <h3 class="name"><code>setData</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>set</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="..\classes\MiddleContainer.html#method_setData">MiddleContainer</a>:
+            
+        
+        
+        <a href="/../files/src_js_container.js.html#l171"><code>src\js\container.js:171</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>slide에 있는 패널들에 현재 인덱스 기준의 데이터 셋을 넣는다.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">set</code>
+                        <span class="type">Object</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>HTMLElement 데이터 셋</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_setNextData" class="method item inherited">
+    
+    <h3 class="name"><code>setNextData</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>next</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="..\classes\MiddleContainer.html#method_setNextData">MiddleContainer</a>:
+            
+        
+        
+        <a href="/../files/src_js_container.js.html#l183"><code>src\js\container.js:183</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>마지막 패널에 next 데이터를 넣는다.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">next</code>
+                        <span class="type">HTMLElement</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>다음 데이터</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_setPanel" class="method item inherited">
+    
+    <h3 class="name"><code>setPanel</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>panelOption</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="..\classes\BasicContainer.html#method_setPanel">BasicContainer</a>:
+            
+        
+        
+        <a href="/../files/src_js_container.js.html#l61"><code>src\js\container.js:61</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>컨테이너에서 조절할 하나의 패널을 설정한다.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">panelOption</code>
+                        <span class="type">Object</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>panel을 설정할때 필요한 panel 옵션 값</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_setPrevData" class="method item inherited">
+    
+    <h3 class="name"><code>setPrevData</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>prev</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="..\classes\MiddleContainer.html#method_setPrevData">MiddleContainer</a>:
+            
+        
+        
+        <a href="/../files/src_js_container.js.html#l192"><code>src\js\container.js:192</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>첫번째 패널에 prev 데이터를 넣는다.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">prev</code>
+                        <span class="type">HTMLElement</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>이전 데이터</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_setSlideSize" class="method item inherited">
+    
+    <h3 class="name"><code>setSlideSize</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>width</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            <p>Inherited from
+            <a href="..\classes\BasicContainer.html#method_setSlideSize">
+                BasicContainer
+            </a>
+            
+            but overwritten in
+            
+        
+        
+        <a href="/../files/src_js_container.js.html#l240"><code>src\js\container.js:240</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>변경된 slide size 와 offset 을 다시 설정한다.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">width</code>
+                        <span class="type">String | Number</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_setTransitionDuration" class="method item inherited">
+    
+    <h3 class="name"><code>setTransitionDuration</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>duration</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="..\classes\AdvanceContainer.html#method_setTransitionDuration">AdvanceContainer</a>:
+            
+        
+        
+        <a href="/../files/src_js_container.js.html#l284"><code>src\js\container.js:284</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>해당 slide(컨테이너 Element) 의 transitionDuration을 설정한다.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">duration</code>
+                        <span class="type">Number</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_showTemporaryClone" class="method item">
+    
+    <h3 class="name"><code>showTemporaryClone</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>callback</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="/../files/src_js_container.js.html#l325"><code>src\js\container.js:325</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>panel을 재배치 하기 전에 해당 컨테이너의 클론을 만들어 보여주었다가 패널이 재배치 된 이후에 클론을 제거 한다.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">callback</code>
+                        <span class="type">Function</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>클론이 보여지는 동안 동작할 callback 함수</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
+            </div>
+        
+
+        
+
+        
+
+        
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="footer">
+    <div class="container">
+        <p class="text-muted credit">@Daum HTML5 기술팀.</p>
+    </div>
+</div>
+<script type="text/javascript" src="http://s1.daumcdn.net/svc/original/U03/cssjs/jquery/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="http://s1.daumcdn.net/svc/original/U03/cssjs/bootstrap/3.0.2/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../assets/js/main.js"></script>
+<script type="text/javascript" src="../assets/vendor/prism/prism-okadia.js"></script>
+<script type="text/javascript"></script>
+</body>
+</html>

@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src\js\slide.js - slide</title>
+    <link rel="shortcut icon" type="image/ico" href="../assets/favicon.ico">
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="http://s1.daumcdn.net/svc/original/U03/cssjs/bootstrap/3.0.2/bootstrap-journal.min.css">
+    <link href="../assets/vendor/prism/prism-okadia.css" rel="stylesheet" />
+        <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <style type="text/css">
+        
+    </style>
+</head>
+<body class="language-javascript">
+<div id="wrap">
+    <div class="navbar navbar-default" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">slide</a>
+            </div>
+            <p class="navbar-text navbar-right">API Docs for Version: <b>1.2.12</b></p>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+            <div>
+    <h3>APIs</h3>
+    <div id="sidebar">
+        <ul id="main-nav" class="nav nav-pills">
+            <li class="active"><a href="#modules" data-toggle="tab">Modules</a></li>
+            <li class=""><a href="#classes" data-toggle="tab">Classes</a></li>  
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active" id="modules">
+                <div id="api-modules" class="list-group">
+                    
+                        <a class="list-group-item" href="../modules/slide.html">slide</a>
+                    
+                </div>
+            </div>
+            <div class="tab-pane" id="classes">
+                <div id="api-classes" class="list-group">
+                    
+                        <a class="list-group-item" href="../classes/AdvanceContainer.html">AdvanceContainer</a>
+                    
+                        <a class="list-group-item" href="../classes/AdvanceSlide.html">AdvanceSlide</a>
+                    
+                        <a class="list-group-item" href="../classes/BasicContainer.html">BasicContainer</a>
+                    
+                        <a class="list-group-item" href="../classes/BasicSlide.html">BasicSlide</a>
+                    
+                        <a class="list-group-item" href="../classes/Class.html">Class</a>
+                    
+                        <a class="list-group-item" href="../classes/CloneAdvanceContainer.html">CloneAdvanceContainer</a>
+                    
+                        <a class="list-group-item" href="../classes/DataSource.html">DataSource</a>
+                    
+                        <a class="list-group-item" href="../classes/gesture.html">gesture</a>
+                    
+                        <a class="list-group-item" href="../classes/InfiniteDataSource.html">InfiniteDataSource</a>
+                    
+                        <a class="list-group-item" href="../classes/MiddleContainer.html">MiddleContainer</a>
+                    
+                        <a class="list-group-item" href="../classes/MiddleSlide.html">MiddleSlide</a>
+                    
+                        <a class="list-group-item" href="../classes/Observable.html">Observable</a>
+                    
+                        <a class="list-group-item" href="../classes/Panel.html">Panel</a>
+                    
+                        <a class="list-group-item" href="../classes/slide.html">slide</a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+            </div>
+            <div class="col-md-9">
+                <!--     <div id="options-form" class="pull-right">
+        Show:
+            <label for="api-show-inherited" class="checkbox-inline">
+                <input type="checkbox" id="api-show-inherited" checked>
+                Inherited
+            </label>
+            <label for="api-show-protected" class="checkbox-inline">
+                <input type="checkbox" id="api-show-protected">
+                Protected
+            </label>
+        
+            <label for="api-show-private" class="checkbox-inline">
+                <input type="checkbox" id="api-show-private">
+                Private
+            </label>
+        
+            <label for="api-show-deprecated" class="checkbox-inline">
+                <input type="checkbox" id="api-show-deprecated">
+                Deprecated
+            </label>
+    </div>
+
+ -->
+                <div class="apidocs row">
+                    <div id="docs-main">
+                        <div class="content">
+                            <div class="page-header">
+    <h1>src\js\slide.js <small>File</small></h1>
+</div>
+
+<div class="file">
+    <pre id="codeBlock" class="line-numbers">
+    	<code class="language-javascript">
+/*jshint browser: true
+*/
+/*global slide:true, Class: true, gesture: true*/
+(function (exports) {
+    &#x27;use strict&#x27;;
+
+    var preventDefault = exports.preventDefault;
+    var ua = exports.ua;
+    var os = ua.os;
+    var isBindingVisibilityChange = function () {
+        return os.ios === true &amp;&amp; parseInt(os.version.major, 10) &gt; 6;
+    }();
+    var availOrientationChange = (&quot;onorientationchange&quot; in window &amp;&amp; ua.platform !== &quot;pc&quot;) ? true : false;
+    var resizeEvent = availOrientationChange ? &#x27;orientationchange&#x27; : &#x27;resize&#x27;;
+
+    var SLIDE_TRESHOLD = 0.1; // 10%
+
+    /**
+     * #### Frame 내에 새로운 슬라이드를 생성/초기화 한다.
+     *
+     * @class BasicSlide
+     * @constructor BasicSlide
+     * @extends Observable
+     * @use BasicContainer
+     * @use gesture
+     * @param frameEl {HTMLElement} slide 가 생성될 frame element
+     * @param dataSource {DataSource} slide에서 보여줄 데이터가 세팅 된 DataSource Class Instance
+     * @param [option] {Object} option values
+     *      @param [option.duration=300] {Number} 슬라이드 애니메이션 duration 값
+     *      @param [option.panelClass=slide.Panel] {Panel} slide 내에서 생성될 panel 클래스
+     *      @param [option.containerClass=slide.Container] {Container} slide 내에서 생성될 container 클래스
+     *      @param [option.container] {Container} slide 내에서 생성될 container 클래스에서 사용될 options
+     *          @param [option.container.className=slide] {String} container element 에 부여될 className
+     *          @param [option.container.id] {String} container element 에 부여될 className
+     *      @param [option.panel] {Panel} slide 내에서 생성될 container 클래스에서 사용될 options
+     *          @param [option.panel.className=panel] {String} panel element 에 부여될 className
+     *          @param [option.panel.tagName=div] {String} panel element 의 tagName
+     */
+    exports.basicSlideObj = {
+        init: function (frameEl, dataSource, option) {
+            this.frameEl = frameEl;
+            this.container = null;
+
+            this.dataSource = dataSource;
+            this.option = option || {};
+
+            this.pageWidth = this.frameEl.clientWidth;
+            this.pageHeight = this.frameEl.clientHeight;
+
+            this.initContainer();
+            this.show();
+            this.bindEvents();
+        },
+        /**
+         * wrapper 내부에 들어갈 mark up 구조를 설정한다.
+         *
+         * @method initContainer
+         */
+        initContainer: function () {
+            var Container = this.option.containerClass || exports.Container;
+            this.container = new Container(this, this.option);
+            this.frameEl.innerHTML = &#x27;&#x27;;
+            this.frameEl.appendChild(this.container.el);
+        },
+        /**
+         * slide 에 필요한 event를 bind 시킨다.
+         *
+         * @method bindEvents
+         */
+        bindEvents: function () {
+            this.bindGesture();
+            this.onResized();
+
+            /**
+             * ios webapp : 다른 탭에서 orientation 발생시 제대로 사이즈 체크 안되는 버그가 존재.
+             *              현재 탭으로 복귀시 발생하는 visivlityChange 이벤트 발생(ios7 이상)시 강제로 리사이즈 체크.
+             */
+            if (isBindingVisibilityChange) {
+                this.onVisibilityChange();
+            }
+        },
+        /**
+         * slide 에 gesture event(mouse or touch event)를 bind 시킨다.
+         *
+         * @method bindGesture
+         */
+        bindGesture: function () {
+            var GESTURE_THRESHOLD = 0,
+                self = this;
+
+            var listener = this.listener = gesture.GestureListener(this.frameEl, GESTURE_THRESHOLD);
+            listener.onGestureStart(function (session) {
+                return self.startDrag(session);
+            });
+            listener.onGestureMove(function (session) {
+                return self.drag(session);
+            });
+            listener.onGestureEnd(function (session) {
+                return self.endDrag(session);
+            });
+        },
+        /**
+         * slide 에 resize event를 bind 시킨다.
+         *
+         * @method onResized
+         */
+        onResized: function () {
+            var self = this;
+            exports.on(window, resizeEvent, function () {
+                self.checkAndResizeSlideFrame();
+            });
+        },
+        /**
+         * slide 에 visibilitychange event를 bind 시킨다.
+         *
+         * @method onVisibilityChange
+         */
+        onVisibilityChange: function () {
+            var hidden, visibilityChange;
+            if (typeof document.hidden !== &quot;undefined&quot;) {
+                hidden = &quot;hidden&quot;;
+                visibilityChange = &quot;visibilitychange&quot;;
+            } else if (typeof document.webkitHidden !== &quot;undefined&quot;) {
+                hidden = &quot;webkitHidden&quot;;
+                visibilityChange = &quot;webkitvisibilitychange&quot;;
+            }
+
+            var self = this;
+            exports.on(document, visibilityChange, function handleVisibilityChange() {
+                if (!document[hidden]) {
+                    self.checkAndResizeSlideFrame();
+                }
+            });
+        },
+        /**
+         * slide Frame 의 사이즈를 확인해서 변경시에는 리사이즈 시킨다.
+         *
+         * @method checkAndResizeSlideFrame
+         */
+        checkAndResizeSlideFrame: function () {
+            var cnt = 0;
+            var self = this;
+            function checkResize() {
+                var width = self.frameEl.clientWidth;
+                var height = self.frameEl.clientHeight;
+                if(self.isChangedSize(width, height)) {
+                    self.resize(width, height);
+                } else if(cnt &lt; 5) {
+                    cnt++;
+                    window.clearTimeout(self.resizeCheckTimeId);
+                    self.resizeCheckTimeId = window.setTimeout(checkResize, 200);
+                }
+            }
+
+            checkResize();
+        },
+        /**
+         * slide Frame 의 사이즈가 변경되었는지 확인한다.
+         *
+         * @method isChangedSize
+         * @return {Boolean} 사이즈 변경시 true, 사이즈 미변경시 false.
+         */
+        isChangedSize: function (width, height) {
+            return !(this.pageWidth === width &amp;&amp; this.pageHeight === height);
+        },
+        /**
+         * 데이터 소스로부터 데이터를 받아서 슬라이드에 보여준다.
+         *
+         * @method show
+         */
+        show: function () {
+            var container = this.container;
+            this.dataSource.queryCurrent(function (current) {
+                container.panel.setData(current);
+            });
+        },
+        /**
+         * 슬라이드를 좌로 이동시킨다. 다음(next) 슬라이드를 보여준다.
+         * 만약, 다음 슬라이드에 내용이 없을 경우 이동 시키지 않는다.
+         *
+         * @method next
+         */
+        next: function () {
+            var self = this;
+            this.dataSource.queryNext(function (next) {
+                if (next === null) {
+                    self.cancel();
+                } else {
+                    self.nextSlide();
+                }
+            });
+        },
+        /**
+         * 다음 슬라이드를 보여준다.
+         *
+         * @method nextSlide
+         * @private
+         */
+        nextSlide: function () {
+            this.emit(&quot;before:next&quot;);
+            this.dataSource.next();
+            this.show();
+            this.emit(&quot;next&quot;);
+        },
+        /**
+         * 슬라이드를 우로 이동시킨다. 이전(prev) 슬라이드를 보여준다.
+         * 만약, 이전 슬라이드에 내용이 없을 경우 이동 시키지 않는다.
+         *
+         * @method prev
+         */
+        prev: function () {
+            var self = this;
+            this.dataSource.queryPrev(function (prev) {
+                if (prev === null) {
+                    self.cancel();
+                } else {
+                    self.prevSlide();
+                }
+            });
+        },
+        /**
+         * 이전 슬라이드를 보여준다.
+         *
+         * @method prevSlide
+         * @private
+         */
+        prevSlide: function () {
+            this.emit(&quot;before:prev&quot;);
+            this.dataSource.prev();
+            this.show();
+            this.emit(&quot;prev&quot;);
+        },
+        /**
+         * slide를 원위치 시킨다.
+         *
+         * @method cancel
+         */
+        cancel: function () {
+            this.emit(&quot;cancel&quot;);
+        },
+        /**
+         * mousedown or touchstart 이벤트 발생시 동작하는 함수
+         *
+         * @method startDrag
+         * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
+         */
+        startDrag: function (session) {
+            this.emit(&quot;startDrag&quot;, session);
+        },
+        /**
+         * mousemove or touchmove 이벤트 발생시 동작하는 함수
+         *
+         * @method drag
+         * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
+         */
+        drag: function (session) {
+
+        },
+        /**
+         * mouseup or touchend 이벤트 발생시 동작하는 함수
+         *
+         * @method endDrag
+         * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
+         */
+        endDrag: function (session) {
+            if (session.isScroll()) {
+                return;
+            }
+
+            if (session.delta.x === 0 &amp;&amp; session.delta.y === 0) {
+                this.emit(&quot;click&quot;);
+                return;
+            }
+            this.emit(&quot;endDrag&quot;, session);
+        },
+        /**
+         * 변경된 wrapper, slide, panels의 size 와 offset을 다시 설정한다.
+         *
+         * @method resize
+         * @param width {Number} frame element의 실제 width 크기
+         * @param height {Number} frame element의 height 실제크기
+         */
+        resize: function (width, height) {
+            width = width || this.frameEl.clientWidth;
+            height = height || this.frameEl.clientHeight;
+
+            this.setWrapperSize(width, height);
+            this.emit(&quot;resize&quot;, width, height);
+        },
+        /**
+         * 변경된 wrapper 사이즈를 확인/저장 한다.
+         *
+         * @method setWrapperSize
+         * @param width {Number} frame element의 실제 width 크기
+         */
+        setWrapperSize: function (width, height) {
+            this.pageWidth = width;
+            this.pageHeight = height;
+        },
+        /**
+         * 해당 클래스의 인스턴스 삭제시 할당된 오브젝트들을 destroy 시킨다.
+         *
+         * @method destroy
+         */
+        destroy: function () {
+            this.container.destroy();
+            this.container = null;
+
+            this.frameEl.innerHTML = &#x27;&#x27;;
+            this.frameEl = null;
+
+            this.listener.destroy();
+            delete this.listener;
+            this.dataSource = null;
+        },
+        /**
+         * 제스처가 왼쪽으로 일정 거리이상 혹은 빠르게 움직였을 경우에 true
+         *
+         * @method isNextSwipe
+         * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
+         */
+        isNextSwipe: function (session) {
+            return session.isLeft() &amp;&amp; (this.isNextThreshold(session) || session.isFlick());
+        },
+        /**
+         * 제스처가 왼쪽으로 일정 거리이상 움직였을 경우에 true
+         *
+         * @method isNextThreshold
+         * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
+         */
+        isNextThreshold: function (session) {
+            return this.container.getWidth() * -1 * SLIDE_TRESHOLD &gt; session.delta.x;
+        },
+        /**
+         * 제스처가 오른쪽으로 일정 거리이상 혹은 빠르게 움직였을 경우에 true
+         *
+         * @method isPrevSwipe
+         * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
+         */
+        isPrevSwipe: function (session) {
+            return session.isRight() &amp;&amp; (this.isPrevThreshold(session) || session.isFlick());
+        },
+        /**
+         * 제스처가 오른쪽으로 일정 거리이상 움직였을 경우에 true
+         *
+         * @method isPrevThreshold
+         * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
+         */
+        isPrevThreshold: function (session) {
+            return this.container.getWidth() * SLIDE_TRESHOLD &lt; session.delta.x;
+        }
+    };
+    /**
+     * #### Frame 내에 새로운 슬라이드를 생성/초기화 한다.
+     *
+     * @class MiddleSlide
+     * @extends BasicSlide
+     * @constructor MiddleSlide
+     * @use MiddleContainer
+     * @param frameEl {HTMLElement} slide 가 생성될 frame element
+     * @param dataSource {DataSource} slide에서 보여줄 데이터가 세팅 된 DataSource Class Instance
+     * @param [option] {Object} option values
+     *      @param [option.duration=300] {Number} 슬라이드 애니메이션 duration 값
+     *      @param [option.panelClass=slide.Panel] {Panel} slide 내에서 생성될 panel 클래스
+     *      @param [option.containerClass=slide.Container] {Container} slide 내에서 생성될 container 클래스
+     *      @param [option.container] {Container} slide 내에서 생성될 container 클래스에서 사용될 options
+     *          @param [option.container.className=slide] {String} container element 에 부여될 className
+     *          @param [option.container.id] {String} container element 에 부여될 className
+     *      @param [option.panel] {Panel} slide 내에서 생성될 container 클래스에서 사용될 options
+     *          @param [option.panel.className=panel] {String} panel element 에 부여될 className
+     *          @param [option.panel.tagName=div] {String} panel element 의 tagName
+     */
+    exports.middleSlideObj = {
+        /**
+         * 데이터 소스로부터 데이터를 받아서 슬라이드에 보여준다.
+         *
+         * @method show
+         */
+        show: function () {
+            var container = this.container;
+            this.dataSource.queryCurrentSet(function (set) {
+                container.setData(set);
+            });
+        },
+        /**
+         * 슬라이드 좌로 이동시킨 후 panel들을 재정렬 + 그 다음 데이터를 미리 로딩해둔다.
+         *
+         * @method nextSlide
+         */
+        nextSlide: function () {
+            var self = this,
+                movingOffset = -1 * this.pageWidth;
+            self.emit(&quot;before:next&quot;);
+            this.slide(movingOffset, function onMoveNextEnd() {
+                self.container.rearrangePanelsAfterNext();
+                self.preloadNextData();
+                self.container.setAriaHiddenPanels();
+                self.emit(&quot;next&quot;);
+            });
+        },
+        /**
+         * 마지막 패널에 다음 데이터를 넣는다.
+         *
+         * @method preloadNextData
+         */
+        preloadNextData: function () {
+            var container = this.container;
+            this.dataSource.next();
+            this.dataSource.queryNext(function (next) {
+                container.setNextData(next);
+            });
+        },
+        /**
+         * 슬라이드 우로 이동시킨 후 panel들을 재정렬 + 그 이전 데이터를 미리 로딩해둔다.
+         *
+         * @method prevSlide
+         */
+        prevSlide: function () {
+            var self = this,
+                movingOffset = this.pageWidth;
+            self.emit(&quot;before:prev&quot;);
+            this.slide(movingOffset, function onMovePrevEnd() {
+                self.container.rearrangePanelsAfterPrev();
+                self.preloadPrevData();
+                self.container.setAriaHiddenPanels();
+                self.emit(&quot;prev&quot;);
+            });
+        },
+        /**
+         * 첫번째 패널에 이전 데이터를 넣는다.
+         *
+         * @method preloadPrevData
+         */
+        preloadPrevData: function () {
+            var container = this.container;
+            this.dataSource.prev();
+            this.dataSource.queryPrev(function (prev) {
+                container.setPrevData(prev);
+            });
+        },
+        /**
+         * 주어진 offset 만큼 slide를 좌우 이동 시킨다.
+         * css transition animation을 통하여 &#x27;스르륵&#x27; 이동
+         *
+         * @method slide
+         * @param offset {Number} 이동시킬 거리 값
+         * @param callback {Function} transition animation 이 끝난 이후 호출되는 callback 함수
+         */
+        slide: function (offset, callback) {
+            this.container.move(offset);
+            if (callback) {
+                callback();
+            }
+        },
+        /**
+         * slide를 원위치 시킨다.
+         *
+         * @method cancel
+         */
+        cancel: function () {
+            var self = this;
+            this.slide(0, function onCancelEnd(){
+                self.emit(&quot;cancel&quot;);
+            });
+        },
+        /**
+         * mousemove or touchmove 이벤트 발생시 동작하는 함수
+         *
+         * @method drag
+         * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
+         */
+        drag: function (session) {
+            if (session.isSwipe()) {
+                preventDefault(session.targetEvent);
+                this.container.move(session.delta.x / 2);
+                this.emit(&quot;drag&quot;, session);
+            }
+        },
+        /**
+         * mouseup or touchend 이벤트 발생시 동작하는 함수
+         *
+         * @method endDrag
+         * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
+         */
+        endDrag: function (session) {
+            if (session.isScroll()) {
+                return;
+            }
+
+            if (session.delta.x === 0 &amp;&amp; session.delta.y === 0) {
+                this.emit(&quot;click&quot;);
+                return;
+            }
+
+            if (this.isNextSwipe(session)) {
+                this.next();
+            } else if (this.isPrevSwipe(session)) {
+                this.prev();
+            } else {
+                this.cancel();
+            }
+            this.emit(&quot;endDrag&quot;, session);
+        }
+    };
+    /**
+     * #### Frame 내에 새로운 슬라이드를 생성/초기화 한다.
+     *
+     * @class AdvanceSlide
+     * @extends MiddleSlide
+     * @constructor AdvanceSlide
+     * @use AdvanceContainer
+     * @param frameEl {HTMLElement} slide 가 생성될 frame element
+     * @param dataSource {DataSource} slide에서 보여줄 데이터가 세팅 된 DataSource Class Instance
+     * @param [option] {Object} option values
+     *      @param [option.duration=300] {Number} 슬라이드 애니메이션 duration 값
+     *      @param [option.panelClass=slide.Panel] {Panel} slide 내에서 생성될 panel 클래스
+     *      @param [option.containerClass=slide.Container] {Container} slide 내에서 생성될 container 클래스
+     *      @param [option.container] {Container} slide 내에서 생성될 container 클래스에서 사용될 options
+     *          @param [option.container.className=slide] {String} container element 에 부여될 className
+     *          @param [option.container.id] {String} container element 에 부여될 className
+     *      @param [option.panel] {Panel} slide 내에서 생성될 container 클래스에서 사용될 options
+     *          @param [option.panel.className=panel] {String} panel element 에 부여될 className
+     *          @param [option.panel.tagName=div] {String} panel element 의 tagName
+     */
+    exports.advanceSlideObj = {
+        init: function (frameEl, dataSource, option) {
+            this._super(frameEl, dataSource, option);
+            this.defaultDuration = this.option.duration || 300;
+            this.isInTransition = false;
+
+            var self = this;
+            this.container.onTransitionEnd(function transitionEnd () {
+                self.timeId = window.setTimeout(function disable(){
+                    self.onSlideComplete();
+                }, 50);
+            });
+        },
+        /**
+         * 주어진 offset 만큼 slide를 좌우 이동 시킨다.
+         * css transition animation을 통하여 &#x27;스르륵&#x27; 이동
+         *
+         * @method slide
+         * @param offset {Number} 이동시킬 거리 값
+         * @param callback {Function} transition animation 이 끝난 이후 호출되는 callback 함수
+         */
+        slide: function (offset, callback) {
+            this.onSlideStart(offset);
+
+            var self = this;
+            this.callback = callback;
+            window.setTimeout(function slideEnd (){
+                self.onSlideComplete();
+            }, this.duration + 30);
+        },
+        /**
+         * 슬라이드가 이동 하기 전에 필요한 값을 세팅하고 container를 이동 시킨다.
+         *
+         * @method onSlideStart
+         * @param offset {Number} 이동시킬 거리 값
+         */
+        onSlideStart: function (offset) {
+            var container = this.container;
+            this.enableTransition(this.duration);
+            container.move(offset);
+        },
+        /**
+         * 슬라이드가 이동을 마친 후에 필요한 값을 세팅하고 callback을 실행 시킨다.
+         *
+         * @method onSlideComplete
+         */
+        onSlideComplete: function () {
+            this.disableTransition();
+            if (this.callback) {
+                var callback = this.callback;
+                this.callback = null;
+                callback();
+            }
+        },
+        /**
+         * Transition을 on한다.
+         *
+         * @method enableTransition
+         * @param duration {Integer} Transition Duration Value
+         */
+        enableTransition: function (duration) {
+            this.container.setTransitionDuration(duration || this.defaultDuration);
+            this.isInTransition = true;
+        },
+        /**
+         * Transition을 off한다.
+         *
+         * @method disableTransition
+         */
+        disableTransition: function () {
+            window.clearTimeout(this.timeId);
+            this.container.setTransitionDuration(0);
+            this.isInTransition = false;
+        },
+        /**
+         * mousedown or touchstart 이벤트 발생시 동작하는 함수
+         *
+         * @method startDrag
+         * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
+         */
+        startDrag: function (session) {
+            if (this.isInTransition) {
+                preventDefault(session.targetEvent);
+                this.isDragging = false;
+                return ;
+            }
+            this.isDragging = true;
+            this._super(session);
+        },
+        /**
+         * mousemove or touchmove 이벤트 발생시 동작하는 함수
+         *
+         * @method drag
+         * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
+         */
+        drag: function (session) {
+            if (this.isInTransition || !this.isDragging) {
+                preventDefault(session.targetEvent);
+                return ;
+            }
+
+            this._super(session);
+        },
+        /**
+         * mouseup or touchend 이벤트 발생시 동작하는 함수
+         *
+         * @method endDrag
+         * @param session {Object} GestureSession 제스쳐 정보를 담은 객체
+         */
+        endDrag: function (session) {
+            if (this.isInTransition || !this.isDragging) {
+                return ;
+            }
+
+            this._super(session);
+        },
+        /**
+         * slide를 원위치 시킨다.
+         *
+         * @method cancel
+         */
+        cancel: function () {
+            if (this.isInTransition) {
+                return;
+            }
+
+            this._super();
+        },
+        /**
+         * 슬라이드를 좌로 이동시킨다. 다음(next) 슬라이드를 보여준다.
+         * 만약, 다음 슬라이드에 내용이 없을 경우 이동 시키지 않는다.
+         *
+         * @method next
+         */
+        next: function (duration) {
+            if (this.isInTransition) {
+                return;
+            }
+            this.duration = duration || this.defaultDuration;
+            this._super();
+        },
+        /**
+         * 슬라이드를 우로 이동시킨다. 이전(prev) 슬라이드를 보여준다.
+         * 만약, 이전 슬라이드에 내용이 없을 경우 이동 시키지 않는다.
+         *
+         * @method prev
+         */
+        prev: function (duration) {
+            if (this.isInTransition) {
+                return;
+            }
+            this.duration = duration || this.defaultDuration;
+            this._super();
+        }
+    };
+})(window.slide = (typeof slide === &#x27;undefined&#x27;) ? {} : slide);
+
+		</code>
+    </pre>
+</div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="footer">
+    <div class="container">
+        <p class="text-muted credit">@Daum HTML5 기술팀.</p>
+    </div>
+</div>
+<script type="text/javascript" src="http://s1.daumcdn.net/svc/original/U03/cssjs/jquery/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="http://s1.daumcdn.net/svc/original/U03/cssjs/bootstrap/3.0.2/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../assets/js/main.js"></script>
+<script type="text/javascript" src="../assets/vendor/prism/prism-okadia.js"></script>
+<script type="text/javascript"></script>
+</body>
+</html>

@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>
+    Slide Library
+    </title>
+    <style type="text/css">
+/*--------------------- Layout and Typography ----------------------------*/
+html {
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: "맑은 고딕", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Verdana, Tahoma, sans-serif;
+    font-size: 14px;
+  line-height: 180%;
+  color: black;
+  margin: 0; padding: 40px;
+  border-top: 6px #8CC84B solid;
+}
+a {
+  color: #480;
+  text-decoration: underline;
+}
+  a:visited {
+    color: #46483e;
+    text-decoration: underline;
+  }
+  a:hover, a:focus {
+    text-decoration: none;
+  }
+
+    code a:hover {
+      background: none;
+      color: #b950b7;
+    }
+
+header a, header a:visited, header a:hover, header a:focus {
+    color: #480;
+    text-decoration: none;
+} 
+
+#changelog #gtoc {
+  display: none;
+}
+
+#gtoc p {
+  margin:0;
+  font-size:18px;
+  line-height: 30px;
+}
+
+#gtoc a {
+  font-family: Georgia, FreeSerif, Times, serif;
+  text-decoration: none;
+  color: #46483e;
+}
+
+#gtoc a:hover {
+    color: #669900;
+    text-decoration: underline;
+}
+
+.notice {
+  display: block;
+  padding: 1em;
+  margin: 1.4667em 0 2.9334em;
+  background:#FFF6BF;
+  color:#514721;
+  border:1px solid #FFD324;
+}
+  .notice p {
+    margin: 0;
+  }
+
+ul.plain {
+  list-style: none;
+}
+
+abbr {
+  border-bottom: 1px dotted #454545;
+}
+
+p {
+  margin: 0 0 1.4667em 0;
+  position: relative;
+  text-rendering: optimizeLegibility;
+}
+
+.apidoc #apicontent p, .apidoc #apicontent li {
+  font-size: 15px;
+  line-height: 22px;
+  color: #000;
+  font-family: Georgia, FreeSerif, Times, serif;
+}
+
+ol, ul, dl {
+  margin: 0 0 1em 0;
+  padding: 0;
+}
+
+ol ul, ol ol, ol dl,
+ul ul, ul ol, ul dl,
+dl ul, dl ol, dl dl {
+  margin-bottom: 0;
+}
+
+ol p:first-child, ul p:first-child, dl p:first-child {
+  margin-bottom: 0;
+}
+
+ul, ol {
+  margin-left: 2em;
+}
+
+
+dl dt {
+  position: relative;
+  margin: 1.5em 0 0;
+}
+
+dl dd {
+  position: relative;
+  margin: 0 1em 0;
+}
+
+dd + dt.pre {
+  margin-top: 1.6em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: Helvetica, Arial, sans-serif;
+  color: #000;
+  text-rendering: optimizeLegibility;
+  position: relative;
+}
+
+header h1 {
+  font-family: dotum, Georgia, FreeSerif, Times, serif;
+  font-size: 50px;
+  font-weight: bold;
+  line-height: 36px;
+  color: #480;
+  margin: 15px 0;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+h1 {
+  font-size: 29px;
+  line-height: 33px;
+  margin: 2em 0 15px;
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid #ccc;
+}
+
+#toc + h1 {
+  margin-top:1.5em;
+  padding-top:0;
+}
+
+h2 {
+  font-size: 1.4em;
+  line-height: 1.0909em;
+  margin: 1.5em 0 0.5em;
+}
+
+h2 + h2 {
+  margin: 0 0 0.5em;
+}
+
+h3 {
+  font-size: 1.3em;
+  line-height: 1.1282em;
+  margin: 2.2em 0 0.5em;
+}
+
+h3 + h3 {
+  margin: 0 0 0.5em;
+}
+
+  h2, h3, h4 {
+    position:relative;
+    padding-right:40px;
+  }
+  h1 span, h2 span, h3 span, h4 span {
+    font-size:25px;
+    position:absolute;
+    display:block;
+    top:0;
+    right:0;
+    opacity: 0.3;
+  }
+  h1 span:hover, h2 span:hover, h3 span:hover, h4 span:hover {
+    opacity: 1;
+  }
+  h1 span a, h2 span a, h3 span a, h4 span a {
+    font-size: 0.8em;
+    color: #000;
+    text-decoration: none;
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight:bold;
+  }
+
+  h1 span a.top, h3 span a.top, h3 span a.top, h4 span a.top {
+    /* XXX Get an image and clean up these two links
+     * so that they look nice next to one another.
+     * http://www.chrisglass.com/work/nodejs/website/v05/docs.html
+     * -isaacs
+     */
+    display:none;
+  }
+
+h5 {
+  font-size: 1.125em;
+  line-height: 1.4em;
+}
+
+h6 {
+  font-size: 1em;
+  line-height: 1.4667em;
+}
+
+  pre, tt, code {
+    font-size: 14px;
+    line-height: 1.5438em;
+    font-family: Monaco, Consolas, "Lucida Console", monospace;
+    margin: 0; padding: 0;
+  }
+
+  .pre {
+    font-family: Monaco, Consolas, "Lucida Console", monospace;
+    line-height: 1.5438em;
+    font-size: 0.95em;
+  }
+
+  pre {
+    padding: 1em 1.6em 1em 1.2em;
+    vertical-align: top;
+    background: #f8f8f8;
+    border: 1px solid #e8e8e8;
+    border-width: 1px 1px 1px 6px;
+    margin: 0.5em 0 1.1em;
+    overflow-x:auto;
+  }
+
+  pre + h3 {
+    margin-top: 2.225em;
+  }
+
+code.pre {
+  white-space: pre;
+}
+
+#intro {
+    width: 775px;
+    margin: 0 auto;
+    text-align: center;
+    color: #d2d8ba;
+
+  /* preload platform-icons.png */
+  background-image: url(http://nodejs.org/images/platform-icons.png);
+  background-repeat: no-repeat;
+  background-position: -999em -999em;
+}
+
+#intro.interior #logo {
+    margin-left: -298px;
+    border:0;
+}
+
+hr {
+  background: none;
+  border: medium none;
+  border-bottom: 1px solid #ccc;
+  margin: 1em 0;
+}
+
+hr.end {
+  border-bottom: 1px solid #8CC84B;
+}
+
+#toc {
+  font-size:15px;
+  line-height:1.5em;
+  line-height: 22px;
+  padding-top:4px;
+}
+
+  #toc h2 {
+    font-size: 15px;
+    line-height: 21px;
+    margin: 0 0 0.5em;
+  }
+
+  #toc h2 a {
+    float: right;
+  }
+
+  #toc hr {
+    margin: 1em 0 2em;
+  }
+
+  #toc ul, #api-section-index #apicontent ul li, #api-section-index #apicontent ul {
+    font-family: Georgia, FreeSerif, Times, serif;
+    color:#666!important;
+  }
+
+  #toc ul a {
+    text-decoration:none;
+    border-bottom:1px dotted #480;
+  }
+  #toc ul a:hover, #toc ul a:focus {
+    border-bottom:1px dotted #fff;
+    color:#000;
+  }
+
+
+p tt, p code {
+  background: #f8f8ff;
+  border: 1px solid #dedede;
+  padding: 0 0.2em;
+}
+
+#content {
+    width: 953px;
+    margin: 0 auto;
+    overflow: visible;
+    clear: both;
+    display: block;
+}
+
+#apicontent {
+  font-size:18px;
+}
+
+#column1.interior {
+    width: 749px;
+    float: right;
+    padding-top: 7px;
+    padding-top: 11px;
+    font-size:18px;
+}
+
+#column2.interior {
+    width: 140px;
+    float: left;
+    margin-top: -55px;
+    overflow: visible;
+}
+
+#column2.interior ul {
+    margin-left: 0;
+}
+
+#column2.interior li {
+    list-style-type: none;
+}
+
+#column2.interior li a {
+    display: block;
+    padding: 0 0 0 35px;
+    color: #878b78;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-size: 11px;
+    line-height: 23px;
+}
+
+#column2.interior li a.home { background: url(http://nodejs.org/images/icons-interior.png) no-repeat -156px 3px; }
+#column2.interior li a.download { background: url(http://nodejs.org/images/icons-interior.png) no-repeat -156px -21px; }
+#column2.interior li a.about { background: url(http://nodejs.org/images/icons-interior.png) no-repeat -156px -45px; }
+#column2.interior li a.npm { background: url(http://nodejs.org/images/icons-interior.png) no-repeat -156px -69px; }
+#column2.interior li a.docs { background: url(http://nodejs.org/images/icons-interior.png) no-repeat -156px -93px; }
+#column2.interior li a.blog { background: url(http://nodejs.org/images/icons-interior.png) no-repeat -156px -117px; }
+#column2.interior li a.community { background: url(http://nodejs.org/images/icons-interior.png) no-repeat -156px -141px; }
+#column2.interior li a.logos { background: url(http://nodejs.org/images/icons-interior.png) no-repeat -156px -165px; }
+#column2.interior li a.jobs { background: url(http://nodejs.org/images/icons-interior.png) no-repeat -156px -189px; } 
+
+#column2.interior li a.home.current { background-position: 2px 3px; }
+#column2.interior li a.download.current { background-position: 2px -21px; }
+#column2.interior li a.about.current { background-position: 2px -45px; }
+#column2.interior li a.npm.current { background-position: 2px -69px; }
+#column2.interior li a.docs.current { background-position: 2px -93px; }
+#column2.interior li a.blog.current { background-position: 2px -117px; }
+#column2.interior li a.community.current { background-position: 2px -141px; }
+#column2.interior li a.logos.current { background-position: 2px -165px; }
+#column2.interior li a.jobs.current { background-position: 2px -189px; }
+#column2.interior li a.current { color: #8cc84b; font-weight: bold; }
+
+#column2.interior li a.home:hover { background-position: -331px 3px; }
+#column2.interior li a.download:hover { background-position: -331px -21px; }
+#column2.interior li a.about:hover { background-position: -331px -45px; }
+#column2.interior li a.npm:hover { background-position: -331px -69px; }
+#column2.interior li a.docs:hover { background-position: -331px -93px; }
+#column2.interior li a.blog:hover { background-position: -331px -117px; }
+#column2.interior li a.community:hover { background-position: -331px -141px; }
+#column2.interior li a.logos:hover { background-position: -331px -165px; }
+#column2.interior li a.jobs:hover { background-position: -331px -189px; }
+#column2.interior li a:hover { color: #000000; text-decoration: none; }
+
+#column2.interior li + li {
+    border-top: 1px solid #c1c7ac;
+}
+#column2.interior p.twitter {
+    padding-top: 20px;
+}
+
+#column2.interior p.twitter a {
+    background: url(http://nodejs.org/images/twitter-bird.png) no-repeat 0 4px;
+    padding-left: 37px;
+    text-decoration: none;
+}
+
+#column2.interior p.twitter a:hover {
+    text-decoration: underline;
+}
+
+a.totop {
+  font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Verdana, Tahoma, sans-serif;
+  font-weight: bold;
+  text-indent: -9999999px;
+  background: url(http://nodejs.org/images/anchor.png) no-repeat top left;
+  margin-right: 7px;
+  display: block;
+  width: 13px;
+  border-bottom: 1px solid #cccccc;
+}
+
+a.anchor {
+  font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Verdana, Tahoma, sans-serif;
+  font-weight: bold;
+  text-indent: -9999999px;
+  background: url(http://nodejs.org/images/anchor.png) no-repeat top right;
+  display: block;
+  width: 13px;
+  border-bottom: 1px solid #cccccc;
+}
+#footer {
+    width: 942px;
+    margin: 150px auto 55px auto;
+    padding:0;
+}
+
+#footer p {
+    font-size: 11px;
+    line-height:1em;
+    padding: 0 0 0 195px;
+    color: #666;
+}
+
+#footer p, #footer li {
+    font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Verdana, Tahoma, sans-serif;
+}
+
+#footer a {
+  text-decoration:none;
+  border:none;
+  color: #480;
+}
+#footer a:hover {
+  color:#000;
+}
+
+#footer p a {
+    border-bottom:1px dotted #480;
+    color: #878b78;
+}
+
+#footer ul {
+    background: url(http://nodejs.org/images/footer-logo-alt.png) left 17px no-repeat;
+    padding: 23px 0 0 195px;
+    height: 26px;
+    margin-left: -1px;
+    border-top: 1px solid #626557;
+}
+
+#footer ul li {
+    list-style-type: none;
+    float: left;
+    font-size: 12px;
+    margin:0!important;
+    padding:0;
+    height: 12px;
+}
+
+#footer ul li a {
+    margin: 0;
+    padding: 0 6px 0 0;
+    display: block;
+    height:12px;
+    line-height:12px;
+}
+
+#footer ul li + li {
+    margin-left: 3px;
+}
+
+#footer ul li + li a {
+    padding: 0 6px 0 6px;
+    border-left: 1px solid #878b78;
+}
+
+#footer ul li a.twitter  {
+    background: url(http://nodejs.org/images/twitter-bird.png) no-repeat 5px 0px;
+    padding-left: 25px;
+}
+
+/* simpler clearfix */
+.clearfix:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+
+.sh_sourceCode {
+  font-weight: normal;
+  font-style: normal;
+}
+
+.sh_sourceCode .sh_symbol , .sh_sourceCode .sh_cbracket {
+  color: #333;
+}
+
+.sh_sourceCode .sh_keyword {
+  color: #c96;
+}
+
+.sh_sourceCode .sh_string, .sh_sourceCode .sh_regexp, .sh_sourceCode .sh_number,
+.sh_sourceCode .sh_specialchar
+{
+  color: #690;
+}
+
+.sh_sourceCode .sh_comment {
+  color: green;
+}
+
+.go-top {
+    position: fixed;
+    bottom: 2em;
+    right: 2em;
+    text-decoration: none;
+    color: #FFF;
+    background-color: rgba(0, 0, 0, 0.3);
+    font-size: 12px;
+    padding: 1em;
+    border-radius: 8px;
+}
+.go-top a, .go-top a:visited {
+    text-decoration: none;
+    color: #FFF;
+}
+    </style>
+</head>
+<body>
+    <header>
+        <h1><a href="index.html">Slide</a></h1>
+    </header>
+    <div id="apicontent">
+        <h1 id="example-image-search">Example 따라하기 - Image search</h1>
+<h2 id="1-slide-html-js-">1. slide가 동작할 HTML 작성 (해당 슬라이드 js 호출)</h2>
+<ul>
+<li>#frameEl, .slide 에 높이 값 지정 필수<ul>
+<li>#frameEl 고정값, .slide 에 100%</li>
+<li>#frameEl 미지정, .slide에 고정값</li>
+</ul>
+</li>
+</ul>
+<p><a href="http://slide.dev.daum.net/src/example/slide_simpleSearch.html">slide_simpleSearch.html</a></p>
+<pre><code class="lang-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0&quot;&gt;
+    &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;
+    &lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=EDGE&quot; /&gt;
+    &lt;title&gt;slide example&lt;/title&gt;
+    &lt;style&gt;
+        html, body {height: 100%; width: 100%; margin: 0; padding: 0; overflow:hidden; background-color: #333;}
+        #frameEl {width: 100%; height:100%; overflow:hidden; background-color: #333; position: relative;}
+        .slide {height:100%;}
+        .panel img {position: absolute; top: 0; width: 100%; height: 100%;}
+        .prevBtn, .nextBtn {position: absolute; top: 45%; z-index: 30; width: 40px; height: 45px; padding: 0px;}
+        .prevBtn {left: 10px;}
+        .nextBtn {right: 10px;}
+        #footer {width: 100%; z-index: 999; position: absolute; bottom:0; background-color: #000; color: #fff;}
+    &lt;/style&gt;
+    &lt;script type=&quot;text/javascript&quot; src=&quot;http://m1.daumcdn.net/svc/original/U03/cssjs/slide/slide-1.2.9.standalone.min.js&quot;&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div id=&quot;frameEl&quot;&gt;&lt;/div&gt;
+    &lt;button type=&quot;button&quot; class=&quot;prevBtn&quot;&gt;prev&lt;/button&gt;
+    &lt;button type=&quot;button&quot; class=&quot;nextBtn&quot;&gt;next&lt;/button&gt;
+    &lt;div id=&quot;footer&quot;&gt;&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<h2 id="2-slide-frame-element-">2. slide가 동작할  frame element를 지정</h2>
+<pre><code class="lang-javascript">var headTag = document.getElementsByTagName(&quot;head&quot;)[0],         // head Element
+    click = &quot;ontouchstart&quot; in window ? &quot;touchstart&quot; : &quot;click&quot;,
+    prevBtn = document.getElementsByClassName(&quot;prevBtn&quot;)[0],    // prev Button Element
+    nextBtn = document.getElementsByClassName(&quot;nextBtn&quot;)[0],    // next Button Element
+    footer = document.getElementById(&quot;footer&quot;),                 // footer Element
+    pageNum = 1;                                                // api page number
+
+var frameEl = document.getElementById(&quot;frameEl&quot;);               // slide가 동작할 frame Element</code></pre>
+<h2 id="3-datasource-init-">3. DataSource에서 사용할 init 데이터를 수신</h2>
+<ul>
+<li>jsonp 방식, <a href="http://dna.daum.net/apis/search/ref#image">Daum 이미지 검색 open API</a> 이용</li>
+</ul>
+<pre><code class="lang-javascript">// 최초 로딩 함수.
+function loadInitialData(callback) {
+    simpleSearchAPIJsonp(function (data) {
+        initSlide(data); // 최초 데이터를 받았을 때 슬라이드를 초기화하는 함수.
+    });
+}
+(function main() {
+    window.addEventListener(&quot;load&quot;, function(e){
+        loadInitialData(); // 데이터 호출 함수.
+    });
+})();</code></pre>
+<h3 id="3-1-init-jsonp-api">3.1. init데이터를 받아오기 위한 jsonp 방식 api</h3>
+<pre><code class="lang-javascript">// jsonp 방식으로 데이터를 받았을 때 호출될 함수.
+var simpleSearchAPICallback = null;
+
+// jsonp data요청 함수.
+function simpleSearchAPIJsonp(callback) {
+    simpleSearchAPICallback = callback;
+    var url = &#39;http://apis.daum.net/search/image&#39; + 
+            &#39;?apikey=080a78bc84cc6b814fb365591b1d7d7fc26575b3&#39; + 
+            &#39;&amp;output=json&amp;callback=simpleJsonpCallback&amp;q=소녀시대&amp;pageno=&#39; + pageNum;
+    var s = document.createElement(&quot;script&quot;);
+    s.type = &quot;text/javascript&quot;;
+    s.src = url;
+    s.charset = &quot;utf-8&quot;;
+    headTag.appendChild(s);
+}
+
+// data를 받았을 때 요청 시 지정한 함수를 실행하게 해주는 함수.
+function simpleJsonpCallback(data) {
+    headTag.removeChild(headTag.lastChild);
+    simpleSearchAPICallback(data); // 실제로 data를 받아서 실행되는 함수.
+}</code></pre>
+<h2 id="4-slide-datasource-slide-slide-">4 slide.Datasource 와 slide.Slide를 생성/초기화</h2>
+<pre><code class="lang-javascript">// slide.Datasource 와 slide.Slide를 생성/초기화 하는 함수.
+function initSlide(data) {
+    // init data를 파싱한다.
+    var items = buildSlides(data);
+    // 파싱한 init data를 가지고 DataSource를 생성.
+    var ds = new slide.DataSource(items);
+
+    // DataSource내의 data의 끝에 도달 했을 시 추가 데이터를 불러온다.
+    ds.willQueryEndOfData(function (callback) {
+        var self = this;
+        loadMoreData(function (data) {
+            var items = buildSlides(data);
+            self.addNextData(items); 
+            callback(items[0]); // (ds.queryNext에서 넘겨 받은 callback 함수)
+        });
+    });
+
+    // frameEl과, 생성한 DataSource를 이용하여 Slide를 초기화 한다.
+    var sl = new slide.Slide(frameEl, ds);
+
+    // Slide의 좌우 버튼 기능을 추가한다.
+    setButton(sl);
+
+    // Slide의 하단 설명 레이어를 보여주는 기능을 추가한다.
+    setFooter(sl, ds);
+
+    // Slide click시 버튼과 하단 설명레이어를 토글할 수 있는 기능을 추가한다.
+    setToggle(sl);
+}</code></pre>
+<h3 id="4-1-init-">4.1. init 데이터를 파싱하는 함수</h3>
+<pre><code class="lang-javascript">function buildSlides(data) {
+    var items = data.channel.item,
+        arr = [];
+    for (var i = 0, len = items.length; i &lt; len; i++) {
+        var item = items[i];
+        arr.push({
+            image: item.image,
+            title: item.title,
+            link: item.link,
+            toHTML: function () {
+                return &quot;&lt;img alt=\&quot;&quot; + this.title + &quot;\&quot; src=\&quot;&quot; + this.image + &quot;\&quot; /&gt;&quot;;
+            }
+        });
+    }
+    return arr;
+}</code></pre>
+<h3 id="4-2-slide-">4.2. Slide의 좌우 버튼 기능을 추가하는 함수</h3>
+<pre><code class="lang-javascript">function setButton(sl) {
+    prevBtn.addEventListener(click, function(){
+        sl.prev();
+    }, false);
+    nextBtn.addEventListener(click, function(){
+        sl.next();
+    }, false);
+}</code></pre>
+<h3 id="4-3-slide-">4.3. Slide의 하단 설명 레이어를 보여주는 기능을 추가하는 함수</h3>
+<pre><code class="lang-javascript">function setFooter(sl, ds) {
+    function setDesc () {
+        ds.queryCurrent(function (data) {
+            footer.innerHTML = &#39;&lt;div&gt;data Title : &#39; + data.title + &#39;&lt;/div&gt;&#39; +
+                                &#39;&lt;div&gt;data Link : &#39; + data.link + &#39;&lt;/div&gt;&#39;;
+        });
+    }
+    sl.on(&quot;startDrag&quot;, function (session) {
+        session.targetEvent.preventDefault();
+    });
+    sl.on(&quot;next&quot;, setDesc);
+    sl.on(&quot;prev&quot;, setDesc);
+    setDesc();
+}</code></pre>
+<h3 id="4-4-slide-click-">4.4. Slide click시 버튼과 하단 레이어를 토글할 수 있는 기능을 추가하는 함수</h3>
+<pre><code class="lang-javascript">function setToggle(sl) {
+    var viewState = &quot;block&quot;;
+    function setDisplay (state) {
+        footer.style.display = state;
+        prevBtn.style.display = state;
+        nextBtn.style.display = state;
+        viewState = state;
+    }
+
+    sl.on(&quot;click&quot;, function() {
+        if (viewState === &quot;none&quot;) {
+            setDisplay(&quot;block&quot;);
+        } else {
+            setDisplay(&quot;none&quot;);
+        }
+    });
+}</code></pre>
+
+    </div>
+    <div class="go-top"><a href="#">Go Top</a></div>
+    <script type="text/javascript">
+        if(!this.sh_languages)this.sh_languages={};var sh_requests={};function sh_isEmailAddress(url){if(/^mailto:/.test(url))return false;return url.indexOf("@")!==-1}function sh_setHref(tags,numTags,inputString){var url=inputString.substring(tags[numTags-2].pos,tags[numTags-1].pos);if(url.length>=2&&(url.charAt(0)==="<"&&url.charAt(url.length-1)===">"))url=url.substr(1,url.length-2);if(sh_isEmailAddress(url))url="mailto:"+url;tags[numTags-2].node.href=url}
+function sh_konquerorExec(s){var result=[""];result.index=s.length;result.input=s;return result}
+function sh_highlightString(inputString,language){if(/Konqueror/.test(navigator.userAgent))if(!language.konquered){for(var s=0;s<language.length;s++)for(var p=0;p<language[s].length;p++){var r=language[s][p][0];if(r.source==="$")r.exec=sh_konquerorExec}language.konquered=true}var a=document.createElement("a");var span=document.createElement("span");var tags=[];var numTags=0;var patternStack=[];var pos=0;var currentStyle=null;var output=function(s,style){var length=s.length;if(length===0)return;if(!style){var stackLength=
+patternStack.length;if(stackLength!==0){var pattern=patternStack[stackLength-1];if(!pattern[3])style=pattern[1]}}if(currentStyle!==style){if(currentStyle){tags[numTags++]={pos:pos};if(currentStyle==="sh_url")sh_setHref(tags,numTags,inputString)}if(style){var clone;if(style==="sh_url")clone=a.cloneNode(false);else clone=span.cloneNode(false);clone.className=style;tags[numTags++]={node:clone,pos:pos}}}pos+=length;currentStyle=style};var endOfLinePattern=/\r\n|\r|\n/g;endOfLinePattern.lastIndex=0;var inputStringLength=
+inputString.length;while(pos<inputStringLength){var start=pos;var end;var startOfNextLine;var endOfLineMatch=endOfLinePattern.exec(inputString);if(endOfLineMatch===null){end=inputStringLength;startOfNextLine=inputStringLength}else{end=endOfLineMatch.index;startOfNextLine=endOfLinePattern.lastIndex}var line=inputString.substring(start,end);var matchCache=[];for(;;){var posWithinLine=pos-start;var stateIndex;var stackLength=patternStack.length;if(stackLength===0)stateIndex=0;else stateIndex=patternStack[stackLength-
+1][2];var state=language[stateIndex];var numPatterns=state.length;var mc=matchCache[stateIndex];if(!mc)mc=matchCache[stateIndex]=[];var bestMatch=null;var bestPatternIndex=-1;for(var i=0;i<numPatterns;i++){var match;if(i<mc.length&&(mc[i]===null||posWithinLine<=mc[i].index))match=mc[i];else{var regex=state[i][0];regex.lastIndex=posWithinLine;match=regex.exec(line);mc[i]=match}if(match!==null&&(bestMatch===null||match.index<bestMatch.index)){bestMatch=match;bestPatternIndex=i;if(match.index===posWithinLine)break}}if(bestMatch===
+null){output(line.substring(posWithinLine),null);break}else{if(bestMatch.index>posWithinLine)output(line.substring(posWithinLine,bestMatch.index),null);var pattern=state[bestPatternIndex];var newStyle=pattern[1];var matchedString;if(newStyle instanceof Array)for(var subexpression=0;subexpression<newStyle.length;subexpression++){matchedString=bestMatch[subexpression+1];output(matchedString,newStyle[subexpression])}else{matchedString=bestMatch[0];output(matchedString,newStyle)}switch(pattern[2]){case -1:break;
+case -2:patternStack.pop();break;case -3:patternStack.length=0;break;default:patternStack.push(pattern);break}}}if(currentStyle){tags[numTags++]={pos:pos};if(currentStyle==="sh_url")sh_setHref(tags,numTags,inputString);currentStyle=null}pos=startOfNextLine}return tags}
+function sh_getClasses(element){var result=[];var htmlClass=element.className;if(htmlClass&&htmlClass.length>0){var htmlClasses=htmlClass.split(" ");for(var i=0;i<htmlClasses.length;i++)if(htmlClasses[i].length>0)result.push(htmlClasses[i])}return result}function sh_addClass(element,name){var htmlClasses=sh_getClasses(element);for(var i=0;i<htmlClasses.length;i++)if(name.toLowerCase()===htmlClasses[i].toLowerCase())return;htmlClasses.push(name);element.className=htmlClasses.join(" ")}
+function sh_extractTagsFromNodeList(nodeList,result){var length=nodeList.length;for(var i=0;i<length;i++){var node=nodeList.item(i);switch(node.nodeType){case 1:if(node.nodeName.toLowerCase()==="br"){var terminator;if(/MSIE/.test(navigator.userAgent))terminator="\r";else terminator="\n";result.text.push(terminator);result.pos++}else{result.tags.push({node:node.cloneNode(false),pos:result.pos});sh_extractTagsFromNodeList(node.childNodes,result);result.tags.push({pos:result.pos})}break;case 3:case 4:result.text.push(node.data);
+result.pos+=node.length;break}}}function sh_extractTags(element,tags){var result={};result.text=[];result.tags=tags;result.pos=0;sh_extractTagsFromNodeList(element.childNodes,result);return result.text.join("")}
+function sh_mergeTags(originalTags,highlightTags){var numOriginalTags=originalTags.length;if(numOriginalTags===0)return highlightTags;var numHighlightTags=highlightTags.length;if(numHighlightTags===0)return originalTags;var result=[];var originalIndex=0;var highlightIndex=0;while(originalIndex<numOriginalTags&&highlightIndex<numHighlightTags){var originalTag=originalTags[originalIndex];var highlightTag=highlightTags[highlightIndex];if(originalTag.pos<=highlightTag.pos){result.push(originalTag);originalIndex++}else{result.push(highlightTag);
+if(highlightTags[highlightIndex+1].pos<=originalTag.pos){highlightIndex++;result.push(highlightTags[highlightIndex]);highlightIndex++}else{result.push({pos:originalTag.pos});highlightTags[highlightIndex]={node:highlightTag.node.cloneNode(false),pos:originalTag.pos}}}}while(originalIndex<numOriginalTags){result.push(originalTags[originalIndex]);originalIndex++}while(highlightIndex<numHighlightTags){result.push(highlightTags[highlightIndex]);highlightIndex++}return result}
+function sh_insertTags(tags,text){var doc=document;var result=document.createDocumentFragment();var tagIndex=0;var numTags=tags.length;var textPos=0;var textLength=text.length;var currentNode=result;while(textPos<textLength||tagIndex<numTags){var tag;var tagPos;if(tagIndex<numTags){tag=tags[tagIndex];tagPos=tag.pos}else tagPos=textLength;if(tagPos<=textPos){if(tag.node){var newNode=tag.node;currentNode.appendChild(newNode);currentNode=newNode}else currentNode=currentNode.parentNode;tagIndex++}else{currentNode.appendChild(doc.createTextNode(text.substring(textPos,
+tagPos)));textPos=tagPos}}return result}function sh_highlightElement(element,language){sh_addClass(element,"sh_sourceCode");var originalTags=[];var inputString=sh_extractTags(element,originalTags);var highlightTags=sh_highlightString(inputString,language);var tags=sh_mergeTags(originalTags,highlightTags);var documentFragment=sh_insertTags(tags,inputString);while(element.hasChildNodes())element.removeChild(element.firstChild);element.appendChild(documentFragment)}
+function sh_getXMLHttpRequest(){if(window.ActiveXObject)return new ActiveXObject("Msxml2.XMLHTTP");else if(window.XMLHttpRequest)return new XMLHttpRequest;throw"No XMLHttpRequest implementation available";}
+function sh_load(language,element,prefix,suffix){if(language in sh_requests){sh_requests[language].push(element);return}sh_requests[language]=[element];var request=sh_getXMLHttpRequest();var url=prefix+"sh_"+language+suffix;request.open("GET",url,true);request.onreadystatechange=function(){if(request.readyState===4)try{if(!request.status||request.status===200){eval(request.responseText);var elements=sh_requests[language];for(var i=0;i<elements.length;i++)sh_highlightElement(elements[i],sh_languages[language])}else throw"HTTP error: status "+
+request.status;}finally{request=null}};request.send(null)}
+function highlight(prefix,suffix,tag){var nodeList=document.getElementsByTagName(tag);for(var i=0;i<nodeList.length;i++){var element=nodeList.item(i);var htmlClasses=sh_getClasses(element);var highlighted=false;var donthighlight=false;for(var j=0;j<htmlClasses.length;j++){var htmlClass=htmlClasses[j].toLowerCase();if(htmlClass==="sh_none"){donthighlight=true;continue}if(htmlClass.substr(0,3)==="sh_"){var language=htmlClass.substring(3);if(language in sh_languages){sh_highlightElement(element,sh_languages[language]);
+highlighted=true}else if(typeof prefix==="string"&&typeof suffix==="string")sh_load(language,element,prefix,suffix);else throw"Found <"+tag+'> element with class="'+htmlClass+'", but no such language exists';break}}if(highlighted===false&&donthighlight==false)sh_highlightElement(element,sh_languages["javascript"])}}function sh_highlightDocument(prefix,suffix){highlight(prefix,suffix,"tt");highlight(prefix,suffix,"code");highlight(prefix,suffix,"pre")};
+    
+
+    </script>
+    <script type="text/javascript">
+if(!this.sh_languages){this.sh_languages={}}sh_languages.javascript=[[[/\/\/\//g,"sh_comment",1],[/\/\//g,"sh_comment",7],[/\/\*\*/g,"sh_comment",8],[/\/\*/g,"sh_comment",9],[/\b(?:abstract|break|case|catch|class|const|continue|debugger|default|delete|do|else|enum|export|extends|false|final|finally|for|function|goto|if|implements|in|instanceof|interface|native|new|null|private|protected|prototype|public|return|static|super|switch|synchronized|throw|throws|this|transient|true|try|typeof|var|volatile|while|with)\b/g,"sh_keyword",-1],[/(\+\+|--|\)|\])(\s*)(\/=?(?![*\/]))/g,["sh_symbol","sh_normal","sh_symbol"],-1],[/(0x[A-Fa-f0-9]+|(?:[\d]*\.)?[\d]+(?:[eE][+-]?[\d]+)?)(\s*)(\/(?![*\/]))/g,["sh_number","sh_normal","sh_symbol"],-1],[/([A-Za-z$_][A-Za-z0-9$_]*\s*)(\/=?(?![*\/]))/g,["sh_normal","sh_symbol"],-1],[/\/(?:\\.|[^*\\\/])(?:\\.|[^\\\/])*\/[gim]*/g,"sh_regexp",-1],[/\b[+-]?(?:(?:0x[A-Fa-f0-9]+)|(?:(?:[\d]*\.)?[\d]+(?:[eE][+-]?[\d]+)?))u?(?:(?:int(?:8|16|32|64))|L)?\b/g,"sh_number",-1],[/"/g,"sh_string",10],[/'/g,"sh_string",11],[/~|!|%|\^|\*|\(|\)|-|\+|=|\[|\]|\\|:|;|,|\.|\/|\?|&|<|>|\|/g,"sh_symbol",-1],[/\{|\}/g,"sh_cbracket",-1],[/\b(?:Math|Infinity|NaN|undefined|arguments)\b/g,"sh_predef_var",-1],[/\b(?:Array|Boolean|Date|Error|EvalError|Function|Number|Object|RangeError|ReferenceError|RegExp|String|SyntaxError|TypeError|URIError|decodeURI|decodeURIComponent|encodeURI|encodeURIComponent|eval|isFinite|isNaN|parseFloat|parseInt)\b/g,"sh_predef_func",-1],[/(?:[A-Za-z]|_)[A-Za-z0-9_]*(?=[ \t]*\()/g,"sh_function",-1]],[[/$/g,null,-2],[/(?:<?)[A-Za-z0-9_\.\/\-_~]+@[A-Za-z0-9_\.\/\-_~]+(?:>?)|(?:<?)[A-Za-z0-9_]+:\/\/[A-Za-z0-9_\.\/\-_~]+(?:>?)/g,"sh_url",-1],[/<\?xml/g,"sh_preproc",2,1],[/<!DOCTYPE/g,"sh_preproc",4,1],[/<!--/g,"sh_comment",5],[/<(?:\/)?[A-Za-z](?:[A-Za-z0-9_:.-]*)(?:\/)?>/g,"sh_keyword",-1],[/<(?:\/)?[A-Za-z](?:[A-Za-z0-9_:.-]*)/g,"sh_keyword",6,1],[/&(?:[A-Za-z0-9]+);/g,"sh_preproc",-1],[/<(?:\/)?[A-Za-z][A-Za-z0-9]*(?:\/)?>/g,"sh_keyword",-1],[/<(?:\/)?[A-Za-z][A-Za-z0-9]*/g,"sh_keyword",6,1],[/@[A-Za-z]+/g,"sh_type",-1],[/(?:TODO|FIXME|BUG)(?:[:]?)/g,"sh_todo",-1]],[[/\?>/g,"sh_preproc",-2],[/([^=" \t>]+)([ \t]*)(=?)/g,["sh_type","sh_normal","sh_symbol"],-1],[/"/g,"sh_string",3]],[[/\\(?:\\|")/g,null,-1],[/"/g,"sh_string",-2]],[[/>/g,"sh_preproc",-2],[/([^=" \t>]+)([ \t]*)(=?)/g,["sh_type","sh_normal","sh_symbol"],-1],[/"/g,"sh_string",3]],[[/-->/g,"sh_comment",-2],[/<!--/g,"sh_comment",5]],[[/(?:\/)?>/g,"sh_keyword",-2],[/([^=" \t>]+)([ \t]*)(=?)/g,["sh_type","sh_normal","sh_symbol"],-1],[/"/g,"sh_string",3]],[[/$/g,null,-2]],[[/\*\//g,"sh_comment",-2],[/(?:<?)[A-Za-z0-9_\.\/\-_~]+@[A-Za-z0-9_\.\/\-_~]+(?:>?)|(?:<?)[A-Za-z0-9_]+:\/\/[A-Za-z0-9_\.\/\-_~]+(?:>?)/g,"sh_url",-1],[/<\?xml/g,"sh_preproc",2,1],[/<!DOCTYPE/g,"sh_preproc",4,1],[/<!--/g,"sh_comment",5],[/<(?:\/)?[A-Za-z](?:[A-Za-z0-9_:.-]*)(?:\/)?>/g,"sh_keyword",-1],[/<(?:\/)?[A-Za-z](?:[A-Za-z0-9_:.-]*)/g,"sh_keyword",6,1],[/&(?:[A-Za-z0-9]+);/g,"sh_preproc",-1],[/<(?:\/)?[A-Za-z][A-Za-z0-9]*(?:\/)?>/g,"sh_keyword",-1],[/<(?:\/)?[A-Za-z][A-Za-z0-9]*/g,"sh_keyword",6,1],[/@[A-Za-z]+/g,"sh_type",-1],[/(?:TODO|FIXME|BUG)(?:[:]?)/g,"sh_todo",-1]],[[/\*\//g,"sh_comment",-2],[/(?:<?)[A-Za-z0-9_\.\/\-_~]+@[A-Za-z0-9_\.\/\-_~]+(?:>?)|(?:<?)[A-Za-z0-9_]+:\/\/[A-Za-z0-9_\.\/\-_~]+(?:>?)/g,"sh_url",-1],[/(?:TODO|FIXME|BUG)(?:[:]?)/g,"sh_todo",-1]],[[/"/g,"sh_string",-2],[/\\./g,"sh_specialchar",-1]],[[/'/g,"sh_string",-2],[/\\./g,"sh_specialchar",-1]]];
+    </script>
+    <script type="text/javascript">highlight(undefined, undefined, 'pre');</script>
+</body>
+</html>
+

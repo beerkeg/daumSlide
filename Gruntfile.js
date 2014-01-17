@@ -215,7 +215,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-yuidoc');
-  grunt.loadNpmTasks('grunt-docco2');
+  //grunt.loadNpmTasks('grunt-docco2');
   grunt.loadNpmTasks('grunt-markdown');
 
   // Default task.

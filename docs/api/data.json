@@ -1,0 +1,2105 @@
+{
+    "project": {
+        "name": "slide",
+        "description": "Slide Library using javascript & css3",
+        "version": "1.2.12",
+        "url": "http://digit.daumcorp.com/eastkiki/slide"
+    },
+    "files": {
+        "src\\js\\container.js": {
+            "name": "src\\js\\container.js",
+            "modules": {},
+            "classes": {
+                "BasicContainer": 1,
+                "MiddleContainer": 1,
+                "AdvanceContainer": 1,
+                "CloneAdvanceContainer": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\js\\datasource.js": {
+            "name": "src\\js\\datasource.js",
+            "modules": {},
+            "classes": {
+                "DataSource": 1,
+                "InfiniteDataSource": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\js\\init.js": {
+            "name": "src\\js\\init.js",
+            "modules": {
+                "slide": 1
+            },
+            "classes": {
+                "slide": 1,
+                "Class": 1,
+                "Observable": 1,
+                "gesture": 1
+            },
+            "fors": {
+                "slide": 1
+            },
+            "namespaces": {}
+        },
+        "src\\js\\panel.js": {
+            "name": "src\\js\\panel.js",
+            "modules": {},
+            "classes": {
+                "Panel": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\js\\progressive.js": {
+            "name": "src\\js\\progressive.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\js\\slide.js": {
+            "name": "src\\js\\slide.js",
+            "modules": {},
+            "classes": {
+                "BasicSlide": 1,
+                "MiddleSlide": 1,
+                "AdvanceSlide": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        }
+    },
+    "modules": {
+        "slide": {
+            "name": "slide",
+            "submodules": {},
+            "classes": {
+                "BasicContainer": 1,
+                "MiddleContainer": 1,
+                "AdvanceContainer": 1,
+                "CloneAdvanceContainer": 1,
+                "DataSource": 1,
+                "InfiniteDataSource": 1,
+                "slide": 1,
+                "Class": 1,
+                "Observable": 1,
+                "gesture": 1,
+                "Panel": 1,
+                "BasicSlide": 1,
+                "MiddleSlide": 1,
+                "AdvanceSlide": 1
+            },
+            "fors": {
+                "slide": 1
+            },
+            "namespaces": {},
+            "tag": "module",
+            "file": "src\\js\\slide.js",
+            "line": 505,
+            "itemtype": "main"
+        }
+    },
+    "classes": {
+        "BasicContainer": {
+            "name": "BasicContainer",
+            "shortname": "BasicContainer",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "slide",
+            "file": "src\\js\\container.js",
+            "line": 9,
+            "description": "#### 새로운 Container를 생성/초기화 한다.",
+            "extends": "Class",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "slide",
+                    "description": "slide Class",
+                    "type": "Object"
+                },
+                {
+                    "name": "option",
+                    "description": "option values",
+                    "type": "Object"
+                }
+            ]
+        },
+        "MiddleContainer": {
+            "name": "MiddleContainer",
+            "shortname": "MiddleContainer",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "slide",
+            "file": "src\\js\\container.js",
+            "line": 126,
+            "description": "#### 새로운 Container를 생성/초기화 한다.",
+            "extends": "BasicContainer",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "slide",
+                    "description": "slide Class",
+                    "type": "Object"
+                },
+                {
+                    "name": "option",
+                    "description": "option values",
+                    "type": "Object"
+                }
+            ]
+        },
+        "AdvanceContainer": {
+            "name": "AdvanceContainer",
+            "shortname": "AdvanceContainer",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "slide",
+            "file": "src\\js\\container.js",
+            "line": 265,
+            "description": "#### 새로운 Container를 생성/초기화 한다.",
+            "extends": "MiddleContainer",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "slide",
+                    "description": "slide Class",
+                    "type": "Object"
+                },
+                {
+                    "name": "option",
+                    "description": "option values",
+                    "type": "Object"
+                }
+            ]
+        },
+        "CloneAdvanceContainer": {
+            "name": "CloneAdvanceContainer",
+            "shortname": "CloneAdvanceContainer",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "slide",
+            "file": "src\\js\\container.js",
+            "line": 312,
+            "description": "#### 새로운 Container를 생성/초기화 한다.\nAdvanceContainer를 상속받아 기본적으로 비슷하게 동작하나,\n패널 재배열시 임시적으로 컨테이너의 클론을 보여주었다가\n패널이 재배열 된 후에 클론을 삭제하는 동작이 추가됨.",
+            "extends": "AdvanceContainer",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "slide",
+                    "description": "slide Class",
+                    "type": "Object"
+                },
+                {
+                    "name": "option",
+                    "description": "option values",
+                    "type": "Object"
+                }
+            ]
+        },
+        "DataSource": {
+            "name": "DataSource",
+            "shortname": "DataSource",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "slide",
+            "file": "src\\js\\datasource.js",
+            "line": 5,
+            "description": "slide 를 위한 데이터소스 delegate\n새로운 DataSource를 생성/초기화한다.",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "data",
+                    "description": "",
+                    "type": "Array"
+                }
+            ]
+        },
+        "InfiniteDataSource": {
+            "name": "InfiniteDataSource",
+            "shortname": "InfiniteDataSource",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "slide",
+            "file": "src\\js\\datasource.js",
+            "line": 189,
+            "description": "slide 를 위한 데이터소스 delegate.\n무한 루프 형태의 DataSource 예시",
+            "extends": "DataSource",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "data",
+                    "description": "",
+                    "type": "Array"
+                }
+            ]
+        },
+        "slide": {
+            "name": "slide",
+            "shortname": "slide",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "slide",
+            "namespace": "",
+            "file": "src\\js\\init.js",
+            "line": 8,
+            "static": 1
+        },
+        "Class": {
+            "name": "Class",
+            "shortname": "Class",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "slide",
+            "namespace": "",
+            "file": "src\\js\\init.js",
+            "line": 56,
+            "description": "상속기능을 제공하는 Class library",
+            "static": 1
+        },
+        "Observable": {
+            "name": "Observable",
+            "shortname": "Observable",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "slide",
+            "namespace": "",
+            "file": "src\\js\\init.js",
+            "line": 70,
+            "description": "custom event emitter Class.",
+            "extends": "Class",
+            "static": 1
+        },
+        "gesture": {
+            "name": "gesture",
+            "shortname": "gesture",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "slide",
+            "namespace": "",
+            "file": "src\\js\\init.js",
+            "line": 118,
+            "description": "gesture library",
+            "static": 1
+        },
+        "Panel": {
+            "name": "Panel",
+            "shortname": "Panel",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "slide",
+            "namespace": "",
+            "file": "src\\js\\panel.js",
+            "line": 6,
+            "description": "새로운 Panel을 생성/초기화 한다.",
+            "is_constructor": 1,
+            "extends": "Class",
+            "params": [
+                {
+                    "name": "slide",
+                    "description": "slide Class",
+                    "type": "Object"
+                },
+                {
+                    "name": "option",
+                    "description": "option values",
+                    "type": "Object"
+                }
+            ]
+        },
+        "BasicSlide": {
+            "name": "BasicSlide",
+            "shortname": "BasicSlide",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "slide",
+            "namespace": "",
+            "file": "src\\js\\slide.js",
+            "line": 18,
+            "description": "#### Frame 내에 새로운 슬라이드를 생성/초기화 한다.",
+            "is_constructor": 1,
+            "extends": "Observable",
+            "use": "gesture",
+            "params": [
+                {
+                    "name": "frameEl",
+                    "description": "slide 가 생성될 frame element",
+                    "type": "HTMLElement"
+                },
+                {
+                    "name": "dataSource",
+                    "description": "slide에서 보여줄 데이터가 세팅 된 DataSource Class Instance",
+                    "type": "DataSource"
+                },
+                {
+                    "name": "option",
+                    "description": "option values",
+                    "type": "Object",
+                    "optional": true,
+                    "props": [
+                        {
+                            "name": "duration",
+                            "description": "슬라이드 애니메이션 duration 값",
+                            "type": "Number",
+                            "optional": true,
+                            "optdefault": "300"
+                        },
+                        {
+                            "name": "panelClass",
+                            "description": "slide 내에서 생성될 panel 클래스",
+                            "type": "Panel",
+                            "optional": true,
+                            "optdefault": "slide.Panel"
+                        },
+                        {
+                            "name": "containerClass",
+                            "description": "slide 내에서 생성될 container 클래스",
+                            "type": "Container",
+                            "optional": true,
+                            "optdefault": "slide.Container"
+                        },
+                        {
+                            "name": "container",
+                            "description": "slide 내에서 생성될 container 클래스에서 사용될 options",
+                            "type": "Container",
+                            "optional": true,
+                            "props": [
+                                {
+                                    "name": "className",
+                                    "description": "container element 에 부여될 className",
+                                    "type": "String",
+                                    "optional": true,
+                                    "optdefault": "slide"
+                                },
+                                {
+                                    "name": "id",
+                                    "description": "container element 에 부여될 className",
+                                    "type": "String",
+                                    "optional": true
+                                }
+                            ]
+                        },
+                        {
+                            "name": "panel",
+                            "description": "slide 내에서 생성될 container 클래스에서 사용될 options",
+                            "type": "Panel",
+                            "optional": true,
+                            "props": [
+                                {
+                                    "name": "className",
+                                    "description": "panel element 에 부여될 className",
+                                    "type": "String",
+                                    "optional": true,
+                                    "optdefault": "panel"
+                                },
+                                {
+                                    "name": "tagName",
+                                    "description": "panel element 의 tagName",
+                                    "type": "String",
+                                    "optional": true,
+                                    "optdefault": "div"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        "MiddleSlide": {
+            "name": "MiddleSlide",
+            "shortname": "MiddleSlide",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "slide",
+            "namespace": "",
+            "file": "src\\js\\slide.js",
+            "line": 353,
+            "description": "#### Frame 내에 새로운 슬라이드를 생성/초기화 한다.",
+            "extends": "BasicSlide",
+            "is_constructor": 1,
+            "use": "MiddleContainer",
+            "params": [
+                {
+                    "name": "frameEl",
+                    "description": "slide 가 생성될 frame element",
+                    "type": "HTMLElement"
+                },
+                {
+                    "name": "dataSource",
+                    "description": "slide에서 보여줄 데이터가 세팅 된 DataSource Class Instance",
+                    "type": "DataSource"
+                },
+                {
+                    "name": "option",
+                    "description": "option values",
+                    "type": "Object",
+                    "optional": true,
+                    "props": [
+                        {
+                            "name": "duration",
+                            "description": "슬라이드 애니메이션 duration 값",
+                            "type": "Number",
+                            "optional": true,
+                            "optdefault": "300"
+                        },
+                        {
+                            "name": "panelClass",
+                            "description": "slide 내에서 생성될 panel 클래스",
+                            "type": "Panel",
+                            "optional": true,
+                            "optdefault": "slide.Panel"
+                        },
+                        {
+                            "name": "containerClass",
+                            "description": "slide 내에서 생성될 container 클래스",
+                            "type": "Container",
+                            "optional": true,
+                            "optdefault": "slide.Container"
+                        },
+                        {
+                            "name": "container",
+                            "description": "slide 내에서 생성될 container 클래스에서 사용될 options",
+                            "type": "Container",
+                            "optional": true,
+                            "props": [
+                                {
+                                    "name": "className",
+                                    "description": "container element 에 부여될 className",
+                                    "type": "String",
+                                    "optional": true,
+                                    "optdefault": "slide"
+                                },
+                                {
+                                    "name": "id",
+                                    "description": "container element 에 부여될 className",
+                                    "type": "String",
+                                    "optional": true
+                                }
+                            ]
+                        },
+                        {
+                            "name": "panel",
+                            "description": "slide 내에서 생성될 container 클래스에서 사용될 options",
+                            "type": "Panel",
+                            "optional": true,
+                            "props": [
+                                {
+                                    "name": "className",
+                                    "description": "panel element 에 부여될 className",
+                                    "type": "String",
+                                    "optional": true,
+                                    "optdefault": "panel"
+                                },
+                                {
+                                    "name": "tagName",
+                                    "description": "panel element 의 tagName",
+                                    "type": "String",
+                                    "optional": true,
+                                    "optdefault": "div"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        "AdvanceSlide": {
+            "name": "AdvanceSlide",
+            "shortname": "AdvanceSlide",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "slide",
+            "namespace": "",
+            "file": "src\\js\\slide.js",
+            "line": 505,
+            "description": "#### Frame 내에 새로운 슬라이드를 생성/초기화 한다.",
+            "extends": "MiddleSlide",
+            "is_constructor": 1,
+            "use": "AdvanceContainer",
+            "params": [
+                {
+                    "name": "frameEl",
+                    "description": "slide 가 생성될 frame element",
+                    "type": "HTMLElement"
+                },
+                {
+                    "name": "dataSource",
+                    "description": "slide에서 보여줄 데이터가 세팅 된 DataSource Class Instance",
+                    "type": "DataSource"
+                },
+                {
+                    "name": "option",
+                    "description": "option values",
+                    "type": "Object",
+                    "optional": true,
+                    "props": [
+                        {
+                            "name": "duration",
+                            "description": "슬라이드 애니메이션 duration 값",
+                            "type": "Number",
+                            "optional": true,
+                            "optdefault": "300"
+                        },
+                        {
+                            "name": "panelClass",
+                            "description": "slide 내에서 생성될 panel 클래스",
+                            "type": "Panel",
+                            "optional": true,
+                            "optdefault": "slide.Panel"
+                        },
+                        {
+                            "name": "containerClass",
+                            "description": "slide 내에서 생성될 container 클래스",
+                            "type": "Container",
+                            "optional": true,
+                            "optdefault": "slide.Container"
+                        },
+                        {
+                            "name": "container",
+                            "description": "slide 내에서 생성될 container 클래스에서 사용될 options",
+                            "type": "Container",
+                            "optional": true,
+                            "props": [
+                                {
+                                    "name": "className",
+                                    "description": "container element 에 부여될 className",
+                                    "type": "String",
+                                    "optional": true,
+                                    "optdefault": "slide"
+                                },
+                                {
+                                    "name": "id",
+                                    "description": "container element 에 부여될 className",
+                                    "type": "String",
+                                    "optional": true
+                                }
+                            ]
+                        },
+                        {
+                            "name": "panel",
+                            "description": "slide 내에서 생성될 container 클래스에서 사용될 options",
+                            "type": "Panel",
+                            "optional": true,
+                            "props": [
+                                {
+                                    "name": "className",
+                                    "description": "panel element 에 부여될 className",
+                                    "type": "String",
+                                    "optional": true,
+                                    "optdefault": "panel"
+                                },
+                                {
+                                    "name": "tagName",
+                                    "description": "panel element 의 tagName",
+                                    "type": "String",
+                                    "optional": true,
+                                    "optdefault": "div"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "classitems": [
+        {
+            "file": "src\\js\\container.js",
+            "line": 30,
+            "description": "새로운 Container를 생성/초기화 한다.",
+            "itemtype": "method",
+            "name": "createContainer",
+            "params": [
+                {
+                    "name": "width",
+                    "description": "Slide Frame의 width 값",
+                    "type": "String | Number"
+                }
+            ],
+            "return": {
+                "description": "container  container element",
+                "type": "HTMLElement"
+            },
+            "class": "BasicContainer"
+        },
+        {
+            "file": "src\\js\\container.js",
+            "line": 50,
+            "description": "새로운 Container를 생성/초기화 한다.",
+            "itemtype": "method",
+            "name": "createContainer",
+            "params": [
+                {
+                    "name": "width",
+                    "description": "Slide Frame의 width 값",
+                    "type": "String | Number"
+                }
+            ],
+            "return": {
+                "description": "container  container element",
+                "type": "HTMLElement"
+            },
+            "class": "BasicContainer"
+        },
+        {
+            "file": "src\\js\\container.js",
+            "line": 61,
+            "description": "컨테이너에서 조절할 하나의 패널을 설정한다.",
+            "itemtype": "method",
+            "name": "setPanel",
+            "params": [
+                {
+                    "name": "panelOption",
+                    "description": "panel을 설정할때 필요한 panel 옵션 값",
+                    "type": "Object"
+                }
+            ],
+            "class": "BasicContainer"
+        },
+        {
+            "file": "src\\js\\container.js",
+            "line": 70,
+            "description": "하나의 패널을 생성/초기화 한다.",
+            "itemtype": "method",
+            "name": "initPanel",
+            "params": [
+                {
+                    "name": "panelOption",
+                    "description": "panel을 설정할때 필요한 panel 옵션 값",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "panel  생성/초기화한 PanelClass Instance",
+                "type": "PanelClass"
+            },
+            "class": "BasicContainer"
+        },
+        {
+            "file": "src\\js\\container.js",
+            "line": 83,
+            "description": "이벤트를 설정한다.\n슬라이드의 frame 크기가 resize 될 경우에 대한 콜백함수 추가.",
+            "itemtype": "method",
+            "name": "bindEvents",
+            "class": "BasicContainer"
+        },
+        {
+            "file": "src\\js\\container.js",
+            "line": 95,
+            "description": "슬라이드의 frame 크기가 resize 될 경우에 컨테이너의 사이즈를 frame 사이즈와 같게 변경해준다.",
+            "itemtype": "method",
+            "name": "setSlideSize",
+            "params": [
+                {
+                    "name": "width",
+                    "description": "frame width size",
+                    "type": "String | Number"
+                }
+            ],
+            "class": "BasicContainer"
+        },
+        {
+            "file": "src\\js\\container.js",
+            "line": 104,
+            "description": "현재 container의 width 사이즈를 얻어온다.",
+            "itemtype": "method",
+            "name": "getWidth",
+            "return": {
+                "description": "width  container element width size",
+                "type": "Number"
+            },
+            "class": "BasicContainer"
+        },
+        {
+            "file": "src\\js\\container.js",
+            "line": 113,
+            "description": "해당 클래스의 인스턴스 삭제시 할당된 오브젝트들을 destroy 시킨다.",
+            "itemtype": "method",
+            "name": "destroy",
+            "class": "BasicContainer"
+        },
+        {
+            "file": "src\\js\\container.js",
+            "line": 144,
+            "description": "slide내에 존재하는 패널들을 생성/초기화 한다.",
+            "itemtype": "method",
+            "name": "initPanels",
+            "params": [
+                {
+                    "name": "panelOption",
+                    "description": "panel들을 생성하는데 필요한 옵션 값",
+                    "type": "Object"
+                }
+            ],
+            "class": "MiddleContainer"
+        },
+        {
+            "file": "src\\js\\container.js",
+            "line": 158,
+            "description": "웹접근성을 위한 코드.\n현재 패널만 스크린 리더에서 읽도록 한다.\n이전 패널과 이후 패널의 데이터를 스크린 리더에서 읽지 못하도록 막는다.",
+            "itemtype": "method",
+            "name": "setAriaHiddenPanels",
+            "class": "MiddleContainer"
+        },
+        {
+            "file": "src\\js\\container.js",
+            "line": 171,
+            "description": "slide에 있는 패널들에 현재 인덱스 기준의 데이터 셋을 넣는다.",
+            "itemtype": "method",
+            "name": "setData",
+            "params": [
+                {
+                    "name": "set",
+                    "description": "HTMLElement 데이터 셋",
+                    "type": "Object"
+                }
+            ],
+            "class": "MiddleContainer"
+        },
+        {
+            "file": "src\\js\\container.js",
+            "line": 183,
+            "description": "마지막 패널에 next 데이터를 넣는다.",
+            "itemtype": "method",
+            "name": "setNextData",
+            "params": [
+                {
+                    "name": "next",
+                    "description": "다음 데이터",
+                    "type": "HTMLElement"
+                }
+            ],
+            "class": "MiddleContainer"
+        },
+        {
+            "file": "src\\js\\container.js",
+            "line": 192,
+            "description": "첫번째 패널에 prev 데이터를 넣는다.",
+            "itemtype": "method",
+            "name": "setPrevData",
+            "params": [
+                {
+                    "name": "prev",
+                    "description": "이전 데이터",
+                    "type": "HTMLElement"
+                }
+            ],
+            "class": "MiddleContainer"
+        },
+        {
+            "file": "src\\js\\container.js",
+            "line": 201,
+            "description": "next 이후 패널들을 재정렬한다.\n첫번째 패널을 마지막으로 옮긴다.",
+            "itemtype": "method",
+            "name": "rearrangePanelsAfterNext",
+            "class": "MiddleContainer"
+        },
+        {
+            "file": "src\\js\\container.js",
+            "line": 215,
+            "description": "prev 이후 패널들을 재정렬한다.\n마지막 패널을 첫번째로 옮긴다.",
+            "itemtype": "method",
+            "name": "rearrangePanelsAfterPrev",
+            "class": "MiddleContainer"
+        },
+        {
+            "file": "src\\js\\container.js",
+            "line": 230,
+            "description": "주어진 offset 만큼 slide를 좌우 이동 시킨다.\ncss transition animation 없이 단순 이동",
+            "itemtype": "method",
+            "name": "move",
+            "params": [
+                {
+                    "name": "offset",
+                    "description": "이동시킬 거리 값",
+                    "type": "Number"
+                }
+            ],
+            "class": "MiddleContainer"
+        },
+        {
+            "file": "src\\js\\container.js",
+            "line": 240,
+            "description": "변경된 slide size 와 offset 을 다시 설정한다.",
+            "itemtype": "method",
+            "name": "setSlideSize",
+            "params": [
+                {
+                    "name": "width",
+                    "description": "",
+                    "type": "String | Number"
+                }
+            ],
+            "class": "MiddleContainer"
+        },
+        {
+            "file": "src\\js\\container.js",
+            "line": 250,
+            "description": "해당 클래스의 인스턴스 삭제시 할당된 오브젝트들을 destroy 시킨다.",
+            "itemtype": "method",
+            "name": "destroy",
+            "class": "MiddleContainer"
+        },
+        {
+            "file": "src\\js\\container.js",
+            "line": 275,
+            "description": "주어진 offset 만큼 slide를 좌우 이동 시킨다.",
+            "itemtype": "method",
+            "name": "move",
+            "params": [
+                {
+                    "name": "offset",
+                    "description": "이동시킬 거리 값",
+                    "type": "Number"
+                }
+            ],
+            "class": "AdvanceContainer"
+        },
+        {
+            "file": "src\\js\\container.js",
+            "line": 284,
+            "description": "해당 slide(컨테이너 Element) 의 transitionDuration을 설정한다.",
+            "itemtype": "method",
+            "name": "setTransitionDuration",
+            "params": [
+                {
+                    "name": "duration",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "class": "AdvanceContainer"
+        },
+        {
+            "file": "src\\js\\container.js",
+            "line": 293,
+            "description": "해당 콜백을 onwebkitTransitionEnd 에 등록한다.",
+            "itemtype": "method",
+            "name": "onTransitionEnd",
+            "params": [
+                {
+                    "name": "callback",
+                    "description": "TransitionEnd 이벤트 발생시 동작할 callback 함수",
+                    "type": "Function"
+                }
+            ],
+            "class": "AdvanceContainer"
+        },
+        {
+            "file": "src\\js\\container.js",
+            "line": 302,
+            "description": "해당 콜백을 onwebkitTransitionEnd 에서 제거한다.",
+            "itemtype": "method",
+            "name": "offTransitionEnd",
+            "params": [
+                {
+                    "name": "callback",
+                    "description": "제거할 callback function",
+                    "type": "Function"
+                }
+            ],
+            "class": "AdvanceContainer"
+        },
+        {
+            "file": "src\\js\\container.js",
+            "line": 325,
+            "description": "panel을 재배치 하기 전에 해당 컨테이너의 클론을 만들어 보여주었다가 패널이 재배치 된 이후에 클론을 제거 한다.",
+            "itemtype": "method",
+            "name": "showTemporaryClone",
+            "params": [
+                {
+                    "name": "callback",
+                    "description": "클론이 보여지는 동안 동작할 callback 함수",
+                    "type": "Function"
+                }
+            ],
+            "class": "CloneAdvanceContainer"
+        },
+        {
+            "file": "src\\js\\container.js",
+            "line": 343,
+            "description": "next 이후 패널들을 재정렬한다.\n첫번째 패널을 마지막으로 옮긴다.",
+            "itemtype": "method",
+            "name": "rearrangePanelsAfterNext",
+            "class": "CloneAdvanceContainer"
+        },
+        {
+            "file": "src\\js\\container.js",
+            "line": 355,
+            "description": "prev 이후 패널들을 재정렬한다.\n마지막 패널을 첫번째로 옮긴다.",
+            "itemtype": "method",
+            "name": "rearrangePanelsAfterPrev",
+            "class": "CloneAdvanceContainer"
+        },
+        {
+            "file": "src\\js\\datasource.js",
+            "line": 14,
+            "description": "새로운 DataSource를 생성/초기화한다.",
+            "params": [
+                {
+                    "name": "data",
+                    "description": "",
+                    "type": "Array"
+                }
+            ],
+            "class": "DataSource"
+        },
+        {
+            "file": "src\\js\\datasource.js",
+            "line": 22,
+            "description": "현재 인덱스를 설정한다.",
+            "itemtype": "method",
+            "name": "setCurrentIndex",
+            "params": [
+                {
+                    "name": "index",
+                    "description": "현재 인덱스로 세팅할 값",
+                    "type": "Number"
+                }
+            ],
+            "class": "DataSource"
+        },
+        {
+            "file": "src\\js\\datasource.js",
+            "line": 31,
+            "description": "현재/이전/다음 데이터셋을 불러온다.\n데이터가 없을 경우 해당 필드는 null 로 세팅된다.",
+            "itemtype": "method",
+            "name": "queryCurrentSet",
+            "async": 1,
+            "params": [
+                {
+                    "name": "callback",
+                    "description": "데이터를 모두 로드 된후 해당 데이터 set을 인자로 갖고 실행될 callback 함수\n     callback({prev, current, next});",
+                    "type": "Function"
+                }
+            ],
+            "class": "DataSource"
+        },
+        {
+            "file": "src\\js\\datasource.js",
+            "line": 54,
+            "description": "이전 데이터를 불러온다.\n데이터가 없을 경우 해당 필드는 null 로 세팅된다.",
+            "itemtype": "method",
+            "name": "queryPrev",
+            "async": 1,
+            "params": [
+                {
+                    "name": "callback",
+                    "description": "데이터를 모두 로드 된후 해당 데이터를 인자로 갖고 실행될 callback 함수",
+                    "type": "Function"
+                }
+            ],
+            "class": "DataSource"
+        },
+        {
+            "file": "src\\js\\datasource.js",
+            "line": 75,
+            "description": "현재 데이터를 불러온다.",
+            "itemtype": "method",
+            "name": "queryCurrent",
+            "async": 1,
+            "params": [
+                {
+                    "name": "callback",
+                    "description": "데이터를 모두 로드 된후 해당 데이터를 인자로 갖고 실행될 callback 함수",
+                    "type": "Function"
+                }
+            ],
+            "class": "DataSource"
+        },
+        {
+            "file": "src\\js\\datasource.js",
+            "line": 85,
+            "description": "다음 데이터를 불러온다.\n데이터가 없을 경우 해당 필드는 null 로 세팅된다.",
+            "itemtype": "method",
+            "name": "queryNext",
+            "async": 1,
+            "params": [
+                {
+                    "name": "callback",
+                    "description": "데이터를 모두 로드 된후 해당 데이터를 인자로 갖고 실행될 callback 함수",
+                    "type": "Function"
+                }
+            ],
+            "class": "DataSource"
+        },
+        {
+            "file": "src\\js\\datasource.js",
+            "line": 106,
+            "description": "다음 데이터로 이동",
+            "itemtype": "method",
+            "name": "next",
+            "class": "DataSource"
+        },
+        {
+            "file": "src\\js\\datasource.js",
+            "line": 114,
+            "description": "이전 데이터로 이동",
+            "itemtype": "method",
+            "name": "prev",
+            "class": "DataSource"
+        },
+        {
+            "file": "src\\js\\datasource.js",
+            "line": 122,
+            "description": "데이터 끝에 도달하였을 때 호출될 delegate를 설정한다.",
+            "itemtype": "method",
+            "name": "willQueryEndOfData",
+            "params": [
+                {
+                    "name": "delegate",
+                    "description": "",
+                    "type": "Function"
+                }
+            ],
+            "class": "DataSource"
+        },
+        {
+            "file": "src\\js\\datasource.js",
+            "line": 131,
+            "description": "현재 데이터 끝에 도달하였을 때 호출될 기본 delegate.\ncallback에 null을 넘겨 호출하여 준다.",
+            "itemtype": "method",
+            "name": "willQueryEndOfDataDelegate",
+            "params": [
+                {
+                    "name": "callback",
+                    "description": "",
+                    "type": "Function"
+                }
+            ],
+            "class": "DataSource"
+        },
+        {
+            "file": "src\\js\\datasource.js",
+            "line": 141,
+            "description": "데이터 시작에 도달하였을 때 호출될 delegate를 설정한다.",
+            "itemtype": "method",
+            "name": "willQueryFirstOfData",
+            "params": [
+                {
+                    "name": "delegate",
+                    "description": "",
+                    "type": "Function"
+                }
+            ],
+            "class": "DataSource"
+        },
+        {
+            "file": "src\\js\\datasource.js",
+            "line": 150,
+            "description": "현재 데이터 시작에 도달하였을 때 호출될 기본 delegate.\ncallback에 null을 넘겨 호출하여 준다.",
+            "itemtype": "method",
+            "name": "willQueryFirstOfDataDelegate",
+            "params": [
+                {
+                    "name": "callback",
+                    "description": "",
+                    "type": "Function"
+                }
+            ],
+            "class": "DataSource"
+        },
+        {
+            "file": "src\\js\\datasource.js",
+            "line": 160,
+            "description": "기존의 데이터 뒤에 새로운 데이터를 추가한다.",
+            "itemtype": "method",
+            "name": "addNextData",
+            "params": [
+                {
+                    "name": "addends",
+                    "description": "추가될 data Array",
+                    "type": "Array"
+                }
+            ],
+            "class": "DataSource"
+        },
+        {
+            "file": "src\\js\\datasource.js",
+            "line": 169,
+            "description": "기존의 데이터 앞에 새로운 데이터를 추가한다.",
+            "itemtype": "method",
+            "name": "addPrevData",
+            "params": [
+                {
+                    "name": "addends",
+                    "description": "추가될 data Array",
+                    "type": "Array"
+                }
+            ],
+            "class": "DataSource"
+        },
+        {
+            "file": "src\\js\\datasource.js",
+            "line": 179,
+            "description": "해당 클래스의 인스턴스 삭제시 할당된 오브젝트들을 destroy 시킨다.",
+            "itemtype": "method",
+            "name": "destroy",
+            "class": "DataSource"
+        },
+        {
+            "file": "src\\js\\datasource.js",
+            "line": 202,
+            "description": "다음 데이터로 이동, 다음 데이터가 없을 경우 맨 처음 데이터로 이동.",
+            "itemtype": "method",
+            "name": "next",
+            "class": "InfiniteDataSource"
+        },
+        {
+            "file": "src\\js\\datasource.js",
+            "line": 214,
+            "description": "이전 데이터로 이동, 이전 데이터가 없을 경우 맨 끝 데이터로 이동.",
+            "itemtype": "method",
+            "name": "prev",
+            "class": "InfiniteDataSource"
+        },
+        {
+            "file": "src\\js\\datasource.js",
+            "line": 226,
+            "description": "현재 데이터 시작에 도달하였을 때 호출될 기본 delegate.\ncallback에 맨 마지막 데이터를 넘겨 호출하여 준다.",
+            "itemtype": "method",
+            "name": "willQueryFirstOfDataDelegate",
+            "params": [
+                {
+                    "name": "callback",
+                    "description": "",
+                    "type": "Function"
+                }
+            ],
+            "class": "InfiniteDataSource"
+        },
+        {
+            "file": "src\\js\\datasource.js",
+            "line": 237,
+            "description": "현재 데이터 끝에 도달하였을 때 호출될 기본 delegate.\ncallback에 맨처음 데이터를 넘겨 호출하여 준다.",
+            "itemtype": "method",
+            "name": "willQueryEndOfDataDelegate",
+            "params": [
+                {
+                    "name": "callback",
+                    "description": "",
+                    "type": "Function"
+                }
+            ],
+            "class": "InfiniteDataSource"
+        },
+        {
+            "file": "src\\js\\init.js",
+            "line": 18,
+            "description": "dom event 등록 함수",
+            "itemtype": "method",
+            "name": "on",
+            "params": [
+                {
+                    "name": "el",
+                    "description": "이벤트가 발생하는 엘리먼트",
+                    "type": "HTMLElement"
+                },
+                {
+                    "name": "eventName",
+                    "description": "이벤트 이름",
+                    "type": "String"
+                },
+                {
+                    "name": "callback",
+                    "description": "이벤트 발생시 동작할 콜백 함수",
+                    "type": "Function"
+                }
+            ],
+            "class": "slide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\init.js",
+            "line": 27,
+            "description": "dom event 제거 함수",
+            "itemtype": "method",
+            "name": "off",
+            "params": [
+                {
+                    "name": "el",
+                    "description": "이벤트가 발생하는 엘리먼트",
+                    "type": "HTMLElement"
+                },
+                {
+                    "name": "eventName",
+                    "description": "이벤트 이름",
+                    "type": "String"
+                },
+                {
+                    "name": "callback",
+                    "description": "이벤트 발생시 동작 하지 않게 제거할 콜백 함수",
+                    "type": "Function"
+                }
+            ],
+            "class": "slide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\init.js",
+            "line": 36,
+            "description": "해당 event에 의한 browser 의 기본 동작을 막는 함수.",
+            "itemtype": "method",
+            "name": "preventDefault",
+            "params": [
+                {
+                    "name": "e",
+                    "description": "dom event object",
+                    "type": "Event"
+                }
+            ],
+            "class": "slide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\init.js",
+            "line": 43,
+            "description": "해당 event에 의한 browser 버블링 현상을 막는 함수.",
+            "itemtype": "method",
+            "name": "stopPropagation",
+            "params": [
+                {
+                    "name": "e",
+                    "description": "dom event object",
+                    "type": "Event"
+                }
+            ],
+            "class": "slide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\init.js",
+            "line": 62,
+            "description": "상속 기능을 갖는 클래스를 생성한다.",
+            "itemtype": "method",
+            "name": "extend",
+            "params": [
+                {
+                    "name": "object",
+                    "description": "클래스로 생성할 객체",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "상속을 받아 새롭게 생성된 Class 객체",
+                "type": "Class"
+            },
+            "class": "Class",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\init.js",
+            "line": 77,
+            "description": "Add custom event.",
+            "itemtype": "method",
+            "name": "on",
+            "chainable": 1,
+            "params": [
+                {
+                    "name": "eventName",
+                    "description": "등록할 커스텀 이벤트",
+                    "type": "String"
+                },
+                {
+                    "name": "callback",
+                    "description": "등록한 이벤트 발생시 호출될 콜백 함수",
+                    "type": "Function"
+                }
+            ],
+            "class": "Observable",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\init.js",
+            "line": 85,
+            "description": "Remove custom event.",
+            "itemtype": "method",
+            "name": "off",
+            "chainable": 1,
+            "params": [
+                {
+                    "name": "eventName",
+                    "description": "제거할 커스텀 이벤트",
+                    "type": "String"
+                },
+                {
+                    "name": "callback",
+                    "description": "제거할 콜백 함수",
+                    "type": "Function"
+                }
+            ],
+            "class": "Observable",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\init.js",
+            "line": 93,
+            "description": "Emit custom event.",
+            "itemtype": "method",
+            "name": "emit",
+            "chainable": 1,
+            "params": [
+                {
+                    "name": "eventName",
+                    "description": "호출할 커스텀 이벤트",
+                    "type": "String"
+                },
+                {
+                    "name": "args",
+                    "description": "호출될 콜백 함수에게 넘겨줄 인자 값",
+                    "type": "Mixed",
+                    "optional": true,
+                    "multiple": true
+                }
+            ],
+            "class": "Observable",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\init.js",
+            "line": 106,
+            "description": "ua_parser library parsing result",
+            "itemtype": "property",
+            "name": "ua",
+            "type": "Object",
+            "class": "slide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\init.js",
+            "line": 124,
+            "itemtype": "method",
+            "name": "GestureListener",
+            "params": [
+                {
+                    "name": "frameEl",
+                    "description": "gesture 를 감지할 영역에 해당하는 엘리먼트",
+                    "type": "HTMLElement"
+                },
+                {
+                    "name": "threshold",
+                    "description": "gesture 를 감지를 시작하기 위한 최소값",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "",
+                "type": "GestureListenerObj"
+            },
+            "class": "gesture",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\panel.js",
+            "line": 26,
+            "description": "panel Element를 생성/초기화 한다.",
+            "itemtype": "method",
+            "name": "createPanel",
+            "params": [
+                {
+                    "name": "width",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "class": "Panel",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\panel.js",
+            "line": 40,
+            "description": "panel Element의 넓이를 바꾼다.",
+            "itemtype": "method",
+            "name": "setWidth",
+            "params": [
+                {
+                    "name": "width",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "class": "Panel",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\panel.js",
+            "line": 49,
+            "description": "panel Element에 data를 넣는다.",
+            "itemtype": "method",
+            "name": "setData",
+            "params": [
+                {
+                    "name": "data",
+                    "description": "",
+                    "type": "HTMLElement"
+                }
+            ],
+            "class": "Panel",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\panel.js",
+            "line": 58,
+            "description": "웹접근성을 위한 코드.\n스크린 리더에서 데이터를 읽을지 말지 결정한다.",
+            "itemtype": "method",
+            "name": "setAriaHidden",
+            "params": [
+                {
+                    "name": "flag",
+                    "description": "true면 스트린리더에서 데이터를 읽지 않는다.",
+                    "type": "Boolean"
+                }
+            ],
+            "class": "Panel",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\panel.js",
+            "line": 68,
+            "description": "해당 클래스의 인스턴스 삭제시 할당된 오브젝트들을 destroy 시킨다.",
+            "itemtype": "method",
+            "name": "destroy",
+            "class": "Panel",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\progressive.js",
+            "line": 8,
+            "description": "3d gpu 가속 여부를 사용할수 있는지 판단한다.",
+            "class": "BasicSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\progressive.js",
+            "line": 35,
+            "description": "ics 4.0.3 이상 버젼 대응.",
+            "class": "BasicSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 54,
+            "description": "wrapper 내부에 들어갈 mark up 구조를 설정한다.",
+            "itemtype": "method",
+            "name": "initContainer",
+            "class": "BasicSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 65,
+            "description": "slide 에 필요한 event를 bind 시킨다.",
+            "itemtype": "method",
+            "name": "bindEvents",
+            "class": "BasicSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 74,
+            "description": "ios webapp : 다른 탭에서 orientation 발생시 제대로 사이즈 체크 안되는 버그가 존재.\n             현재 탭으로 복귀시 발생하는 visivlityChange 이벤트 발생(ios7 이상)시 강제로 리사이즈 체크.",
+            "class": "BasicSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 82,
+            "description": "slide 에 gesture event(mouse or touch event)를 bind 시킨다.",
+            "itemtype": "method",
+            "name": "bindGesture",
+            "class": "BasicSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 102,
+            "description": "slide 에 resize event를 bind 시킨다.",
+            "itemtype": "method",
+            "name": "onResized",
+            "class": "BasicSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 113,
+            "description": "slide 에 visibilitychange event를 bind 시킨다.",
+            "itemtype": "method",
+            "name": "onVisibilityChange",
+            "class": "BasicSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 135,
+            "description": "slide Frame 의 사이즈를 확인해서 변경시에는 리사이즈 시킨다.",
+            "itemtype": "method",
+            "name": "checkAndResizeSlideFrame",
+            "class": "BasicSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 157,
+            "description": "slide Frame 의 사이즈가 변경되었는지 확인한다.",
+            "itemtype": "method",
+            "name": "isChangedSize",
+            "return": {
+                "description": "사이즈 변경시 true, 사이즈 미변경시 false.",
+                "type": "Boolean"
+            },
+            "class": "BasicSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 166,
+            "description": "데이터 소스로부터 데이터를 받아서 슬라이드에 보여준다.",
+            "itemtype": "method",
+            "name": "show",
+            "class": "BasicSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 177,
+            "description": "슬라이드를 좌로 이동시킨다. 다음(next) 슬라이드를 보여준다.\n만약, 다음 슬라이드에 내용이 없을 경우 이동 시키지 않는다.",
+            "itemtype": "method",
+            "name": "next",
+            "class": "BasicSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 193,
+            "description": "다음 슬라이드를 보여준다.",
+            "itemtype": "method",
+            "name": "nextSlide",
+            "access": "private",
+            "tagname": "",
+            "class": "BasicSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 205,
+            "description": "슬라이드를 우로 이동시킨다. 이전(prev) 슬라이드를 보여준다.\n만약, 이전 슬라이드에 내용이 없을 경우 이동 시키지 않는다.",
+            "itemtype": "method",
+            "name": "prev",
+            "class": "BasicSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 221,
+            "description": "이전 슬라이드를 보여준다.",
+            "itemtype": "method",
+            "name": "prevSlide",
+            "access": "private",
+            "tagname": "",
+            "class": "BasicSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 233,
+            "description": "slide를 원위치 시킨다.",
+            "itemtype": "method",
+            "name": "cancel",
+            "class": "BasicSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 241,
+            "description": "mousedown or touchstart 이벤트 발생시 동작하는 함수",
+            "itemtype": "method",
+            "name": "startDrag",
+            "params": [
+                {
+                    "name": "session",
+                    "description": "GestureSession 제스쳐 정보를 담은 객체",
+                    "type": "Object"
+                }
+            ],
+            "class": "BasicSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 250,
+            "description": "mousemove or touchmove 이벤트 발생시 동작하는 함수",
+            "itemtype": "method",
+            "name": "drag",
+            "params": [
+                {
+                    "name": "session",
+                    "description": "GestureSession 제스쳐 정보를 담은 객체",
+                    "type": "Object"
+                }
+            ],
+            "class": "BasicSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 259,
+            "description": "mouseup or touchend 이벤트 발생시 동작하는 함수",
+            "itemtype": "method",
+            "name": "endDrag",
+            "params": [
+                {
+                    "name": "session",
+                    "description": "GestureSession 제스쳐 정보를 담은 객체",
+                    "type": "Object"
+                }
+            ],
+            "class": "BasicSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 276,
+            "description": "변경된 wrapper, slide, panels의 size 와 offset을 다시 설정한다.",
+            "itemtype": "method",
+            "name": "resize",
+            "params": [
+                {
+                    "name": "width",
+                    "description": "frame element의 실제 width 크기",
+                    "type": "Number"
+                },
+                {
+                    "name": "height",
+                    "description": "frame element의 height 실제크기",
+                    "type": "Number"
+                }
+            ],
+            "class": "BasicSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 290,
+            "description": "변경된 wrapper 사이즈를 확인/저장 한다.",
+            "itemtype": "method",
+            "name": "setWrapperSize",
+            "params": [
+                {
+                    "name": "width",
+                    "description": "frame element의 실제 width 크기",
+                    "type": "Number"
+                }
+            ],
+            "class": "BasicSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 300,
+            "description": "해당 클래스의 인스턴스 삭제시 할당된 오브젝트들을 destroy 시킨다.",
+            "itemtype": "method",
+            "name": "destroy",
+            "class": "BasicSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 316,
+            "description": "제스처가 왼쪽으로 일정 거리이상 혹은 빠르게 움직였을 경우에 true",
+            "itemtype": "method",
+            "name": "isNextSwipe",
+            "params": [
+                {
+                    "name": "session",
+                    "description": "GestureSession 제스쳐 정보를 담은 객체",
+                    "type": "Object"
+                }
+            ],
+            "class": "BasicSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 325,
+            "description": "제스처가 왼쪽으로 일정 거리이상 움직였을 경우에 true",
+            "itemtype": "method",
+            "name": "isNextThreshold",
+            "params": [
+                {
+                    "name": "session",
+                    "description": "GestureSession 제스쳐 정보를 담은 객체",
+                    "type": "Object"
+                }
+            ],
+            "class": "BasicSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 334,
+            "description": "제스처가 오른쪽으로 일정 거리이상 혹은 빠르게 움직였을 경우에 true",
+            "itemtype": "method",
+            "name": "isPrevSwipe",
+            "params": [
+                {
+                    "name": "session",
+                    "description": "GestureSession 제스쳐 정보를 담은 객체",
+                    "type": "Object"
+                }
+            ],
+            "class": "BasicSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 343,
+            "description": "제스처가 오른쪽으로 일정 거리이상 움직였을 경우에 true",
+            "itemtype": "method",
+            "name": "isPrevThreshold",
+            "params": [
+                {
+                    "name": "session",
+                    "description": "GestureSession 제스쳐 정보를 담은 객체",
+                    "type": "Object"
+                }
+            ],
+            "class": "BasicSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 374,
+            "description": "데이터 소스로부터 데이터를 받아서 슬라이드에 보여준다.",
+            "itemtype": "method",
+            "name": "show",
+            "class": "MiddleSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 385,
+            "description": "슬라이드 좌로 이동시킨 후 panel들을 재정렬 + 그 다음 데이터를 미리 로딩해둔다.",
+            "itemtype": "method",
+            "name": "nextSlide",
+            "class": "MiddleSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 401,
+            "description": "마지막 패널에 다음 데이터를 넣는다.",
+            "itemtype": "method",
+            "name": "preloadNextData",
+            "class": "MiddleSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 413,
+            "description": "슬라이드 우로 이동시킨 후 panel들을 재정렬 + 그 이전 데이터를 미리 로딩해둔다.",
+            "itemtype": "method",
+            "name": "prevSlide",
+            "class": "MiddleSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 429,
+            "description": "첫번째 패널에 이전 데이터를 넣는다.",
+            "itemtype": "method",
+            "name": "preloadPrevData",
+            "class": "MiddleSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 441,
+            "description": "주어진 offset 만큼 slide를 좌우 이동 시킨다.\ncss transition animation을 통하여 '스르륵' 이동",
+            "itemtype": "method",
+            "name": "slide",
+            "params": [
+                {
+                    "name": "offset",
+                    "description": "이동시킬 거리 값",
+                    "type": "Number"
+                },
+                {
+                    "name": "callback",
+                    "description": "transition animation 이 끝난 이후 호출되는 callback 함수",
+                    "type": "Function"
+                }
+            ],
+            "class": "MiddleSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 455,
+            "description": "slide를 원위치 시킨다.",
+            "itemtype": "method",
+            "name": "cancel",
+            "class": "MiddleSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 466,
+            "description": "mousemove or touchmove 이벤트 발생시 동작하는 함수",
+            "itemtype": "method",
+            "name": "drag",
+            "params": [
+                {
+                    "name": "session",
+                    "description": "GestureSession 제스쳐 정보를 담은 객체",
+                    "type": "Object"
+                }
+            ],
+            "class": "MiddleSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 479,
+            "description": "mouseup or touchend 이벤트 발생시 동작하는 함수",
+            "itemtype": "method",
+            "name": "endDrag",
+            "params": [
+                {
+                    "name": "session",
+                    "description": "GestureSession 제스쳐 정보를 담은 객체",
+                    "type": "Object"
+                }
+            ],
+            "class": "MiddleSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 538,
+            "description": "주어진 offset 만큼 slide를 좌우 이동 시킨다.\ncss transition animation을 통하여 '스르륵' 이동",
+            "itemtype": "method",
+            "name": "slide",
+            "params": [
+                {
+                    "name": "offset",
+                    "description": "이동시킬 거리 값",
+                    "type": "Number"
+                },
+                {
+                    "name": "callback",
+                    "description": "transition animation 이 끝난 이후 호출되는 callback 함수",
+                    "type": "Function"
+                }
+            ],
+            "class": "AdvanceSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 555,
+            "description": "슬라이드가 이동 하기 전에 필요한 값을 세팅하고 container를 이동 시킨다.",
+            "itemtype": "method",
+            "name": "onSlideStart",
+            "params": [
+                {
+                    "name": "offset",
+                    "description": "이동시킬 거리 값",
+                    "type": "Number"
+                }
+            ],
+            "class": "AdvanceSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 566,
+            "description": "슬라이드가 이동을 마친 후에 필요한 값을 세팅하고 callback을 실행 시킨다.",
+            "itemtype": "method",
+            "name": "onSlideComplete",
+            "class": "AdvanceSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 579,
+            "description": "Transition을 on한다.",
+            "itemtype": "method",
+            "name": "enableTransition",
+            "params": [
+                {
+                    "name": "duration",
+                    "description": "Transition Duration Value",
+                    "type": "Integer"
+                }
+            ],
+            "class": "AdvanceSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 589,
+            "description": "Transition을 off한다.",
+            "itemtype": "method",
+            "name": "disableTransition",
+            "class": "AdvanceSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 599,
+            "description": "mousedown or touchstart 이벤트 발생시 동작하는 함수",
+            "itemtype": "method",
+            "name": "startDrag",
+            "params": [
+                {
+                    "name": "session",
+                    "description": "GestureSession 제스쳐 정보를 담은 객체",
+                    "type": "Object"
+                }
+            ],
+            "class": "AdvanceSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 614,
+            "description": "mousemove or touchmove 이벤트 발생시 동작하는 함수",
+            "itemtype": "method",
+            "name": "drag",
+            "params": [
+                {
+                    "name": "session",
+                    "description": "GestureSession 제스쳐 정보를 담은 객체",
+                    "type": "Object"
+                }
+            ],
+            "class": "AdvanceSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 628,
+            "description": "mouseup or touchend 이벤트 발생시 동작하는 함수",
+            "itemtype": "method",
+            "name": "endDrag",
+            "params": [
+                {
+                    "name": "session",
+                    "description": "GestureSession 제스쳐 정보를 담은 객체",
+                    "type": "Object"
+                }
+            ],
+            "class": "AdvanceSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 641,
+            "description": "slide를 원위치 시킨다.",
+            "itemtype": "method",
+            "name": "cancel",
+            "class": "AdvanceSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 653,
+            "description": "슬라이드를 좌로 이동시킨다. 다음(next) 슬라이드를 보여준다.\n만약, 다음 슬라이드에 내용이 없을 경우 이동 시키지 않는다.",
+            "itemtype": "method",
+            "name": "next",
+            "class": "AdvanceSlide",
+            "module": "slide"
+        },
+        {
+            "file": "src\\js\\slide.js",
+            "line": 666,
+            "description": "슬라이드를 우로 이동시킨다. 이전(prev) 슬라이드를 보여준다.\n만약, 이전 슬라이드에 내용이 없을 경우 이동 시키지 않는다.",
+            "itemtype": "method",
+            "name": "prev",
+            "class": "AdvanceSlide",
+            "module": "slide"
+        }
+    ],
+    "warnings": [
+        {
+            "message": "replacing incorrect tag: extend with extends",
+            "line": " src\\js\\datasource.js:189"
+        },
+        {
+            "message": "unknown tag: use",
+            "line": " src\\js\\slide.js:18"
+        },
+        {
+            "message": "unknown tag: use",
+            "line": " src\\js\\slide.js:18"
+        },
+        {
+            "message": "unknown tag: use",
+            "line": " src\\js\\slide.js:353"
+        },
+        {
+            "message": "unknown tag: use",
+            "line": " src\\js\\slide.js:505"
+        },
+        {
+            "message": "Missing item type\n새로운 DataSource를 생성/초기화한다.",
+            "line": " src\\js\\datasource.js:14"
+        },
+        {
+            "message": "Missing item type\n3d gpu 가속 여부를 사용할수 있는지 판단한다.",
+            "line": " src\\js\\progressive.js:8"
+        },
+        {
+            "message": "Missing item type\nics 4.0.3 이상 버젼 대응.",
+            "line": " src\\js\\progressive.js:35"
+        },
+        {
+            "message": "Missing item type\nios webapp : 다른 탭에서 orientation 발생시 제대로 사이즈 체크 안되는 버그가 존재.\n             현재 탭으로 복귀시 발생하는 visivlityChange 이벤트 발생(ios7 이상)시 강제로 리사이즈 체크.",
+            "line": " src\\js\\slide.js:74"
+        }
+    ]
+}
