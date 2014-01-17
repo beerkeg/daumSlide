@@ -34,4 +34,7 @@
         + [4.2. Slide의 좌우 버튼 기능을 추가하는 함수](example.html#slide의-좌우-버튼-기능을-추가하는-함수)
         + [4.3. Slide의 하단 설명 레이어를 보여주는 기능을 추가하는 함수](example.html#slide의-하단-설명-레이어를-보여주는-기능을-추가하는-함수)
         + [4.4. Slide click시 버튼과 하단 레이어를 토글할 수 있는 기능을 추가하는 함수](example.html#slide-click시-버튼과-하단-레이어를-토글할-수-있는-기능을-추가하는-함수)
-+ [추가 Example](#추가-example)
++ [Demo](#Demo)
+    + [1. image search slide](/src/example/slide_search.html)
+    + [2. image media slide](/src/example/slide_media.html)
+    + [3. top content slide](/src/example/new_top.html)
