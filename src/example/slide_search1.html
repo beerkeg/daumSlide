@@ -222,7 +222,7 @@ var EventUtil = window.gesture.EventUtil;
 var simpleSearchAPICallback = null;
 function simpleSearchAPIJsonp(callback) {
     simpleSearchAPICallback = callback; 
-    var url = 'http://apis.daum.net/search/image?q='+ escape(queryEl.value) +
+    var url = 'http://apis.daum.net/search/image?q='+ encodeURIComponent(queryEl.value) +
             '&output=json&callback=simpleJsonpCallback&pageno=' + pageNum +
             '&apikey=0bdf91fedab0c293962cd90855358777e15944d8';
     var s = document.createElement("script");

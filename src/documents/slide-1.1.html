@@ -361,16 +361,16 @@ html, body {height: 100%; width: 100%; margin: 0; padding: 0; overflow:hidden; b
 &lt;/head&gt;
 &lt;body&gt;
 &lt;div id=&quot;frameEl&quot;&gt;&lt;/div&gt;
-&lt;button type=&quot;button&quot; class=&quot;prevBtn&quot;&gt;prev&lt;/button&gt;
-&lt;button type=&quot;button&quot; class=&quot;nextBtn&quot;&gt;next&lt;/button&gt;
+&lt;button type=&quot;button&quot; class=&quot;prevBtn&quot; id=&quot;prevBtn&quot;&gt;prev&lt;/button&gt;
+&lt;button type=&quot;button&quot; class=&quot;nextBtn&quot; id=&quot;nextBtn&quot;&gt;next&lt;/button&gt;
 &lt;div id=&quot;footer&quot;&gt;&lt;/div&gt;
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
 <h2 id="slide가-동작할-frame-element를-지정">2. slide가 동작할 frame element를 지정 <span><a href="#" class="mark">#</a></span></h2>
 <pre><code>var headTag = document.getElementsByTagName(&quot;head&quot;)[0],         // head Element
     click = &quot;ontouchstart&quot; in window ? &quot;touchstart&quot; : &quot;click&quot;,
-    prevBtn = document.getElementsByClassName(&quot;prevBtn&quot;)[0],    // prev Button Element
-    nextBtn = document.getElementsByClassName(&quot;nextBtn&quot;)[0],    // next Button Element
+    prevBtn = document.getElementById(&quot;prevBtn&quot;),    // prev Button Element
+    nextBtn = document.getElementById(&quot;nextBtn&quot;),    // next Button Element
     footer = document.getElementById(&quot;footer&quot;),                 // footer Element
     pageNum = 1;                                                // api page number
 
@@ -461,12 +461,23 @@ function initSlide(data) {
 }</code></pre>
 <h3 id="slide의-좌우-버튼-기능을-추가하는-함수">4.2. Slide의 좌우 버튼 기능을 추가하는 함수 <span><a href="#" class="mark">#</a></span></h3>
 <pre><code>function setButton(sl) {
-    prevBtn.addEventListener(click, function(){
+    var addEvent = function () {
+        if (document.addEventListener) {
+            return function (el, type, fn) {
+                el.addEventListener(type, fn, false);
+            };
+        } else {
+            return function (el, type, fn) {
+                el.attachEvent('on' + type, fn);
+            };
+        }
+    }();
+    addEvent(prevBtn, "click", function () {
         sl.prev();
-    }, false);
-    nextBtn.addEventListener(click, function(){
+    });
+    addEvent(nextBtn, "click", function () {
         sl.next();
-    }, false);
+    });
 }</code></pre>
 <h3 id="slide의-하단-설명-레이어를-보여주는-기능을-추가하는-함수">4.3. Slide의 하단 설명 레이어를 보여주는 기능을 추가하는 함수 <span><a href="#" class="mark">#</a></span></h3>
 <pre><code>function setFooter(sl, ds) {

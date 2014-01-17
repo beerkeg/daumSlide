@@ -26,12 +26,12 @@
         .nextBtn {right: 10px;}
         #footer {width: 100%; z-index: 999; position: absolute; bottom:0; background-color: #000; color: #fff;}
     </style>
-    <script type="text/javascript" src="http://m1.daumcdn.net/svc/original/U03/cssjs/slide/slide-1.2.9.standalone.min.js"></script>
+    <script type="text/javascript" src="http://m1.daumcdn.net/svc/original/U03/cssjs/slide/slide-1.2.12.standalone.min.js"></script>
 </head>
 <body>
     <div id="frameEl"></div>
-    <button type="button" class="prevBtn">prev</button>
-    <button type="button" class="nextBtn">next</button>
+    <button type="button" class="prevBtn" id="prevBtn">prev</button>
+    <button type="button" class="nextBtn" id="nextBtn">next</button>
     <div id="footer"></div>
 </body>
 </html>
@@ -43,8 +43,8 @@
 ```javascript
 var headTag = document.getElementsByTagName("head")[0],         // head Element
     click = "ontouchstart" in window ? "touchstart" : "click",
-    prevBtn = document.getElementsByClassName("prevBtn")[0],    // prev Button Element
-    nextBtn = document.getElementsByClassName("nextBtn")[0],    // next Button Element
+    prevBtn = document.getElementById("prevBtn"),    // prev Button Element
+    nextBtn = document.getElementById("nextBtn"),    // next Button Element
     footer = document.getElementById("footer"),                 // footer Element
     pageNum = 1;                                                // api page number
 
@@ -154,12 +154,23 @@ function buildSlides(data) {
 
 ```javascript
 function setButton(sl) {
-    prevBtn.addEventListener(click, function(){
+    var addEvent = function () {
+        if (document.addEventListener) {
+            return function (el, type, fn) {
+                el.addEventListener(type, fn, false);
+            };
+        } else {
+            return function (el, type, fn) {
+                el.attachEvent('on' + type, fn);
+            };
+        }
+    }();
+    addEvent(prevBtn, "click", function () {
         sl.prev();
-    }, false);
-    nextBtn.addEventListener(click, function(){
+    });
+    addEvent(nextBtn, "click", function () {
         sl.next();
-    }, false);
+    });
 }
 ```
 

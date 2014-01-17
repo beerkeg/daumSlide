@@ -20,15 +20,15 @@ html, body {height: 100%; width: 100%; margin: 0; padding: 0; overflow:hidden; b
 </head>
 <body>
 <div id="frameEl"></div>
-<button type="button" class="prevBtn">이전</button>
-<button type="button" class="nextBtn">다음</button>
+<button type="button" class="prevBtn" id="prevBtn">이전</button>
+<button type="button" class="nextBtn" id="nextBtn">다음</button>
 <div id="footer"></div>
 <script type="text/javascript">
 var headTag = document.getElementsByTagName("head")[0],
         frameEl = document.getElementById("frameEl"),
         click = "ontouchstart" in window ? "touchstart" : "click",
-        prevBtn = document.getElementsByClassName("prevBtn")[0],
-        nextBtn = document.getElementsByClassName("nextBtn")[0],
+        prevBtn = document.getElementById("prevBtn"),
+        nextBtn = document.getElementById("nextBtn"),
         footer = document.getElementById("footer"),
         pageNum = 1;
 
@@ -109,12 +109,23 @@ function buildSlides(data) {
 }
 
 function setButton(sl) {
-    prevBtn.addEventListener(click, function(){
+    var addEvent = function () {
+        if (document.addEventListener) {
+            return function (el, type, fn) {
+                el.addEventListener(type, fn, false);
+            };
+        } else {
+            return function (el, type, fn) {
+                el.attachEvent('on' + type, fn);
+            };
+        }
+    }();
+    addEvent(prevBtn, "click", function () {
         sl.prev();
-    }, false);
-    nextBtn.addEventListener(click, function(){
+    });
+    addEvent(nextBtn, "click", function () {
         sl.next();
-    }, false);
+    });
 }
 function setFooter(sl, ds) {
     function setDesc () {
