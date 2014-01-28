@@ -10,9 +10,8 @@
     var isBindingVisibilityChange = function () {
         return os.ios === true && parseInt(os.version.major, 10) > 6;
     }();
-    var availOrientationChange = ("onorientationchange" in window && ua.platform !== "pc") ? true : false;
-    var resizeEvent = availOrientationChange ? 'orientationchange' : 'resize';
 
+    var SLIDE_RESIZE_DELAY_TIME = 200; //200ms
     var SLIDE_TRESHOLD = 0.1; // 10%
 
     /**
@@ -106,8 +105,12 @@
          */
         onResized: function () {
             var self = this;
-            exports.on(window, resizeEvent, function () {
-                self.checkAndResizeSlideFrame();
+            this.resizeTimeId = null;
+            exports.on(window, 'resize', function () {
+                window.clearTimeout(self.resizeTimeId);
+                self.resizeTimeId = window.setTimeout(function () {
+                    self.checkAndResizeSlideFrame();
+                }, SLIDE_RESIZE_DELAY_TIME);
             });
         },
         /**
@@ -138,21 +141,11 @@
          * @method checkAndResizeSlideFrame
          */
         checkAndResizeSlideFrame: function () {
-            var cnt = 0;
-            var self = this;
-            function checkResize() {
-                var width = self.frameEl.clientWidth;
-                var height = self.frameEl.clientHeight;
-                if(self.isChangedSize(width, height)) {
-                    self.resize(width, height);
-                } else if(cnt < 5) {
-                    cnt++;
-                    window.clearTimeout(self.resizeCheckTimeId);
-                    self.resizeCheckTimeId = window.setTimeout(checkResize, 200);
-                }
+            var width = this.frameEl.clientWidth;
+            var height = this.frameEl.clientHeight;
+            if(this.isChangedSize(width, height)) {
+                this.resize(width, height);
             }
-
-            checkResize();
         },
         /**
          * slide Frame 의 사이즈가 변경되었는지 확인한다.
