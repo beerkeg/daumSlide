@@ -14,7 +14,7 @@ app.use(express.static(path.join(__dirname, '/')));
 app.use(express.static(path.join(__dirname, 'docs')));
 
 // development only
-if ('development' == app.get('env')) {
+if ('development' === app.get('env')) {
   app.use(express.errorHandler());
 }
 

@@ -1,0 +1,20 @@
+{
+    "curly": true,
+    "eqeqeq": true,
+    "eqnull": true,
+    "browser": true,
+    "loopfunc": true,
+    "undef": true,
+    "node": true,
+    "globals": {
+        "clay": true,
+        "slide": true,
+        "Class": false,
+        "ua_result": false,
+        "daumtools": false,
+        "daumApps": false,
+        "Observable": false,
+        "daum": false,
+        "dongtl": false
+    }
+}
