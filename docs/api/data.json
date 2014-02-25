@@ -2,7 +2,7 @@
     "project": {
         "name": "slide",
         "description": "Slide Library using javascript & css3",
-        "version": "1.2.12",
+        "version": "1.2.13",
         "url": "http://digit.daumcorp.com/eastkiki/slide"
     },
     "files": {
@@ -98,7 +98,7 @@
             "namespaces": {},
             "tag": "module",
             "file": "src\\js\\slide.js",
-            "line": 505,
+            "line": 498,
             "itemtype": "main"
         }
     },
@@ -353,7 +353,7 @@
             "module": "slide",
             "namespace": "",
             "file": "src\\js\\slide.js",
-            "line": 18,
+            "line": 17,
             "description": "#### Frame 내에 새로운 슬라이드를 생성/초기화 한다.",
             "is_constructor": 1,
             "extends": "Observable",
@@ -454,7 +454,7 @@
             "module": "slide",
             "namespace": "",
             "file": "src\\js\\slide.js",
-            "line": 353,
+            "line": 346,
             "description": "#### Frame 내에 새로운 슬라이드를 생성/초기화 한다.",
             "extends": "BasicSlide",
             "is_constructor": 1,
@@ -555,7 +555,7 @@
             "module": "slide",
             "namespace": "",
             "file": "src\\js\\slide.js",
-            "line": 505,
+            "line": 498,
             "description": "#### Frame 내에 새로운 슬라이드를 생성/초기화 한다.",
             "extends": "MiddleSlide",
             "is_constructor": 1,
@@ -1522,7 +1522,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 54,
+            "line": 53,
             "description": "wrapper 내부에 들어갈 mark up 구조를 설정한다.",
             "itemtype": "method",
             "name": "initContainer",
@@ -1531,7 +1531,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 65,
+            "line": 64,
             "description": "slide 에 필요한 event를 bind 시킨다.",
             "itemtype": "method",
             "name": "bindEvents",
@@ -1540,14 +1540,14 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 74,
+            "line": 73,
             "description": "ios webapp : 다른 탭에서 orientation 발생시 제대로 사이즈 체크 안되는 버그가 존재.\n             현재 탭으로 복귀시 발생하는 visivlityChange 이벤트 발생(ios7 이상)시 강제로 리사이즈 체크.",
             "class": "BasicSlide",
             "module": "slide"
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 82,
+            "line": 81,
             "description": "slide 에 gesture event(mouse or touch event)를 bind 시킨다.",
             "itemtype": "method",
             "name": "bindGesture",
@@ -1556,7 +1556,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 102,
+            "line": 101,
             "description": "slide 에 resize event를 bind 시킨다.",
             "itemtype": "method",
             "name": "onResized",
@@ -1565,7 +1565,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 113,
+            "line": 116,
             "description": "slide 에 visibilitychange event를 bind 시킨다.",
             "itemtype": "method",
             "name": "onVisibilityChange",
@@ -1574,7 +1574,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 135,
+            "line": 138,
             "description": "slide Frame 의 사이즈를 확인해서 변경시에는 리사이즈 시킨다.",
             "itemtype": "method",
             "name": "checkAndResizeSlideFrame",
@@ -1583,7 +1583,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 157,
+            "line": 150,
             "description": "slide Frame 의 사이즈가 변경되었는지 확인한다.",
             "itemtype": "method",
             "name": "isChangedSize",
@@ -1596,7 +1596,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 166,
+            "line": 159,
             "description": "데이터 소스로부터 데이터를 받아서 슬라이드에 보여준다.",
             "itemtype": "method",
             "name": "show",
@@ -1605,7 +1605,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 177,
+            "line": 170,
             "description": "슬라이드를 좌로 이동시킨다. 다음(next) 슬라이드를 보여준다.\n만약, 다음 슬라이드에 내용이 없을 경우 이동 시키지 않는다.",
             "itemtype": "method",
             "name": "next",
@@ -1614,7 +1614,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 193,
+            "line": 186,
             "description": "다음 슬라이드를 보여준다.",
             "itemtype": "method",
             "name": "nextSlide",
@@ -1625,7 +1625,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 205,
+            "line": 198,
             "description": "슬라이드를 우로 이동시킨다. 이전(prev) 슬라이드를 보여준다.\n만약, 이전 슬라이드에 내용이 없을 경우 이동 시키지 않는다.",
             "itemtype": "method",
             "name": "prev",
@@ -1634,7 +1634,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 221,
+            "line": 214,
             "description": "이전 슬라이드를 보여준다.",
             "itemtype": "method",
             "name": "prevSlide",
@@ -1645,7 +1645,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 233,
+            "line": 226,
             "description": "slide를 원위치 시킨다.",
             "itemtype": "method",
             "name": "cancel",
@@ -1654,7 +1654,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 241,
+            "line": 234,
             "description": "mousedown or touchstart 이벤트 발생시 동작하는 함수",
             "itemtype": "method",
             "name": "startDrag",
@@ -1670,7 +1670,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 250,
+            "line": 243,
             "description": "mousemove or touchmove 이벤트 발생시 동작하는 함수",
             "itemtype": "method",
             "name": "drag",
@@ -1686,7 +1686,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 259,
+            "line": 252,
             "description": "mouseup or touchend 이벤트 발생시 동작하는 함수",
             "itemtype": "method",
             "name": "endDrag",
@@ -1702,7 +1702,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 276,
+            "line": 269,
             "description": "변경된 wrapper, slide, panels의 size 와 offset을 다시 설정한다.",
             "itemtype": "method",
             "name": "resize",
@@ -1723,7 +1723,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 290,
+            "line": 283,
             "description": "변경된 wrapper 사이즈를 확인/저장 한다.",
             "itemtype": "method",
             "name": "setWrapperSize",
@@ -1739,7 +1739,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 300,
+            "line": 293,
             "description": "해당 클래스의 인스턴스 삭제시 할당된 오브젝트들을 destroy 시킨다.",
             "itemtype": "method",
             "name": "destroy",
@@ -1748,7 +1748,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 316,
+            "line": 309,
             "description": "제스처가 왼쪽으로 일정 거리이상 혹은 빠르게 움직였을 경우에 true",
             "itemtype": "method",
             "name": "isNextSwipe",
@@ -1764,7 +1764,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 325,
+            "line": 318,
             "description": "제스처가 왼쪽으로 일정 거리이상 움직였을 경우에 true",
             "itemtype": "method",
             "name": "isNextThreshold",
@@ -1780,7 +1780,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 334,
+            "line": 327,
             "description": "제스처가 오른쪽으로 일정 거리이상 혹은 빠르게 움직였을 경우에 true",
             "itemtype": "method",
             "name": "isPrevSwipe",
@@ -1796,7 +1796,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 343,
+            "line": 336,
             "description": "제스처가 오른쪽으로 일정 거리이상 움직였을 경우에 true",
             "itemtype": "method",
             "name": "isPrevThreshold",
@@ -1812,7 +1812,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 374,
+            "line": 367,
             "description": "데이터 소스로부터 데이터를 받아서 슬라이드에 보여준다.",
             "itemtype": "method",
             "name": "show",
@@ -1821,7 +1821,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 385,
+            "line": 378,
             "description": "슬라이드 좌로 이동시킨 후 panel들을 재정렬 + 그 다음 데이터를 미리 로딩해둔다.",
             "itemtype": "method",
             "name": "nextSlide",
@@ -1830,7 +1830,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 401,
+            "line": 394,
             "description": "마지막 패널에 다음 데이터를 넣는다.",
             "itemtype": "method",
             "name": "preloadNextData",
@@ -1839,7 +1839,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 413,
+            "line": 406,
             "description": "슬라이드 우로 이동시킨 후 panel들을 재정렬 + 그 이전 데이터를 미리 로딩해둔다.",
             "itemtype": "method",
             "name": "prevSlide",
@@ -1848,7 +1848,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 429,
+            "line": 422,
             "description": "첫번째 패널에 이전 데이터를 넣는다.",
             "itemtype": "method",
             "name": "preloadPrevData",
@@ -1857,7 +1857,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 441,
+            "line": 434,
             "description": "주어진 offset 만큼 slide를 좌우 이동 시킨다.\ncss transition animation을 통하여 '스르륵' 이동",
             "itemtype": "method",
             "name": "slide",
@@ -1878,7 +1878,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 455,
+            "line": 448,
             "description": "slide를 원위치 시킨다.",
             "itemtype": "method",
             "name": "cancel",
@@ -1887,7 +1887,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 466,
+            "line": 459,
             "description": "mousemove or touchmove 이벤트 발생시 동작하는 함수",
             "itemtype": "method",
             "name": "drag",
@@ -1903,7 +1903,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 479,
+            "line": 472,
             "description": "mouseup or touchend 이벤트 발생시 동작하는 함수",
             "itemtype": "method",
             "name": "endDrag",
@@ -1919,7 +1919,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 538,
+            "line": 531,
             "description": "주어진 offset 만큼 slide를 좌우 이동 시킨다.\ncss transition animation을 통하여 '스르륵' 이동",
             "itemtype": "method",
             "name": "slide",
@@ -1940,7 +1940,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 555,
+            "line": 548,
             "description": "슬라이드가 이동 하기 전에 필요한 값을 세팅하고 container를 이동 시킨다.",
             "itemtype": "method",
             "name": "onSlideStart",
@@ -1956,7 +1956,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 566,
+            "line": 559,
             "description": "슬라이드가 이동을 마친 후에 필요한 값을 세팅하고 callback을 실행 시킨다.",
             "itemtype": "method",
             "name": "onSlideComplete",
@@ -1965,7 +1965,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 579,
+            "line": 572,
             "description": "Transition을 on한다.",
             "itemtype": "method",
             "name": "enableTransition",
@@ -1981,7 +1981,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 589,
+            "line": 582,
             "description": "Transition을 off한다.",
             "itemtype": "method",
             "name": "disableTransition",
@@ -1990,7 +1990,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 599,
+            "line": 592,
             "description": "mousedown or touchstart 이벤트 발생시 동작하는 함수",
             "itemtype": "method",
             "name": "startDrag",
@@ -2006,7 +2006,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 614,
+            "line": 607,
             "description": "mousemove or touchmove 이벤트 발생시 동작하는 함수",
             "itemtype": "method",
             "name": "drag",
@@ -2022,7 +2022,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 628,
+            "line": 621,
             "description": "mouseup or touchend 이벤트 발생시 동작하는 함수",
             "itemtype": "method",
             "name": "endDrag",
@@ -2038,7 +2038,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 641,
+            "line": 634,
             "description": "slide를 원위치 시킨다.",
             "itemtype": "method",
             "name": "cancel",
@@ -2047,7 +2047,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 653,
+            "line": 646,
             "description": "슬라이드를 좌로 이동시킨다. 다음(next) 슬라이드를 보여준다.\n만약, 다음 슬라이드에 내용이 없을 경우 이동 시키지 않는다.",
             "itemtype": "method",
             "name": "next",
@@ -2056,7 +2056,7 @@
         },
         {
             "file": "src\\js\\slide.js",
-            "line": 666,
+            "line": 659,
             "description": "슬라이드를 우로 이동시킨다. 이전(prev) 슬라이드를 보여준다.\n만약, 이전 슬라이드에 내용이 없을 경우 이동 시키지 않는다.",
             "itemtype": "method",
             "name": "prev",
@@ -2071,19 +2071,19 @@
         },
         {
             "message": "unknown tag: use",
-            "line": " src\\js\\slide.js:18"
+            "line": " src\\js\\slide.js:17"
         },
         {
             "message": "unknown tag: use",
-            "line": " src\\js\\slide.js:18"
+            "line": " src\\js\\slide.js:17"
         },
         {
             "message": "unknown tag: use",
-            "line": " src\\js\\slide.js:353"
+            "line": " src\\js\\slide.js:346"
         },
         {
             "message": "unknown tag: use",
-            "line": " src\\js\\slide.js:505"
+            "line": " src\\js\\slide.js:498"
         },
         {
             "message": "Missing item type\n새로운 DataSource를 생성/초기화한다.",
@@ -2099,7 +2099,7 @@
         },
         {
             "message": "Missing item type\nios webapp : 다른 탭에서 orientation 발생시 제대로 사이즈 체크 안되는 버그가 존재.\n             현재 탭으로 복귀시 발생하는 visivlityChange 이벤트 발생(ios7 이상)시 강제로 리사이즈 체크.",
-            "line": " src\\js\\slide.js:74"
+            "line": " src\\js\\slide.js:73"
         }
     ]
 }

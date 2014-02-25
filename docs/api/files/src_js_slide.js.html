@@ -22,7 +22,7 @@
             <div class="navbar-header">
                 <a class="navbar-brand" href="/">slide</a>
             </div>
-            <p class="navbar-text navbar-right">API Docs for Version: <b>1.2.12</b></p>
+            <p class="navbar-text navbar-right">API Docs for Version: <b>1.2.13</b></p>
         </div>
     </div>
     <div class="container">
@@ -127,9 +127,8 @@
     var isBindingVisibilityChange = function () {
         return os.ios === true &amp;&amp; parseInt(os.version.major, 10) &gt; 6;
     }();
-    var availOrientationChange = (&quot;onorientationchange&quot; in window &amp;&amp; ua.platform !== &quot;pc&quot;) ? true : false;
-    var resizeEvent = availOrientationChange ? &#x27;orientationchange&#x27; : &#x27;resize&#x27;;
 
+    var SLIDE_RESIZE_DELAY_TIME = 200; //200ms
     var SLIDE_TRESHOLD = 0.1; // 10%
 
     /**
@@ -223,8 +222,12 @@
          */
         onResized: function () {
             var self = this;
-            exports.on(window, resizeEvent, function () {
-                self.checkAndResizeSlideFrame();
+            this.resizeTimeId = null;
+            exports.on(window, &#x27;resize&#x27;, function () {
+                window.clearTimeout(self.resizeTimeId);
+                self.resizeTimeId = window.setTimeout(function () {
+                    self.checkAndResizeSlideFrame();
+                }, SLIDE_RESIZE_DELAY_TIME);
             });
         },
         /**
@@ -255,21 +258,11 @@
          * @method checkAndResizeSlideFrame
          */
         checkAndResizeSlideFrame: function () {
-            var cnt = 0;
-            var self = this;
-            function checkResize() {
-                var width = self.frameEl.clientWidth;
-                var height = self.frameEl.clientHeight;
-                if(self.isChangedSize(width, height)) {
-                    self.resize(width, height);
-                } else if(cnt &lt; 5) {
-                    cnt++;
-                    window.clearTimeout(self.resizeCheckTimeId);
-                    self.resizeCheckTimeId = window.setTimeout(checkResize, 200);
-                }
+            var width = this.frameEl.clientWidth;
+            var height = this.frameEl.clientHeight;
+            if(this.isChangedSize(width, height)) {
+                this.resize(width, height);
             }
-
-            checkResize();
         },
         /**
          * slide Frame 의 사이즈가 변경되었는지 확인한다.
