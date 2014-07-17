@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Slide by HTML5Tech</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Slide</h1>
+        <h2>제스쳐 라이브러리를 이용한 슬라이드 라이브러리</h2>
+        <a href="https://github.daumcorp.com/HTML5Tech/slide" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a name="daumslide" class="anchor" href="#daumslide"><span class="octicon octicon-link"></span></a>daumSlide</h1>
+
+<p>daum carousel pattern javscript library</p>
+
+<h1>
+<a name="quick-start" class="anchor" href="#quick-start"><span class="octicon octicon-link"></span></a>Quick Start</h1>
+
+<h3>
+<a name="1-slide%EA%B0%80-%EB%8F%99%EC%9E%91%ED%95%A0--frame-element%EB%A5%BC-%EC%A7%80%EC%A0%95%ED%95%9C%EB%8B%A4" class="anchor" href="#1-slide%EA%B0%80-%EB%8F%99%EC%9E%91%ED%95%A0--frame-element%EB%A5%BC-%EC%A7%80%EC%A0%95%ED%95%9C%EB%8B%A4"><span class="octicon octicon-link"></span></a>1. slide가 동작할  frame element를 지정한다.</h3>
+
+<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">frameEl</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">"frameEl"</span><span class="p">);</span>
+</pre></div>
+
+<ul>
+<li>
+<p>frameEl {HTMLElement}</p>
+
+<p><code>Slide</code> 가 동작할 frame element</p>
+</li>
+</ul><h3>
+<a name="2-datasource%EC%97%90%EC%84%9C-%EC%82%AC%EC%9A%A9%ED%95%A0-%EC%B5%9C%EC%B4%88%EC%9D%98-%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%93%A4%EC%9D%84-%EC%84%B8%ED%8C%85%ED%95%9C%EB%8B%A4" class="anchor" href="#2-datasource%EC%97%90%EC%84%9C-%EC%82%AC%EC%9A%A9%ED%95%A0-%EC%B5%9C%EC%B4%88%EC%9D%98-%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%93%A4%EC%9D%84-%EC%84%B8%ED%8C%85%ED%95%9C%EB%8B%A4"><span class="octicon octicon-link"></span></a>2. datasource에서 사용할 최초의 데이터들을 세팅한다.</h3>
+
+<div class="highlight highlight-javascript"><pre><span class="kd">function</span> <span class="nx">createItem</span><span class="p">(</span><span class="nx">title</span><span class="p">,</span> <span class="nx">image</span><span class="p">,</span> <span class="nx">width</span><span class="p">,</span> <span class="nx">height</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">item</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="nx">title</span><span class="o">:</span> <span class="nx">title</span><span class="p">,</span>
+            <span class="nx">image</span><span class="o">:</span> <span class="nx">image</span><span class="p">,</span>
+            <span class="nx">width</span><span class="o">:</span> <span class="nx">width</span><span class="p">,</span>
+            <span class="nx">height</span><span class="o">:</span> <span class="nx">height</span><span class="p">,</span>
+            <span class="nx">toHTML</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>   
+                <span class="kd">var</span> <span class="nx">str</span> <span class="o">=</span> <span class="s1">'&lt;img alt="'</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">title</span> <span class="o">+</span> 
+                            <span class="s1">'" src="'</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">image</span> <span class="o">+</span> 
+                            <span class="s1">'" width="'</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">width</span> <span class="o">+</span> 
+                            <span class="s1">'" height="'</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">height</span> <span class="o">+</span> <span class="s1">'"&gt;'</span><span class="p">;</span>
+                <span class="k">return</span> <span class="nx">str</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
+    <span class="k">return</span> <span class="nx">item</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">items</span> <span class="o">=</span> <span class="p">[</span> 
+   <span class="nx">createItem</span><span class="p">(</span><span class="s2">"first Image"</span><span class="p">,</span> <span class="s2">"http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic01.jpg"</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
+   <span class="nx">createItem</span><span class="p">(</span><span class="s2">"second Image"</span><span class="p">,</span> <span class="s2">"http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic02.jpg"</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
+   <span class="nx">createItem</span><span class="p">(</span><span class="s2">"third Image"</span><span class="p">,</span> <span class="s2">"http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic03.jpg"</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
+   <span class="nx">createItem</span><span class="p">(</span><span class="s2">"fourth Image"</span><span class="p">,</span> <span class="s2">"http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic04.jpg"</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
+   <span class="nx">createItem</span><span class="p">(</span><span class="s2">"fifth Image"</span><span class="p">,</span> <span class="s2">"http://cubiq.org/dropbox/SwipeView/demo/gallery/images/pic05.jpg"</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="p">];</span>
+</pre></div>
+
+<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">items</span> <span class="o">=</span> <span class="p">[</span> <span class="nx">itme1</span><span class="p">,</span> <span class="nx">item2</span><span class="p">,</span> <span class="nx">item3</span> <span class="p">...</span> <span class="p">];</span>
+
+<span class="kd">var</span> <span class="nx">item</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">variable1</span><span class="o">:</span> <span class="nx">variable1</span><span class="p">,</span>
+        <span class="nx">variable2</span><span class="o">:</span> <span class="nx">variable2</span><span class="p">,</span>
+        <span class="p">...</span>
+        <span class="nx">toHTML</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>   
+            <span class="c1">// 필수 함수 요소 : itme의 variable들의 값을 가지고, panel에 보여줄 html String 값을 리턴하는 함수.</span>
+            <span class="k">return</span> <span class="o">&lt;</span><span class="nx">HTMLString</span><span class="o">&gt;</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+</pre></div>
+
+<h3>
+<a name="3-slide%EC%97%90%EC%84%9C-%EB%B3%B4%EC%97%AC%EC%A4%84-%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC-%EA%B4%80%EB%A6%AC%ED%95%98%EB%8A%94-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%86%8C%EC%8A%A4%EB%A5%BC-%EC%B4%88%EA%B8%B0%ED%99%94-%ED%95%9C%EB%8B%A4" class="anchor" href="#3-slide%EC%97%90%EC%84%9C-%EB%B3%B4%EC%97%AC%EC%A4%84-%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC-%EA%B4%80%EB%A6%AC%ED%95%98%EB%8A%94-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%86%8C%EC%8A%A4%EB%A5%BC-%EC%B4%88%EA%B8%B0%ED%99%94-%ED%95%9C%EB%8B%A4"><span class="octicon octicon-link"></span></a>3. slide에서 보여줄 데이터를 관리하는 데이터 소스를 초기화 한다.</h3>
+
+<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">ds</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">slide</span><span class="p">.</span><span class="nx">DataSource</span><span class="p">(</span><span class="nx">items</span><span class="p">);</span>
+
+<span class="p">[</span><span class="nx">OR</span><span class="p">]</span>
+
+<span class="kd">var</span> <span class="nx">ds</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">slide</span><span class="p">.</span><span class="nx">InfiniteDataSource</span><span class="p">(</span><span class="nx">items</span><span class="p">);</span> <span class="c1">// 데이터 반복형</span>
+</pre></div>
+
+<h3>
+<a name="4-frameel%EA%B3%BC-datasource%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%98%EC%97%AC-slide%EB%A5%BC-%EC%B4%88%EA%B8%B0%ED%99%94-%ED%95%9C%EB%8B%A4" class="anchor" href="#4-frameel%EA%B3%BC-datasource%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%98%EC%97%AC-slide%EB%A5%BC-%EC%B4%88%EA%B8%B0%ED%99%94-%ED%95%9C%EB%8B%A4"><span class="octicon octicon-link"></span></a>4. frameEl과 datasource를 이용하여 slide를 초기화 한다.</h3>
+
+<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">sl</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">slide</span><span class="p">.</span><span class="nx">Slide</span><span class="p">(</span><span class="nx">frameEl</span><span class="p">,</span> <span class="nx">ds</span><span class="p">,</span> <span class="nx">option</span><span class="p">);</span> 
+</pre></div>
+
+<div class="highlight highlight-javascript"><pre><span class="kd">var</span> <span class="nx">option</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">container</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">id</span><span class="o">:</span> <span class="nb">String</span><span class="p">,</span>         <span class="c1">// default = "slide-" + Number</span>
+            <span class="nx">className</span><span class="o">:</span> <span class="nb">String</span>   <span class="c1">// default = "slide"</span>
+        <span class="p">},</span>
+        <span class="nx">panel</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">tagName</span><span class="o">:</span> <span class="nb">String</span><span class="p">,</span>    <span class="c1">// default = div</span>
+            <span class="nx">className</span><span class="o">:</span> <span class="nb">String</span>   <span class="c1">// default = panel</span>
+        <span class="p">},</span>
+        <span class="nx">duration</span><span class="o">:</span> <span class="nb">Number</span><span class="p">,</span>       <span class="c1">// default = 500</span>
+        <span class="nx">panelClass</span><span class="o">:</span> <span class="nx">PanelClass</span>  <span class="c1">// default = Panel</span>
+        <span class="nx">containerClass</span><span class="o">:</span> <span class="nx">ContainerClass</span> <span class="c1">// default = Container</span>
+    <span class="p">};</span>
+</pre></div>
+
+<h1>
+<a name="document" class="anchor" href="#document"><span class="octicon octicon-link"></span></a>Document</h1>
+
+<ul>
+<li><a href="https://github.com/daumcorp/daumSlide/wiki/Api">API</a></li>
+<li><a href="https://github.com/daumcorp/daumSlide/wiki/Example">Example</a></li>
+</ul><h1>
+<a name="slider-markup-architecture" class="anchor" href="#slider-markup-architecture"><span class="octicon octicon-link"></span></a>Slider Markup Architecture</h1>
+
+<pre><code>                          Frame (visible Area)
+                       +======================+
++--------------------- | -------------------- | ---------------------+
+|                      |                      |                      |
+|  +----------------+  |  +----------------+  |  +----------------+  |
+|  |                |  |  |                |  |  |                |  |
+|  |                |  |  |                |  |  |                |  |
+|  |                |  |  |                |  |  |                |  |
+|  |                |  |  |                |  |  |                |  |
+|  |     Panel      |  |  |      Panel     |  |  |      Panel     |  |
+|  |    (prev)      |  |  |    (current)   |  |  |     (next)     |  |
+|  |                |  |  |                |  |  |                |  | &lt;=== Slider(Container)
+|  |                |  |  |                |  |  |                |  |
+|  |                |  |  |                |  |  |                |  |
+|  |                |  |  |                |  |  |                |  |
+|  |                |  |  |                |  |  |                |  |
+|  +----------------+  |  +----------------+  |  +----------------+  |
+|                      |                      |                      |
++--------------------- | -------------------- | ---------------------+
+                       +======================+
+</code></pre>
+        </section>
+
+        <aside id="sidebar">
+
+          <p class="repo-owner"><a href="https://github.daumcorp.com/HTML5Tech/slide"></a> is maintained by <a href="https://github.daumcorp.com/HTML5Tech">HTML5Tech</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
