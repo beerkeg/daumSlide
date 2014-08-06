@@ -44,7 +44,7 @@ var headTag = document.getElementsByTagName("head")[0],
 var simpleSearchAPICallback = null;
 function simpleSearchAPIJsonp(callback) {
     simpleSearchAPICallback = callback;
-    var url = 'http://apis.daum.net/search/image?apikey=080a78bc84cc6b814fb365591b1d7d7fc26575b3&output=json&callback=simpleJsonpCallback&q=소녀시대&pageno=' + pageNum;
+    var url = 'http://apis.daum.net/search/image?apikey=080a78bc84cc6b814fb365591b1d7d7fc26575b3&output=json&callback=simpleJsonpCallback&q=걸스데이&pageno=' + pageNum;
     var s = document.createElement("script");
     s.type = "text/javascript";
     s.src = url;

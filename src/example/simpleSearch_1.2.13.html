@@ -16,7 +16,7 @@ html, body {height: 100%; width: 100%; margin: 0; padding: 0; overflow:hidden; b
 .nextBtn {right: 10px;}
 #footer {width: 100%; z-index: 999; position: absolute; bottom:0; background-color: #000; color: #fff;}
 </style>
-<script type="text/javascript" src="http://m1.daumcdn.net/svc/original/U03/cssjs/slide/slide-1.0.5.min.js"></script>
+<script type="text/javascript" src="http://m1.daumcdn.net/svc/original/U03/cssjs/slide/slide-1.2.13.standalone.min.js"></script>
 </head>
 <body>
 <div id="frameEl"></div>
@@ -25,17 +25,17 @@ html, body {height: 100%; width: 100%; margin: 0; padding: 0; overflow:hidden; b
 <div id="footer"></div>
 <script type="text/javascript">
 var headTag = document.getElementsByTagName("head")[0],
-        frameEl = document.getElementById("frameEl"),
-        click = "ontouchstart" in window ? "touchstart" : "click",
-        prevBtn = document.getElementById("prevBtn"),
-        nextBtn = document.getElementById("nextBtn"),
-        footer = document.getElementById("footer"),
-        pageNum = 1;
+    frameEl = document.getElementById("frameEl"),
+    click = "ontouchstart" in window ? "touchstart" : "click",
+    prevBtn = document.getElementById("prevBtn"),
+    nextBtn = document.getElementById("nextBtn"),
+    footer = document.getElementById("footer"),
+    pageNum = 1;
 
 var simpleSearchAPICallback = null;
 function simpleSearchAPIJsonp(callback) {
     simpleSearchAPICallback = callback;
-    var url = 'http://apis.daum.net/search/image?apikey=080a78bc84cc6b814fb365591b1d7d7fc26575b3&output=json&callback=simpleJsonpCallback&q=소녀시대&pageno=' + pageNum;
+    var url = 'http://apis.daum.net/search/image?apikey=080a78bc84cc6b814fb365591b1d7d7fc26575b3&output=json&callback=simpleJsonpCallback&q=걸스데이&pageno=' + pageNum;
     var s = document.createElement("script");
     s.type = "text/javascript";
     s.src = url;
@@ -109,21 +109,10 @@ function buildSlides(data) {
 }
 
 function setButton(sl) {
-    var addEvent = function () {
-        if (document.addEventListener) {
-            return function (el, type, fn) {
-                el.addEventListener(type, fn, false);
-            };
-        } else {
-            return function (el, type, fn) {
-                el.attachEvent('on' + type, fn);
-            };
-        }
-    }();
-    addEvent(prevBtn, "click", function () {
+    daumtools.event.on(prevBtn, "click", function () {
         sl.prev();
     });
-    addEvent(nextBtn, "click", function () {
+    daumtools.event.on(nextBtn, "click", function () {
         sl.next();
     });
 }

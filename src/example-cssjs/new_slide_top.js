@@ -631,18 +631,14 @@ function setSlidePanels () {
     };
 
     function setPageNumber (el, index, length) {
-        if (slide.isTransformEnabled || slide.isSwipeEnabled) {
-            for (var i = 0; i < length; i++) {
-                if (el.childNodes[i].tagName == 'STRONG') {
-                    var nEl = document.createElement('SPAN');
-                    el.replaceChild(nEl, el.childNodes[i]);
-                }
+        for (var i = 0; i < length; i++) {
+            if (el.childNodes[i].tagName == 'STRONG') {
+                var nEl = document.createElement('SPAN');
+                el.replaceChild(nEl, el.childNodes[i]);
             }
-            var cEl = document.createElement('STRONG');
-            el.replaceChild(cEl, el.childNodes[index]);
-        } else {
-            el.innerHTML = ''+ (index + 1);
         }
+        var cEl = document.createElement('STRONG');
+        el.replaceChild(cEl, el.childNodes[index]);
     }
     
     function setCurrentTab (area, home, btn, type) {
@@ -698,11 +694,7 @@ function setSlidePanels () {
             },
             duration: 300
         });
-        if (slide.isTransformEnabled || slide.isSwipeEnabled) {
-            var pagenum = $$("#"+slideName+"Paging .paging_swipe")[0]; 
-        } else {
-            var pagenum = $$("#"+slideName+"Paging .page_no")[0]; 
-        }
+        var pagenum = $$("#"+slideName+"Paging .paging_swipe")[0]; 
         var area = $(slideName+"Area");
         var home = $(slideName+"Home");
 
