@@ -10,7 +10,7 @@
             var callbackId = '_simpleJsonpCallback' + (this.callbackId += 1);
             exports[callbackId] = callback;
 
-            var url = 'http://apis.daum.net/search/image?q='+ this.query +
+            var url = 'https://apis.daum.net/search/image?q='+ this.query +
                 '&output=json&callback=' + callbackId + '&pageno=' + this.pageNum +
                 '&apikey=0bdf91fedab0c293962cd90855358777e15944d8';
             var s = document.createElement("script");
