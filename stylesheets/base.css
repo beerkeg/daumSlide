@@ -1,0 +1,91 @@
+@charset "utf-8";
+
+/* reset */
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,textarea,p,blockquote,th,td,input,select,textarea,button{margin:0;padding:0}
+fieldset,img{border:0 none}
+dl,ul,ol,menu,li {list-style:none}
+blockquote, q {quotes:none}
+blockquote:before, blockquote:after,q:before, q:after {content:'';content:none}
+input,select,textarea,button {font-size:100%;vertical-align:middle}
+button {border:0 none;background-color:transparent;cursor:pointer}
+table {border-collapse:collapse;border-spacing:0}
+body{-webkit-text-size-adjust:none} input[type='text'],input[type='password'],input[type='submit'],input[type='search'] {-webkit-appearance:none; border-radius:0}
+input:checked[type='checkbox'] {background-color:#666; -webkit-appearance:checkbox}
+button,html input[type='button'],input[type='submit'],input[type='reset'],input[type='file'] {-webkit-appearance:button; border-radius:0}
+body {background-color:#fff}
+
+a {color:#333;text-decoration:none} a:active, a:hover {text-decoration:none}
+address,caption,cite,code,dfn,em,var {font-style:normal;font-weight:normal}
+
+/* common */
+.ir_pm {display:block;overflow:hidden;font-size:0px;line-height:0;text-indent:-9999px}
+.ir_wa {display:block;overflow:hidden;position:relative;z-index:-1;width:100%;height:100%}
+.screen_out {display:block;overflow:hidden;position:absolute;left:-9999px;width:1px;height:1px;font-size:0;line-height:0;text-indent:-9999px}
+.screen_hide {font-size:0;line-height:0;visibility:hidden}
+.f_l {float:left}
+.f_r {float:right}
+.clear_g {display:block;overflow:visible;width:auto;clear:both;*zoom:1}
+.clear_g:after {display:block;visibility:hidden;height:0;font-size:0;clear:both;content:''}
+.cl_b {width:0;height:0;font-size:0;line-height:0;clear:both}
+.show {display:block}
+.hide {display:none}
+.tbl {border-collapse:collapse;border-spacing: 0}
+
+body,th,td,input,select,textarea,button {font-size:14px;line-height:1.5;font-family: 'Damion', cursive;color:#333}
+
+/* for script classList */
+.visible {visibility: visible}
+.hidden {visibility: hidden}
+.transition_move {
+    transition-duration: 0.5s;
+    -webkit-transition-duration: 0.5s;
+}
+.transition_stop {
+    transition-duration: 0s;
+    -webkit-transition-duration: 0s;
+}
+
+/* spinner */
+.spinner {
+    position: absolute;
+    overflow:hidden;
+    width:20px; height:20px;
+    top: 50%; left: 50%;
+    margin: -9px 0 0 -9px;
+    z-index:1000;
+    text-indent:100px;white-space:nowrap;
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA+dJREFUeNrMWHFkVWEUf3t7Ho/HY0R5RPMSjSxL/VNKLMuSFYlSYjNKWcpmz1Lk5c2yeVNKs6cUI9JbESOl2D/FbIopTTSmMcZjxHhe5+R3OX3d+77vu/f+0eFn9969e++55/ud8/3OqatWq5GgNjk5yX96CAVcukwY7ejoCPzsmMGLTW2bemx6f60PiRq+PEXIE65HgtsQYZzQEDiCsAThC2Ejzj8Spnw6107oxXEboZGwXusGkwjyA9bEOUey3odzccFRthWdc6YOVkB6x5oJ3T4cvELIiPNLJjeZcvAV4FjOlEOwNGFAnE8Qpo05aJhtHMVWLFUDnLxgkRhJHDNd+kyqBWd31CIKC4QRcd6N5dbZXsIpcT5KWDJ9qXSQo/KN8K7Gi2+B3BEkypD431eP4zvimB0b9Hg2v/MD4YeoGH852AsS7yfMEh648IyX54Y4bxEZzZGpA0ZxjZd1i/h9n1IRInBmHO/cTdgs+Sod3KDcyEv4HdkXF9fHCM8ITwl7kOVexs7sIDwh3EdyyLIzgFXrVO5LuhXqLmRWXoSYd5BhwnnCVcJLOHRCt10J4i8Szio/PwZ6ZJTr/Nus/BB1J3mE6PQjcglc5we9IBTxIb72Vzj9kHBO+dcvJOCgSoGYx7Jcg7ND+Fq5LJGAKkXdhSYQtUXbQs1l5TjhAOEzsjcbgljgZywT5gj7CKe9nDMVC+9B9KRLBvoxLjWbjOugheYLwzlrIRxDOWnR/HbeqW1B+Mf3ioCwAt+uuWUmhkRIGTy/GGIUk4r08rJyNPKfWwzbj8kSh8nBNagj7RLXlUol33zy2f1ZWTSM1tCHJUyDYMJBXoY3hJ8ue6cfS0NSzUI5+Zb8LLXuET4RDkJADIfgYB7KqRna87kiybQ7ST1qo1vfkQiBbysuyqbNVCy0oj6p2bWKbC96OWDBZZZtb/GejPjwAejCPujHfxzMKZ2X0xPfJdzkoimuFxDdrNNf1IhYBtTg4nwIepI7xNeEi5hWpIS6fgxuduk4yNODJnxxWZkO8DZ1BvxMaqQV8+woeNytfDwv61a5MrBltyQZhOzhonwYWNBMBxYhNp29tQr0iKZ/TtNPryBaO6Gc5mX3GFWqeyOiNmUxHah4TbdEP10RlSHn8ew5aM8mcN61zFQspgMlw+nAAhotxzpt6mmsVgYqxM8Jvq2r0wGNcQtxEhF0aHIkzPlgM5LCsREXftayVTgpE609zOFRQTQ7S5gw2NqYkjAFkzGeqYNpzXTAxCrKyC2uDAR8N01su1BQ65XpgK1No65yYb4tSlRgB8t4cBg2YquoA4tSZPuMVMIhNPh/7LcAAwA9vfhmt8xmXQAAAABJRU5ErkJggg==");
+    background-size: 20px 20px;
+    -webkit-animation: Rotate .3s infinite linear;
+    -moz-animation: Rotate .3s infinite linear;
+    -ms-animation: Rotate .3s infinite linear;
+    -o-animation: Rotate .3s infinite linear;
+    animation: Rotate .3s infinite linear;
+}
+.os_android.chrome .spinner {
+    -webkit-animation: none;
+    -moz-animation: none;
+    -ms-animation: none;
+    -o-animation: none;
+    animation: none;
+}
+@-o-keyframes Rotate {
+    from {-o-transform:rotate(0deg);}
+    to {-o-transform:rotate(30deg);}
+}
+@-moz-keyframes Rotate {
+    from {-moz-transform:rotate(0deg);}
+    to {-moz-transform:rotate(30deg);}
+}
+@-ms-keyframes Rotate {
+    from {-ms-transform:rotate(0deg);}
+    to {-ms-transform:rotate(30deg);}
+}
+@-webkit-keyframes Rotate {
+    from {-webkit-transform:rotate(0deg);}
+    to {-webkit-transform:rotate(30deg);}
+}
+@keyframes Rotate {
+    from { transform:rotate(0deg);}
+    to { transform:rotate(30deg);}
+}
