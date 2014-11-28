@@ -1,9 +1,5 @@
 @charset "utf-8";
 
-h2:before {
-    content: '\f00a';
-}
-
 article pre.prettyprint {
     overflow: auto;
     border: 0;
