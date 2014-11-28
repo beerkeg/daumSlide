@@ -1,0 +1,19 @@
+{
+  "name": "slide",
+  "author": {
+    "name": "HTML5 Cell, daumkakao corp"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-cli": "*",
+    "grunt-contrib-concat": "*",
+    "grunt-contrib-uglify": "*",
+    "grunt-remotefile": "*"
+  },
+  "engines": {
+    "node": ">= 0.6"
+  },
+  "scripts": {
+    "build": "node build.js"
+  }
+}
