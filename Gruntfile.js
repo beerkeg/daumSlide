@@ -25,7 +25,7 @@ module.exports = function(grunt) {
                 dest: 'javascripts/external/gesture.js'
             },
             slide: {
-                url: 'http://s1.daumcdn.net/svc/attach/U03/cssjs/slide/slide-2.0.0-pre19.merged.js',
+                url: 'http://s1.daumcdn.net/svc/attach/U03/cssjs/slide/slide-2.0.0-pre20.merged.js',
                 dest: 'javascripts/external/slide.js'
             }
         },

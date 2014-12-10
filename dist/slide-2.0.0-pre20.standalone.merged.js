@@ -1,3 +1,16 @@
+/*
+       _  _     _          
+      | |(_)   | |         
+   ___| | _  __| | ____    
+  / __| || |/ _  |/ __ \   
+  \__ \ || | (_| |  ___/   
+  |___/_||_|\____|\____/   
+
+  Version   : 2.0.0-pre20 (standalone)
+  Copyright : 2014-12-10
+  Author    : HTML5 Cell, daumkakao corp
+
+*/
 /*jshint browser: true
 */
 
@@ -682,19 +695,6 @@
 
 })(window.gesture = (typeof gesture === 'undefined') ? {} : gesture);
 
-/*
-       _  _     _          
-      | |(_)   | |         
-   ___| | _  __| | ____    
-  / __| || |/ _  |/ __ \   
-  \__ \ || | (_| |  ___/   
-  |___/_||_|\____|\____/   
-
-  Version   : 2.0.0-pre20
-  Copyright : 2014-12-10
-  Author    : HTML5 Cell, daumkakao corp
-
-*/
 /*jshint browser: true
 */
 /*global slide:true, Class, gesture, clay, util, daumtools, dongtl*/
