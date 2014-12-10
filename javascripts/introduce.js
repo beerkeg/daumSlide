@@ -101,6 +101,7 @@
     function launchAppendCase(elFrame, elPrev, elNext) {
         loader.load(function(builded) {
             var ds = new slide.DataSource(builded, {
+                index: 3,
                 delegate: {
                     willQueryEndOfDataDelegate: function (callback) {
                         var self = this;
