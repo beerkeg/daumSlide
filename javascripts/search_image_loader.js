@@ -42,7 +42,7 @@
                         img.className = 'image';
                         img.src = this.thumbnail;
                         img.onload = function() {
-                            panel.clear();
+                            panel.draw('');
                             panel.el.appendChild(img);
                         };
                         img.ondragstart = function(e) {

@@ -690,8 +690,8 @@
   \__ \ || | (_| |  ___/   
   |___/_||_|\____|\____/   
 
-  Version   : 2.0.0-pre18
-  Copyright : 2014-11-28
+  Version   : 2.0.0-pre19
+  Copyright : 2014-12-10
   Author    : HTML5 Cell, daumkakao corp
 
 */
@@ -713,13 +713,13 @@
     var _style = (document.body || document.documentElement).style;
     function getPrefixStyle(exp) {
         var _prefixExp = '';
-        for(var i=0, len=_prefix.length; i<len; i+=1) {
-            _prefixExp = _prefix[i] + exp;
-            if(_prefixExp in _style) {
-                return _prefixExp;
+        _prefix.map(function(prefix) {
+            var _exp = prefix + exp;
+            if(_exp in _style) {
+                _prefixExp = _exp;
             }
-        }
-        return '';
+        });
+        return _prefixExp;
     }
 
     // slide mode for animation
@@ -747,6 +747,119 @@
     exports.CANCEL = 'cancel';
     exports.NEXT = 'next';
     exports.PREV = 'prev';
+
+    // polyfill
+    if (!Function.prototype.bind) {
+        Function.prototype.bind = function(oThis) {
+            if (typeof this !== 'function') {
+                // closest thing possible to the ECMAScript 5
+                // internal IsCallable function
+                throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
+            }
+
+            var aArgs   = Array.prototype.slice.call(arguments, 1),
+                fToBind = this,
+                FNOP    = function() {},
+                FBound  = function() {
+                    return fToBind.apply(this instanceof FNOP && oThis ? this : oThis,
+                        aArgs.concat(Array.prototype.slice.call(arguments)));
+                };
+
+            FNOP.prototype = this.prototype;
+            FBound.prototype = new FNOP();
+
+            return FBound;
+        };
+    }
+
+    // Production steps of ECMA-262, Edition 5, 15.4.4.19
+    // Reference: http://es5.github.io/#x15.4.4.19
+    if (!Array.prototype.map) {
+        Array.prototype.map = function(callback, thisArg) {
+
+            var T, A, k;
+
+            if (this == null) {
+                throw new TypeError(' this is null or not defined');
+            }
+
+            // 1. Let O be the result of calling ToObject passing the |this|
+            //    value as the argument.
+            var O = Object(this);
+
+            // 2. Let lenValue be the result of calling the Get internal
+            //    method of O with the argument "length".
+            // 3. Let len be ToUint32(lenValue).
+            var len = O.length >>> 0;
+
+            // 4. If IsCallable(callback) is false, throw a TypeError exception.
+            // See: http://es5.github.com/#x9.11
+            if (typeof callback !== 'function') {
+                throw new TypeError(callback + ' is not a function');
+            }
+
+            // 5. If thisArg was supplied, let T be thisArg; else let T be undefined.
+            if (arguments.length > 1) {
+                T = thisArg;
+            }
+
+            // 6. Let A be a new array created as if by the expression new Array(len)
+            //    where Array is the standard built-in constructor with that name and
+            //    len is the value of len.
+            A = new Array(len);
+
+            // 7. Let k be 0
+            k = 0;
+
+            // 8. Repeat, while k < len
+            while (k < len) {
+
+                var kValue, mappedValue;
+
+                // a. Let Pk be ToString(k).
+                //   This is implicit for LHS operands of the in operator
+                // b. Let kPresent be the result of calling the HasProperty internal
+                //    method of O with argument Pk.
+                //   This step can be combined with c
+                // c. If kPresent is true, then
+                if (k in O) {
+
+                    // i. Let kValue be the result of calling the Get internal
+                    //    method of O with argument Pk.
+                    kValue = O[k];
+
+                    // ii. Let mappedValue be the result of calling the Call internal
+                    //     method of callback with T as the this value and argument
+                    //     list containing kValue, k, and O.
+                    mappedValue = callback.call(T, kValue, k, O);
+
+                    // iii. Call the DefineOwnProperty internal method of A with arguments
+                    // Pk, Property Descriptor
+                    // { Value: mappedValue,
+                    //   Writable: true,
+                    //   Enumerable: true,
+                    //   Configurable: true },
+                    // and false.
+
+                    // In browsers that support Object.defineProperty, use the following:
+                    // Object.defineProperty(A, k, {
+                    //   value: mappedValue,
+                    //   writable: true,
+                    //   enumerable: true,
+                    //   configurable: true
+                    // });
+
+                    // For best browser support, use the following:
+                    A[k] = mappedValue;
+                }
+                // d. Increase k by 1.
+                k++;
+            }
+
+            // 9. return A
+            return A;
+        };
+    }
 
     var util = exports.util = {};
     // event & extend library
@@ -800,10 +913,69 @@
             return n-0;
         };
 
-        util.createDelegate = function(delegate, scope) {
-            return function _delegate() {
-                return delegate.apply(scope, arguments);
-            };
+        util.isObject = function(o) {
+            return o !== exports.EMPTY && typeof o === 'object';
+        };
+        util.isFunction = function(f) {
+            return typeof f === 'function';
+        };
+        util.isString = function(s) {
+            return typeof s === 'string';
+        };
+        util.isNumber = function(n) {
+            return typeof n === 'number';
+        };
+        util.isDOMElement = function(e) {
+            return util.isObject(e) && (e.nodeType === 1 || e.nodeType === 11);
+        };
+        //util.isArray = function(o) {
+        //    return Object.prototype.toString.call(o) === '[object Array]';
+        //};
+
+        util.promise = function(fn) {
+            var _value, _self = this;
+            var _isResovled = false;
+            var _handlers  = [];
+
+            function _doFulfill(value) {
+                _isResovled = true;
+                _value = value;
+
+                _handlers.map(function _launchHandler(handler) {
+                    handler(value);
+                });
+                _handlers = [];
+            }
+
+            function _resolve(value) {
+                if(value && typeof value.then === 'function') {
+                    value.then(_doFulfill);
+
+                } else {
+                    _doFulfill(value);
+                }
+
+                return _self;
+            }
+
+            function _then(callback) {
+                return new _self.constructor(function(fulfill) {
+                    _handlers.push(function _insertHandlers() {
+                        fulfill(callback(_value));
+                    });
+
+                    if(_isResovled) {
+                        _doFulfill(_value);
+                    }
+                });
+            }
+
+            this.resolve = _resolve;
+            this.then = _then;
+
+            if(fn && typeof fn === 'function') {
+                fn(_resolve);
+            }
         };
 
     } catch(e) {
@@ -925,8 +1097,6 @@
 (function (exports) {
     "use strict";
 
-    var EMPTY_FUNC = function() {};
-
     /**
      * slide 를 위한 데이터소스 delegate
      * 새로운 DataSource를 생성/초기화한다.
@@ -941,9 +1111,8 @@
          * @param data {Array}
          */
         init: function (data) {
-            this.data = data;
+            this.data = data || [];
             this.index = 0;
-            this.EMPTY = '_empty';
         },
         /**
          * 현재 인덱스를 설정한다.
@@ -954,18 +1123,15 @@
         setIndex: function (index) {
             this.index = index;
         },
-
         getIndex: function () {
             return this.index;
         },
-
         setIndexByOffset: function(offset) {
             this.index = this.getIndexByOffset(offset);
         },
         getIndexByOffset: function(offset) {
             return this.index + offset;
         },
-
         /**
          * 이전 데이터를 불러온다.
          * 데이터가 없을 경우 해당 필드는 null 로 세팅된다.
@@ -974,9 +1140,9 @@
          * @async
          * @param callback {Function} 데이터를 모두 로드 된후 해당 데이터를 인자로 갖고 실행될 callback 함수
          */
-        queryPrev: function (callback) {
+        queryPrev: function () {
             var index = this.getIndexByOffset(-1);
-            this.queryData(index, callback);
+            return this.queryData(index);
         },
         /**
          * 현재 데이터를 불러온다.
@@ -985,8 +1151,8 @@
          * @async
          * @param callback {Function} 데이터를 모두 로드 된후 해당 데이터를 인자로 갖고 실행될 callback 함수
          */
-        queryCurrent: function (callback) {
-            this.queryData(this.index, callback);
+        queryCurrent: function () {
+            return this.queryData(this.index);
         },
         /**
          * 다음 데이터를 불러온다.
@@ -996,9 +1162,9 @@
          * @async
          * @param callback {Function} 데이터를 모두 로드 된후 해당 데이터를 인자로 갖고 실행될 callback 함수
          */
-        queryNext: function (callback) {
+        queryNext: function () {
             var index = this.getIndexByOffset(1);
-            this.queryData(index, callback);
+            return this.queryData(index);
         },
         /**
          * 다음 데이터로 이동
@@ -1016,43 +1182,11 @@
         prev: function (movedCount) {
             this.index = this.getIndexByOffset(-(movedCount || 1));
         },
-        /**
-         * 데이터 끝에 도달하였을 때 호출될 delegate를 설정한다.
-         *
-         * @method willQueryEndOfData
-         * @param delegate {Function}
-         */
-        willQueryEndOfData: function (delegate) {
-            this.willQueryEndOfDataDelegate = delegate;
+        willQueryEndOfDataDelegate: function (callback) {
+            callback(false);
         },
-        /**
-         * 현재 데이터 끝에 도달하였을 때 호출될 기본 delegate.
-         * callback에 null을 넘겨 호출하여 준다.
-         *
-         * @method willQueryEndOfDataDelegate
-         * @param callback {Function}
-         */
-        willQueryEndOfDataDelegate: function (callback, index) {
-            callback(exports.EMPTY);
-        },
-        /**
-         * 데이터 시작에 도달하였을 때 호출될 delegate를 설정한다.
-         *
-         * @method willQueryFirstOfData
-         * @param delegate {Function}
-         */
-        willQueryFirstOfData: function (delegate) {
-            this.willQueryFirstOfDataDelegate = delegate;
-        },
-        /**
-         * 현재 데이터 시작에 도달하였을 때 호출될 기본 delegate.
-         * callback에 null을 넘겨 호출하여 준다.
-         *
-         * @method willQueryFirstOfDataDelegate
-         * @param callback {Function}
-         */
-        willQueryFirstOfDataDelegate: function (callback, index) {
-            callback(exports.EMPTY);
+        willQueryFirstOfDataDelegate: function (callback) {
+            callback(false);
         },
         /**
          * 기존의 데이터 뒤에 새로운 데이터를 추가한다.
@@ -1074,61 +1208,48 @@
             this.data = addends.concat(this.data);
         },
 
-        hasNext: function(callback) {
-            this.hasDataByOffset(1, callback);
-        },
-        hasPrev: function(callback) {
-            this.hasDataByOffset(-1, callback);
-        },
-        hasDataByOffset: function(offset, callback) {
-            var index = this.getIndexByOffset(offset);
-            this.queryData(index, function _hasData(data) {
-                callback(!!data);
+        queryData: function(index) {
+            return this.queryDataList(index, 1).then(function(datalist) {
+                return datalist[0];
             });
         },
-
-        queryData: function(index, callback) {
-            if(typeof callback !== 'function') {
-                callback = EMPTY_FUNC;
+        queryDataList: function(index, n) {
+            var self = this;
+            function _resolveQuery(hasExtraData) {
+                return hasExtraData ?
+                    self.queryDataList(index, n) : self._resolveQueryDataList(index, n);
             }
 
-            if (index > (this.data.length-1)) { // reaches end
-                return this.willQueryEndOfDataDelegate(callback, index);
+            if ((index+n-1) > (this.data.length-1)) { // reaches end
+                return this._callNextData().then(_resolveQuery);
 
             } else if (index < 0) { // reaches at first
-                return this.willQueryFirstOfDataDelegate(callback, index);
+                return this._callPrevData().then(_resolveQuery);
+
+            } else {
+                return _resolveQuery();
             }
-
-            callback(this.data[index]);
         },
+        _callNextData: function() {
+            var promise = new exports.util.promise();
+            this.willQueryEndOfDataDelegate(promise.resolve);
 
-        queryDataList: function(index, n, callback) {
-            var self = this;
+            return promise;
+        },
+        _callPrevData: function() {
+            var promise = new exports.util.promise();
+            this.willQueryFirstOfDataDelegate(promise.resolve);
+
+            return promise;
+        },
+        _resolveQueryDataList: function(index, n) {
             var dataset = [];
-            var counter = 0;
-
-            if(typeof callback !== 'function') {
-                callback = EMPTY_FUNC;
-            }
-
-            if(n <= 0) {
-                return callback(dataset);
-            }
-
-            // 다음 delegate가 실행되어야 새로운 데이터를 받으므로,
-            // Serialization가 필요없다.
-            this.queryData(index, function _insert(data) {
+            for(var i=0;i<n;i+=1) {
+                var data = this.data[index + i] || exports.EMPTY;
                 dataset.push(data);
-                counter+=1;
-                if(counter < n) {
-                    self.queryData(index+counter, _insert);
-
-                } else {
-                    callback(dataset);
-                }
-            });
+            }
+            return new exports.util.promise().resolve(dataset);
         },
-
         /**
          * 해당 클래스의 인스턴스 삭제시 할당된 오브젝트들을 destroy 시킨다.
          *
@@ -1155,28 +1276,6 @@
      * @param data {Array}
      */
     exports.InfiniteDataSource = exports.DataSource.extend({
-        /**
-         * 현재 데이터 시작에 도달하였을 때 호출될 기본 delegate.
-         * callback에 맨 마지막 데이터를 넘겨 호출하여 준다.
-         *
-         * @method willQueryFirstOfDataDelegate
-         * @param callback {Function}
-         */
-        willQueryFirstOfDataDelegate: function (callback, index) {
-            var _index = this.convertRegularIndex(index || (this.data.length-1));
-            callback(this.data[_index]);
-        },
-        /**
-         * 현재 데이터 끝에 도달하였을 때 호출될 기본 delegate.
-         * callback에 맨처음 데이터를 넘겨 호출하여 준다.
-         *
-         * @method willQueryEndOfDataDelegate
-         * @param callback {Function}
-         */
-        willQueryEndOfDataDelegate: function (callback, index) {
-            var _index = this.convertRegularIndex(index || 0);
-            callback(this.data[_index]);
-        },
         convertRegularIndex: function(index) {
             var length = this.data.length;
             while(index < 0) {
@@ -1186,6 +1285,15 @@
         },
         getIndexByOffset: function(offset) {
             return this.convertRegularIndex(this.index + offset);
+        },
+        _resolveQueryDataList: function(index, n) {
+            var dataset = [];
+            for(var i=0;i<n;i+=1) {
+                var _index = this.convertRegularIndex(index + i);
+                var data = this.data[_index] || exports.EMPTY;
+                dataset.push(data);
+            }
+            return new exports.util.promise().resolve(dataset);
         }
     });
 
@@ -1196,6 +1304,8 @@
 /* global slide:true, Class: true, gesture: true */
 (function (exports) {
     'use strict';
+
+    var EMPTY = '&nbsp;';
 
     /**
      * @class Element
@@ -1211,7 +1321,6 @@
         destroy: function () {
             this.el = null;
         },
-
         setStyle: function (key, value) {
             this.el.style[key] = value;
         },
@@ -1224,11 +1333,17 @@
         setLeft: function (left) {
             this.setStyle('left', left);
         },
+        draw: function(data) {
+            var el = this.el;
+            var util = exports.util;
+            if(util.isDOMElement(data)) {
+                el.innerHTML = '';
+                el.appendChild(data);
 
-        clear: function() {
-            this.el.innerHTML = '';
+            } else {
+                el.innerHTML = util.isString(data) ? data : EMPTY;
+            }
         },
-
         show: function() {
             this.setStyle('display', 'inline-block');
         },
@@ -1277,7 +1392,13 @@
          * @param data {HTMLElement}
          */
         render: function (data) {
-            this.el.innerHTML = !!data ? data.toHTML(this, this.slide) : '&nbsp;';
+            var content, util = exports.util;
+            if(util.isObject(data)) {
+                content = util.isFunction(data.toHTML) ?
+                    data.toHTML(this, this.slide) : data.content;
+            }
+
+            this.draw(content || data);
         },
         /**
          * 웹접근성을 위한 코드.
@@ -1359,7 +1480,7 @@
             this.config = config;
 
             this.hide();
-            this.clear();
+            this.draw('');
             for (var i=0, len=config.length; i<len; i+=1) {
                 this.panels.push(this.initPanel());
             }
@@ -1389,17 +1510,16 @@
          * @method setAriaHiddenPanels
          */
         setAccessibility: function () {
-            var panels = this.panels;
             var config = this.config;
-            for (var i=0, len=panels.length; i<len; i+=1) {
-                panels[i].setAccessibility(config[i].accessibility || false);
-            }
+            this.panels.map(function(panel, i) {
+                panel.setAccessibility(config[i].accessibility || false);
+            });
         },
         updateAll: function (dataSet) {
             var panels = this.panels;
-            for (var i=0, len=panels.length; i<len; i+=1) {
-                panels[i].render(dataSet[i]);
-            }
+            panels.map(function(panel, i) {
+                panel.render(dataSet[i]);
+            });
         },
         /**
          * 해당 클래스의 인스턴스 삭제시 할당된 오브젝트들을 destroy 시킨다.
@@ -1408,159 +1528,70 @@
          */
         destroy: function () {
             this.el = null;
-
-            var panels = this.panels;
-            for(var i=0, l=panels.length; i<l; i+=1){
-                panels[i].destroy();
-            }
+            this.panels.map(function(panel) {
+                panel.destroy();
+            });
             delete this.panels;
         },
 
         getPanel: function(index) {
-            if(typeof index !== 'number') {
+            if(!exports.util.isNumber(index)) {
                 return;
             }
 
             return this.panels[index];
         },
-        extractPanel: function(index) {
-            if(typeof index !== 'number' || index < 0) {
-                return;
-            }
-
-            return this.panels.splice(index, 1)[0];
-        },
-
         updatePanel: function(index, data) {
             var panel = this.getPanel(index);
             panel.render(data);
         },
-        arrangePanel: function(targetIndex, beforeIndex) {
-            var beforePanel = this.getPanel(beforeIndex);
-            var targetPanel = this.extractPanel(targetIndex);
-
-            if(beforePanel) {
-                var panels = this.panels;
-                this.panels = panels.splice(0, beforeIndex).concat(targetPanel, panels);
-                this.el.insertBefore(targetPanel.el, panels[beforeIndex].el);
+        arrangePanel: function(movedOffset) {
+            var moved, panels = this.panels;
+            if(movedOffset > 0) {
+                moved = panels.splice(0, movedOffset);
 
             } else {
-                this.panels.push(targetPanel);
-                this.el.appendChild(targetPanel.el);
+                moved = panels.splice(0, panels.length + movedOffset);
             }
+            this.panels = panels.concat(moved);
 
             this.setAccessibility();
         },
-
         setPanelStyle: function(name, style) {
-            var panels = this.panels;
-            for(var i=0,len=panels.length;i<len;i+=1) {
-                panels[i].setStyle(name, style);
-            }
+            this.panels.map(function(panel) {
+                panel.setStyle(name, style);
+            });
         }
     });
 })(window.slide = (typeof slide === 'undefined') ? {} : slide);
 
 (function(exports) {
-
-    var SLIDE_THRESHOLD = 50;
-    var DURATION = 200;
-    var GESTURE_RATIO = 0.5;
-    var PANELS_TO_SLIDE = 1;
-    var PANELS_TO_SHOW = 1;
-    var PANEL_WIDTH = 300;
+    'use strict';
 
     exports.BasicController = Class.extend({
-        init: function(slide, datasource, option) {
+        init: function(slide, option) {
             this.slide = slide;
-            this.datasource = datasource;
-            this.container = null;
-            this.animator = null;
-            this.updater = null;
 
-            this.callback = null;
-
-            this.frameWidth = slide.screen.width;
-            this.frameHeight = slide.screen.height;
-
-            this._setOption(option);
-            this._createContainer(slide, option);
-            this._createAnimator(slide, option);
-            this._createUpdater(slide, option);
-            this._setDelegate(option);
+            this.animator = new exports.Animator(slide, option);
+            this.updater = new exports.Updater(slide, option);
         },
-        _setDelegate: function(option) {
-            if(!option.delegate) {
-                return;
-            }
-
-            var DelegateClass = exports.BasicDelegate.extend(option.delegate);
-            var delegate = new DelegateClass();
-
-            for(var name in DelegateClass.prototype) {
-                this._setDelegateMethod(name, delegate, this);
-                this._setDelegateMethod(name, delegate, this.animator);
-                this._setDelegateMethod(name, delegate, this.updater);
-            }
-        },
-        _setDelegateMethod: function(name, delegate, scope) {
-            if(scope[name]) {
-                scope[name] = exports.util.createDelegate(delegate[name], scope);
-            }
-        },
-        _setOption: function(option) {
-            var util = exports.util;
-
-            this.panelType = option.panelType || exports.DIVIDED;
-            this.isCenterAligned = option.isCenterAligned || false;
-            this.isAutoAligned = !this.isCenterAligned && (this.panelType === exports.FIXED);
-
-            this.threshold = util.toNumber(option.threshold, SLIDE_THRESHOLD);
-            this.gestureRatio = util.toNumber(option.gestureRatio, GESTURE_RATIO);
-            this.panelsToSlide = util.toNumber(option.panelsToSlide, PANELS_TO_SLIDE);
-
-            if(this.panelType === exports.DIVIDED) {
-                var panelsToShow = util.toNumber(option.panelsToShow, PANELS_TO_SHOW);
-                this._setDividedPanelWidth(panelsToShow);
-
-            } else {
-                var panelWidth = util.toNumber(option.panelWidth, PANEL_WIDTH);
-                this._setFixedPanelWidth(panelWidth);
-            }
-        },
-        _setDividedPanelWidth: function(panelsToShow) {
-            this.panelsToShow = panelsToShow;
-            this.panelWidth = this.frameWidth/panelsToShow;
-        },
-        _setFixedPanelWidth: function(panelWidth) {
-            this.panelsToShow = Math.ceil(this.frameWidth / panelWidth);
-            this.panelWidth = panelWidth;
-        },
-        _createContainer: function (slide, option) {
-            this.container = new exports.Container(slide, option);
-        },
-        _createAnimator: function (slide, option) {
-            var duration = exports.util.toNumber(option.duration, DURATION);
-            this.animator = new exports.Animator(slide, this, duration);
-        },
-        _createUpdater: function(slide, option) {
-            this.updater = new exports.Updater(slide, this);
-        },
-
         _getSparePanelsCount: function() {
-            var leastSparePanels = Math.ceil(this.panelsToShow * this.gestureRatio);
-            return Math.max(leastSparePanels, this.panelsToSlide);
+            var slide = this.slide;
+            var leastSparePanels = Math.ceil(slide.panelsToShow * slide.gestureRatio);
+            return Math.max(leastSparePanels, slide.panelsToSlide);
         },
         _getPanelsLength: function(sparePanelCount) {
-            var panelsLength = this.panelsToShow + (sparePanelCount * 2);
-            var isUnbalanced = (this.isCenterAligned && !(panelsLength%2));
+            var slide = this.slide;
+            var panelsLength = slide.panelsToShow + (sparePanelCount * 2);
+            var isUnbalanced = (slide.isCenterAligned && !(panelsLength%2));
             return panelsLength + (isUnbalanced ? 1 : 0);
         },
         createPanelsConfig: function() {
+            var slide = this.slide;
             var sparePanelCount = this._getSparePanelsCount();
             var panelsLength = this._getPanelsLength(sparePanelCount);
 
-            this.basePanelIndex = this.isCenterAligned ?
+            slide.basePanelIndex = slide.isCenterAligned ?
                 Math.floor(panelsLength/2) : sparePanelCount;
 
             var panelsConfig = [];
@@ -1574,10 +1605,12 @@
         },
         createPanels: function() {
             var panelsConfig = this.createPanelsConfig();
-            this.container.createPanels(panelsConfig);
+            this.slide.container.createPanels(panelsConfig);
         },
         resizePanels: function() {
-            this.container.setPanelStyle('width', this.panelWidth + 'px');
+            var slide = this.slide;
+            slide.container.setPanelStyle('width', slide.panelWidth + 'px');
+
             this.animator.setDefaultSlidePosition();
         },
         refresh: function() {
@@ -1588,9 +1621,8 @@
             this.createPanels();
             this.refresh();
         },
-
         resize: function(width, height) {
-            if(this.panelType === exports.FIXED) {
+            if(this.slide.panelType === exports.FIXED) {
                 this._resizeFixedPanels(width, height);
 
             } else {
@@ -1598,15 +1630,17 @@
             }
         },
         _resizeDividedPanels: function(width, height) {
-            this.panelWidth = width/this.panelsToShow;
+            var slide = this.slide;
+            slide.panelWidth = width/slide.panelsToShow;
             this.resizePanels();
         },
         _resizeFixedPanels: function(width, height) {
-            var panelsToShow = Math.ceil(width / this.panelWidth);
-            if(this.panelsToShow !== panelsToShow) {
+            var slide = this.slide;
+            var panelsToShow = Math.ceil(width / slide.panelWidth);
+            if(slide.panelsToShow !== panelsToShow) {
                 this._adjustDataIndexToPanelsToShow(panelsToShow);
 
-                this.panelsToShow = panelsToShow;
+                slide.panelsToShow = panelsToShow;
                 this.resetPanels();
 
             } else {
@@ -1614,14 +1648,15 @@
             }
         },
         _adjustDataIndexToPanelsToShow: function(panelsToShow) {
-            if(!this.isAutoAligned) {
+            var slide = this.slide;
+            if(!slide.isAutoAligned) {
                 return;
             }
 
-            var ds = this.datasource;
-            var index = ds.getIndexByOffset(panelsToShow);
-            if(index > ds.data.length ) {
-                ds.setIndexByOffset(this.panelsToShow - panelsToShow);
+            var datasource = slide.datasource;
+            var index = datasource.getIndexByOffset(panelsToShow);
+            if(index > datasource.data.length ) {
+                datasource.setIndexByOffset(slide.panelsToShow - panelsToShow);
             }
         },
 
@@ -1632,25 +1667,25 @@
 
             return this.animator.getMovedCountByGesture(deltaX, deltaY);
         },
-
         getNextPanelStartOffset: function() {
-            return this.isCenterAligned ? 1 : this.panelsToShow;
+            var slide = this.slide;
+            return slide.isCenterAligned ? 1 : slide.panelsToShow;
         },
         getPrevPanelStartOffset: function(movedCount) {
             return -movedCount;
         },
         getChangedDataStartIndex: function(type, movedCount) {
-            var changedPanelStartOffset = type === exports.NEXT ?
+            var changedPanelStartOffset = (type === exports.NEXT) ?
                 this.getNextPanelStartOffset() : this.getPrevPanelStartOffset(movedCount);
-            return this.datasource.getIndexByOffset(changedPanelStartOffset);
+            return this.slide.datasource.getIndexByOffset(changedPanelStartOffset);
         },
         createAnimationStatus: function(type, datalist) {
             var movedCount = 0;
-            for(var i=0,len=datalist.length;i<len;i+=1) {
-                if(datalist[i] !== exports.EMPTY) {
+            datalist.map(function(data) {
+                if(data !== exports.EMPTY) {
                     movedCount += 1;
                 }
-            }
+            });
 
             var isNext = (type === exports.NEXT);
             return {
@@ -1659,221 +1694,164 @@
                 isLastData: isNext && (movedCount === 0)
             };
         },
-        getAnimationStatus: function(type, movedCount, callback) {
-            var self = this;
-            var ds = this.datasource;
+        queryAnimationStatus: function(type, movedCount) {
+            var slide = this.slide;
+            var _movedCount = exports.util.isNumber(movedCount) ?
+                movedCount : slide.panelsToSlide;
 
-            if(type === exports.CANCEL) {
-                var cancelStatus = this.createAnimationStatus(type, []);
-                return callback(cancelStatus);
+            if(type === exports.CANCEL || _movedCount === 0) {
+                var cancel = this.createAnimationStatus(exports.CANCEL, []);
+                return new exports.util.promise().resolve(cancel);
             }
 
-            var changedLength = movedCount || this.panelsToSlide;
-            //var checkingLastDataFlag = 1;
-            var changedStartIndex = this.getChangedDataStartIndex(type, changedLength);
-            //var changedLength = _movedCount + checkingLastDataFlag;
-
-            ds.queryDataList(changedStartIndex, changedLength, function _getChanged(datalist) {
-                var status = self.createAnimationStatus(type, datalist);
-                callback(status);
-            });
+            var self = this;
+            var changedStartIndex = this.getChangedDataStartIndex(type, _movedCount);
+            return slide.datasource.queryDataList(changedStartIndex, _movedCount).
+                then(function _getChangedData(datalist) {
+                    return self.createAnimationStatus(type, datalist);
+                });
         },
 
-        onInitialize: function() {
+        moveSlide: function(deltaX, deltaY) {
+            var animator = this.animator;
+            var position = animator.getPositionByGesture(deltaX, deltaY);
+            animator.moveSlidePosition(position);
+        },
+        animateSlide: function(type, movedCount) {
+            var _status, self = this;
+            this.queryAnimationStatus(type, movedCount).
+                then(function _onBeforeSlide(status) {
+                    _status = status;
+                    self.onBeforeSlide(_status);
+                }).
+                then(function _onAnimateSlide() {
+                    return self.onAnimateSlide(_status);
+                }).
+                then(function _onAnimateComplete() {
+                    return self.onAnimateComplete(_status);
+                }).
+                then(function _onAfterSlide() {
+                    self.onAfterSlide(_status);
+                });
+        },
+
+        onStart: function() {
             this.resetPanels();
         },
-        onMoveSlide: function(deltaX, deltaY) {
-            var position = this.animator.getPositionByGesture(deltaX, deltaY);
-            this.animator.moveSlidePosition(position);
-        },
-        onAnimateSlide: function(type, movedCount, option) {
-            var self = this;
-            var _option = option || {};
-            this.getAnimationStatus(type, movedCount, function(status) {
-                if(typeof _option.onStart === 'function') {
-                    _option.onStart(status.type);
-                }
+        onBeforeSlide: function(status) {
+            var slide = this.slide;
 
-                if(self.isAutoAligned) {
-                    var alignedType = status.isLastData ? exports.RIGHT : exports.LEFT;
-                    self.animator.setAlignedType(alignedType);
-                }
-
-                self.animator.animateSlideByOffset(status.movedOffset, function _animateComplete() {
-                    self.onAnimateComplete(status, _option);
-                });
-            });
-        },
-        onAnimateComplete: function(status, option) {
-            this.arrangePanels(status.movedOffset);
-            this.updater.updatePanelsByOffset(status.movedOffset, function _updateComplete() {
-                if(typeof option.onComplete === 'function') {
-                    option.onComplete(status.type);
-                }
-            });
-        },
-
-        arrangePanels: function(movedOffset) {
-            var container = this.container;
-            var isNext = movedOffset > 0;
-            var targetIndex = isNext ? 0 : container.panels.length - 1;
-            var beforeIndex = isNext ? exports.EMPTY : 0;
-
-            this.animator.arrangePanelPosition(movedOffset);
-            for(var i=0,len=Math.abs(movedOffset);i<len;i+=1) {
-                container.arrangePanel(targetIndex, beforeIndex);
+            slide.onBeforeSlide(status.type);
+            if(slide.isAutoAligned) {
+                var alignedType = status.isLastData ? exports.RIGHT : exports.LEFT;
+                this.animator.setAlignedType(alignedType);
             }
+        },
+        onAnimateSlide: function(status) {
+            return this.animator.animateSlideByOffset(status.movedOffset);
+        },
+        onAnimateComplete: function(status) {
+            var movedOffset = status.movedOffset;
+
+            this.slide.container.arrangePanel(movedOffset);
+            this.animator.arrangePanelPosition(movedOffset);
+            return this.updater.updatePanelsByOffset(movedOffset);
+        },
+        onAfterSlide: function(status) {
+            this.slide.onAfterSlide(status.type);
         },
 
         isOverThreshold: function(deltaX, deltaY) {
-            return this.threshold < Math.abs(deltaX);
+            return this.slide.threshold < Math.abs(deltaX);
         }
     });
 }(window.slide = (typeof slide === 'undefined') ? {} : slide));
 
 (function(exports) {
     exports.SimpleController = exports.BasicController.extend({
-        createPanelsConfig: function() {
-            var panelsLength = this.panelsToShow;
-            this.basePanelIndex = this.isCenterAligned ?
-                Math.floor(panelsLength/2) : 0;
-
-            var panelsConfig = [];
-            for(var i=0;i<panelsLength;i+=1) {
-                panelsConfig.push({
-                    accessibility: false
-                });
-            }
-
-            return panelsConfig;
-        },
-        onMoveSlide: function(x, y) {
-
-        },
-        onAnimateSlide: function(type, movedCount, option) {
-            var self = this;
-            var _option = option || {};
-            this.getAnimationStatus(type, movedCount, function(status) {
-                if(typeof _option.onStart === 'function') {
-                    _option.onStart(status.type);
-                }
-
-                self.onAnimateComplete(status, _option);
-            });
-        },
-        onAnimateComplete: function(status, option) {
-            var ds = this.datasource;
-            ds.setIndexByOffset(status.movedOffset);
-            this.updater.updateAll();
-
-            if(typeof option.onComplete === 'function') {
-                option.onComplete(status.type);
-            }
+        _getSparePanelsCount: function() {
+            return 0;
         }
     });
 }(window.slide = (typeof slide === 'undefined') ? {} : slide));
 
 (function(exports) {
     exports.BasicUpdater = Class.extend({
-        init: function(slide, controller) {
+        init: function(slide, option) {
             this.slide = slide;
-            this.controller = controller;
-            this.datasource = controller.datasource;
-            this.container = controller.container;
         },
+        updateAll: function() {
+            var slide = this.slide;
+            var datasource = slide.datasource;
+            var container = slide.container;
+            var firstDataIndex = datasource.index - slide.basePanelIndex;
 
-        updateAll: function(callback) {
-            var ds = this.datasource;
-            var controller = this.controller;
-            var container = this.container;
-            var firstDataIndex = ds.index - controller.basePanelIndex;
-
-            ds.queryDataList(firstDataIndex, container.panels.length, function(datalist) {
-                container.updateAll(datalist);
-                if(typeof callback === 'function') {
-                    callback(datalist);
-                }
-            });
+            return datasource.queryDataList(firstDataIndex, container.panels.length).
+                then(function(datalist) {
+                    container.updateAll(datalist);
+                });
         },
-        updatePanelsByOffset: function(movedOffset, callback) {
+        updatePanelsByOffset: function(movedOffset) {
             var self = this;
-            var ds = this.datasource;
-
-            ds.setIndexByOffset(movedOffset);
-
+            var slide = this.slide;
+            var datasource = slide.datasource;
             var firstPanelIndex = (movedOffset < 0) ?
-                0 : (this.container.panels.length - movedOffset);
-            var firstPanelOffset = firstPanelIndex - this.controller.basePanelIndex;
-            var firstDataIndex = ds.getIndexByOffset(firstPanelOffset);
-            ds.queryDataList(firstDataIndex, Math.abs(movedOffset), function(datalist) {
-                self.updatePanels(firstPanelIndex, datalist);
-                if(typeof callback === 'function') {
-                    callback(datalist);
-                }
-            });
+                0 : (slide.container.panels.length - movedOffset);
+            var firstPanelOffset = firstPanelIndex - slide.basePanelIndex;
+
+            datasource.setIndexByOffset(movedOffset);
+
+            var firstDataIndex = datasource.getIndexByOffset(firstPanelOffset);
+            return datasource.queryDataList(firstDataIndex, Math.abs(movedOffset)).
+                then(function(datalist) {
+                    self.updatePanels(firstPanelIndex, datalist);
+                });
         },
         updatePanels: function(startIndex, datalist) {
-            for(var i=0,len=datalist.length;i<len;i+=1) {
-                this.container.updatePanel(startIndex + i, datalist[i]);
-            }
+            var container = this.slide.container;
+            datalist.map(function(data, index) {
+                container.updatePanel(startIndex + index, data);
+            });
         }
     });
-}(window.slide = (typeof slide === 'undefined') ? {} : slide));
-(function(exports) {
-    var MESSAGE = 'require is not defined: ';
-    exports.BasicDelegate = Class.extend({
-        getPositionByOffset: function(movedOffset) {
-            throw MESSAGE + 'getPositionByOffset';
-        },
-        getPositionByGesture: function(deltaX, deltaY) {
-            throw MESSAGE + 'getPositionByGesture';
-        },
-        movePanelPosition: function (panelIndex, position) {
-            throw MESSAGE + 'movePanelPosition';
-        },
-        moveSlidePosition: function (position) {
-            throw MESSAGE + 'moveSlidePosition';
-        },
-        updateBasePosition: function(movedOffset) {
-            throw MESSAGE + 'updateBasePosition';
-        }
-    });
-
 }(window.slide = (typeof slide === 'undefined') ? {} : slide));
 (function(exports) {
     'use strict';
 
-    exports.BasicAnimator = Class.extend({
-        init: function(slide, controller, duration) {
+    var DURATION = 200;
+
+    exports.TransformAnimator = Class.extend({
+        init: function(slide, option) {
             this.slide = slide;
-            this.controller = controller;
-            this.container = controller.container;
+
+            this.duration = exports.util.toNumber(option.duration, DURATION);
 
             this.basePosition = {};
-
-            this.duration = duration;
+            this.prevPosition = {};
             this.aligned = 0;
             this.timeId = 0;
             this.slideTimeId = 0;
 
             this.bindTransitionEvent();
         },
+
         bindTransitionEvent: function () {
             var self = this;
-            exports.util.on(this.container.el, 'webkitTransitionEnd', function() {
+            exports.util.on(this.slide.container.el, 'webkitTransitionEnd', function() {
                 self.timeId = window.setTimeout(function _forceComplete(){
                     self.animateComplete(self.slideTimeId);
                 }, 50);
             });
         },
         setTransitionDuration: function(duration) {
-            this.container.setTransitionDuration(duration + 'ms');
+            this.slide.container.setTransitionDuration(duration + 'ms');
         },
+
         setDefaultSlidePosition: function() {
-            var controller = this.controller;
-            var panelsLength = this.container.panels.length;
-            var basePanelIndex = controller.basePanelIndex;
-            var alignedType = controller.isCenterAligned ? exports.CENTER : exports.LEFT;
+            var slide = this.slide;
+            var panelsLength = slide.container.panels.length;
+            var basePanelIndex = slide.basePanelIndex;
+            var alignedType = slide.isCenterAligned ? exports.CENTER : exports.LEFT;
 
             this.basePosition = this.getPositionByGesture(0, 0);
             this.setAlignedType(alignedType);
@@ -1886,30 +1864,26 @@
             this.moveSlidePosition(position);
         },
         setAlignedType: function(type) {
-            var ct = this.controller;
-            switch(type) {
-                case exports.CENTER:
-                    this.aligned =  (ct.frameWidth - ct.panelWidth)/2;
-                    break;
+            var slide = this.slide;
+            if(type === exports.CENTER) {
+                this.aligned = (slide.frameWidth - slide.panelWidth)/2;
 
-                case exports.RIGHT:
-                    this.aligned = ct.frameWidth - (ct.panelWidth * ct.panelsToShow);
-                    break;
+            } else if (type === exports.RIGHT) {
+                this.aligned = slide.frameWidth - (slide.panelWidth * slide.panelsToShow);
 
-                case exports.LEFT:
-                default:
-                    this.aligned = 0;
+            } else {// Maybe LEFT
+                this.aligned = 0;
             }
         },
 
         getPositionByOffset: function(movedOffset) {
             return {
-                x: movedOffset * this.controller.panelWidth,
+                x: movedOffset * this.slide.panelWidth,
                 y: 0
             };
         },
         getPositionByGesture: function(deltaX, deltaY) {
-            var gestureRatio = this.controller.gestureRatio;
+            var gestureRatio = this.slide.gestureRatio;
             return {
                 x: deltaX * gestureRatio,
                 y: 0
@@ -1918,48 +1892,52 @@
         getMovedCountByGesture: function(deltaX, deltaY) {
             var position = this.getPositionByGesture(deltaX, deltaY);
             return position.x ?
-                Math.ceil(Math.abs(position.x)/this.controller.panelWidth) : 1;
+                Math.ceil(Math.abs(position.x)/this.slide.panelWidth) : 1;
         },
+
         arrangePanelPosition: function(movedOffset) {
-            var isNext = movedOffset > 0;
-            var panelsLength = this.container.panels.length;
-            var basePanelIndex = this.controller.basePanelIndex;
-            var targetIndex = isNext ? 0 : (panelsLength + movedOffset);
-            var targetOffset = (isNext ? (panelsLength - movedOffset) : 0) - basePanelIndex;
+            var slide = this.slide;
+            var basePanelIndex = slide.basePanelIndex;
+            var targetIndex = (movedOffset > 0) ?
+                (slide.container.panels.length - movedOffset) : 0;
 
             this.updateBasePosition(movedOffset);
             for(var i=0,len=Math.abs(movedOffset);i<len;i+=1) {
-                this.movePanelByOffset(targetIndex + i, targetOffset + i);
+                var index = targetIndex + i;
+                this.movePanelByOffset(index, index - basePanelIndex);
             }
         },
+
         updateBasePosition: function(movedOffset) {
             var position = this.getPositionByOffset(movedOffset);
             this.basePosition.x -= position.x;
         },
-        movePanelPosition: function  (panelIndex, position) {
-            var panel = this.container.getPanel(panelIndex);
+        movePanelPosition: function (panelIndex, position) {
+            var panel = this.slide.container.getPanel(panelIndex);
             var _x = position.x - this.basePosition.x;
-            panel.setLeft(_x + 'px');
+
+            panel.setTransform('translate3d(' + _x + 'px, 0, 0)');
         },
         moveSlidePosition: function (position) {
             var _x = position.x + this.basePosition.x + this.aligned;
-            this.container.setLeft(_x + 'px');
+            if(this.prevPosition.x !== _x) {
+                this.slide.container.setTransform('translate3d(' + _x + 'px, 0, 0)');
+                this.prevPosition.x = _x;
+            }
         },
+
         movePanelByOffset: function (panelIndex, offset) {
-            var pos = this.getPositionByOffset(offset);
-            this.movePanelPosition(panelIndex, pos);
+            var position = this.getPositionByOffset(offset);
+            this.movePanelPosition(panelIndex, position);
         },
-        animateSlideByOffset: function(movedOffset, callback) {
-            var self = this;
+        animateSlideByOffset: function(movedOffset) {
             var position = this.getPositionByOffset(-movedOffset);
-            this.animateSlidePosition(position, function _animateComplete() {
-                if(typeof callback === 'function') {
-                    callback();
-                }
-            });
+            return this.animateSlidePosition(position);
         },
-        animateSlidePosition: function(position, callback) {
-            this.callback = callback;
+
+        animateSlidePosition: function(position) {
+            this.promise = new exports.util.promise();
+
             this.setTransitionDuration(this.duration);
             this.moveSlidePosition(position);
 
@@ -1967,106 +1945,52 @@
             this.slideTimeId = window.setTimeout(function _transitionEnd (){
                 self.animateComplete(self.timeId);
             }, this.duration + 30);
+
+            return this.promise;
         },
         animateComplete: function(clearTimeId) {
             window.clearTimeout(clearTimeId);
-            var _callback = this.callback;
-            this.callback = null;
-
             this.setTransitionDuration(0);
-            if(typeof _callback === 'function') {
-                _callback();
-            }
+
+            this.promise.resolve();
         }
     });
 }(window.slide = (typeof slide === 'undefined') ? {} : slide));
 (function(exports) {
     'use strict';
 
-    var intervalDelay = 1000/60;
-
-    exports.JSAnimator = exports.BasicAnimator.extend({
+    exports.SimpleAnimator = exports.TransformAnimator.extend({
         bindTransitionEvent: function () {
-        },
-        setTransitionDuration: function(duration) {
-        },
-        moveSlidePosition: function(position) {
-            this.prevPosition = position;
-            this._super(position);
-        },
-        animateSlidePosition: function(position, callback) {
-            this.startPoint = this.prevPosition.x;
-            this.endPoint = position.x;
-            this.distance = this.endPoint - this.startPoint;
-            this.startTime = new Date().getTime();
-            this.endTime = this.startTime + this.duration;
-            this.callback = callback;
 
-            var self = this;
-            this.timeId = window.setInterval(function () {
-                self._step();
-            }, intervalDelay);
         },
-        _step: function(){
-            var currentTime = new Date().getTime();
-
-            if (currentTime < this.endTime) {
-                this.moveSlidePosition({
-                    x: this._getCurrentPoint(currentTime - this.startTime)
-                });
-
-            } else {
-                this.moveSlidePosition({
-                    x: this.endPoint
-                });
-                this.animateComplete(this.timeId);
-            }
+        getPositionByGesture: function(deltaX, deltaY) {
+            return {
+                x: 0,
+                y: 0
+            };
         },
-        _getCurrentPoint: function (elapsedTime) {
-            var movePoint = this._cosInOut(this.distance, elapsedTime, this.duration);
-            return this.startPoint + movePoint;
-        },
-        /**********************************************
-         *
-         * 삼각함수를 이용한 cubiq bezier (ease) 함수 흉내 [ y = (-cosX + 1) / 2 ]
-         *  y = (-cos(X) + 1) * distance / 2
-         *  X = PI * elapsedTime / duration
-         *
-         **********************************************/
-        _cosInOut: function (distance, elapsedTime, duration) {
-            var X = Math.PI * elapsedTime / duration;
-            var movePoint = (-Math.cos(X) + 1) * distance/2;
 
-            return movePoint;
-        },
-        /**********************************************
-         *
-         * 삼각함수를 이용한 cubiq bezier (ease) 함수 흉내 [ y = (sin(X - pi/2) + 1)/2 ]
-         *  y = (sin(X - pi/2) + 1) * diatance/2
-         *  X = PI * elapsedTime / duration
-         *
-         **********************************************/
-        _sinInOut: function (distance, elapsedTime, duration) {
-            var X = Math.PI * elapsedTime / duration;
-            var movePoint = (Math.sin(X - Math.PI/2) + 1) * distance/2;
-
-            return movePoint;
-        }
-    });
-}(window.slide = (typeof slide === 'undefined') ? {} : slide));
-(function(exports) {
-    'use strict';
-
-    exports.TransformAnimator = exports.BasicAnimator.extend({
-        movePanelPosition: function (panelIndex, position) {
-            var panel = this.container.getPanel(panelIndex);
+        movePanelPosition: function  (panelIndex, position) {
+            var panel = this.slide.container.getPanel(panelIndex);
             var _x = position.x - this.basePosition.x;
-
-            panel.setTransform('translate3d(' + _x + 'px, 0, 0)');
+            panel.setLeft(_x + 'px');
         },
         moveSlidePosition: function (position) {
             var _x = position.x + this.basePosition.x + this.aligned;
-            this.container.setTransform('translate3d(' + _x + 'px, 0, 0)');
+            if(this.prevPosition.x !== _x) {
+                this.slide.container.setLeft(_x + 'px');
+                this.prevPosition.x = _x;
+            }
+        },
+        animateSlidePosition: function(position) {
+            this.promise = new exports.util.promise();
+            this.moveSlidePosition(position);
+            this.animateComplete();
+
+            return this.promise;
+        },
+        animateComplete: function() {
+            this.promise.resolve();
         }
     });
 }(window.slide = (typeof slide === 'undefined') ? {} : slide));
@@ -2156,8 +2080,9 @@
          * @param height {Number} frame element의 height 실제크기
          */
         resize: function (width, height) {
-            var pageWidth = width || this.el.clientWidth;
-            var pageHeight = height || this.el.clientHeight;
+            var el = this.el;
+            var pageWidth = width || el.clientWidth;
+            var pageHeight = height || el.clientHeight;
 
             this.setWrapperSize(pageWidth, pageHeight);
             this.onResizeDelegate(pageWidth, pageHeight);
@@ -2180,48 +2105,101 @@
 (function (exports) {
     'use strict';
 
+    var SLIDE_THRESHOLD = 50;
+    var GESTURE_RATIO = 0.5;
+    var PANELS_TO_SLIDE = 1;
+    var PANELS_TO_SHOW = 1;
+    var PANEL_WIDTH = 300;
     var GESTURE_THRESHOLD = 10;
-    var toNumber = exports.util.toNumber;
 
     exports.Slide = exports.Observable.extend({
         init: function (frameEl, dataSource, option) {
-            this.screen = null;
-            this.controller = null;
-
-            this._createScreen(frameEl);
+            this.frameEl = frameEl;
+            this.datasource = dataSource;
+            this.screen = new exports.Screen(frameEl);
 
             var _option = option || {};
+            this._setOption(_option);
+            this._createModules(_option);
 
-            this.frameEl = frameEl;
-            this.isInTransition = false;
-            if (!_option.disableOverflow) {
-                this.setOverflowHidden();
-            }
-
-            this._createController(dataSource, _option);
             this._bindResizeEvent(_option);
             this._bindGestureEvent(_option);
+            this._setDelegate(_option);
 
-            this._start();
+            this.onStart();
         },
-        _createScreen: function(frameEl) {
-            this.screen = new exports.Screen(frameEl);
+        _setOption: function(option) {
+            this.panelType = option.panelType || exports.DIVIDED;
+            this.isCenterAligned = option.isCenterAligned || false;
+            this.isAutoAligned = !this.isCenterAligned && (this.panelType === exports.FIXED);
+
+            var toNumber = exports.util.toNumber;
+            this.threshold = toNumber(option.threshold, SLIDE_THRESHOLD);
+            this.gestureRatio = toNumber(option.gestureRatio, GESTURE_RATIO);
+            this.panelsToSlide = toNumber(option.panelsToSlide, PANELS_TO_SLIDE);
+
+            this.frameWidth = this.screen.width;
+            this.frameHeight = this.screen.height;
+
+            if(this.panelType === exports.DIVIDED) {
+                var panelsToShow = toNumber(option.panelsToShow, PANELS_TO_SHOW);
+                this._setDividedPanelWidth(panelsToShow);
+
+            } else {
+                var panelWidth = toNumber(option.panelWidth, PANEL_WIDTH);
+                this._setFixedPanelWidth(panelWidth);
+            }
+
+            this.isInTransition = false;
+            if (!option.disableOverflow) {
+                this.setOverflowHidden();
+            }
         },
-        _createController: function(datasource, option) {
-            this.controller = new exports.Controller(this, datasource, option);
+        _setDividedPanelWidth: function(panelsToShow) {
+            this.panelsToShow = panelsToShow;
+            this.panelWidth = this.frameWidth/panelsToShow;
         },
+        _setFixedPanelWidth: function(panelWidth) {
+            this.panelsToShow = Math.ceil(this.frameWidth / panelWidth);
+            this.panelWidth = panelWidth;
+        },
+        _createModules: function(option) {
+            this.container = new exports.Container(this, option);
+            this.controller = new exports.Controller(this, option);
+        },
+
+        _setDelegate: function(option) {
+            var delegate = option.delegate;
+            if(!delegate) {
+                return;
+            }
+
+            var controller = this.controller;
+            var scopes = [controller, controller.animator, controller.updater];
+            for(var name in delegate) {
+                if(delegate.hasOwnProperty(name)) {
+                    var binded = false;
+                    scopes.map(function(scope) {
+                        if(!binded && scope[name]) {
+                            binded = true;
+                            scope[name] = delegate[name].bind(scope);
+                        }
+                    });
+                }
+            }
+        },
+
         _bindResizeEvent: function (option) {
             var self = this;
-            var controller = this.controller;
             this.screen.onResize(function (width, height) {
-                controller.frameWidth = width;
-                controller.frameHeight = height;
-                controller.resize(width, height);
+                self.frameWidth = width;
+                self.frameHeight = height;
+                self.controller.resize(width, height);
                 self.emit('resize', width, height);
             });
         },
         _bindGestureEvent: function (option) {
-            var threshold = toNumber(option.gestureThreshold, GESTURE_THRESHOLD);
+            var threshold = exports.util.toNumber(option.gestureThreshold, GESTURE_THRESHOLD);
             var listener = this.listener = new gesture.Listener(this.frameEl, {
                 threshold: threshold
             });
@@ -2248,64 +2226,54 @@
                 self.emit('click', session);
             });
         },
-        _start: function() {
-            this.controller.onInitialize();
+
+        onStart: function() {
+            this.controller.onStart();
         },
-        _slide: function(type, movedCount) {
-            var self = this;
-            this.controller.onAnimateSlide(type, movedCount, {
-                onStart: function(type) {
-                    self._onBeforeSlide(type);
-                },
-                onComplete: function(type) {
-                    self._onAfterSlide(type);
-                }
-            });
-        },
-        _onBeforeSlide: function (type) {
+        onBeforeSlide: function (type) {
             this.isInTransition = true;
             this.listener.stop();
             this.emit(['slide:before', type + ':before'], type);
         },
-        _onAfterSlide: function (type) {
+        onAfterSlide: function (type) {
             this.isInTransition = false;
             this.listener.start();
             this.emit(['slide:after', type], type);
         },
-        _getTypeByMovedOffset: function(movedOffset) {
-            if(movedOffset > 0) { return exports.NEXT; }
-            else if(movedOffset < 0) { return exports.PREV; }
-            return exports.CANCEL;
-        },
-
         onSwipe: function(session) {
             var delta = session.delta;
-            this.controller.onMoveSlide(delta.x, delta.y);
+            this.controller.moveSlide(delta.x, delta.y);
         },
         onLeft: function(session) {
             var delta = session.delta;
             var movedCount = this.controller.getMovedCountByGesture(delta.x, delta.y);
-            var type = (movedCount > 0) ? exports.NEXT : exports.CANCEL;
-            this._slide(type, movedCount);
+            this.controller.animateSlide(exports.NEXT, movedCount);
         },
         onRight: function(session) {
             var delta = session.delta;
             var movedCount = this.controller.getMovedCountByGesture(delta.x, delta.y);
-            var type = (movedCount > 0) ? exports.PREV : exports.CANCEL;
-            this._slide(type, movedCount);
+            this.controller.animateSlide(exports.PREV, movedCount);
         },
 
         next: function (movedCount) {
-            this._slide(exports.NEXT, movedCount);
+            this.controller.animateSlide(exports.NEXT, movedCount);
         },
         prev: function (movedCount) {
-            this._slide(exports.PREV, movedCount);
+            this.controller.animateSlide(exports.PREV, movedCount);
         },
         cancel: function () {
-            this._slide(exports.CANCEL);
+            this.controller.animateSlide(exports.CANCEL);
         },
         refresh: function  () {
             this.controller.refresh();
+        },
+
+        getDataSource: function() {
+            return this.datasource;
+        },
+        setDataSource: function(datasource) {
+            this.datasource = datasource;
+            this.refresh();
         },
         setOverflowHidden: function () {
             this.frameEl.style.overflow = 'hidden';
@@ -2313,13 +2281,6 @@
         destroy: function () {
             this.frameEl.innerHTML = '';
             this.frameEl = null;
-        },
-        getDataSource: function() {
-            return this.controller.datasource;
-        },
-        setDataSource: function(datasource) {
-            this.controller.datasource = datasource;
-            this.refresh();
         }
     });
 })(window.slide = (typeof slide === 'undefined') ? {} : slide);
@@ -2332,24 +2293,14 @@
     'use strict';
 
     var config = exports.config;
-    exports.Controller = (function() {
-        if (config.mode === exports.MODE_SIMPLE) {
-            return exports.SimpleController;
-        }
+    if (config.mode === exports.MODE_SIMPLE) {
+        exports.Controller = exports.SimpleController;
+        exports.Animator = exports.SimpleAnimator;
 
-        return exports.BasicController;
-    }());
-
-    exports.Animator = (function() {
-        if (config.mode === exports.MODE_SIMPLE) {
-            return exports.BasicAnimator;
-
-        } else if (config.mode === exports.MODE_INTERVAL) {
-            return exports.JSAnimator;
-        }
-
-        return exports.TransformAnimator;
-    }());
+    } else {
+        exports.Controller = exports.BasicController;
+        exports.Animator = exports.TransformAnimator;
+    }
 
     exports.Updater = exports.BasicUpdater;
 }(window.slide = (typeof slide === 'undefined') ? {} : slide));

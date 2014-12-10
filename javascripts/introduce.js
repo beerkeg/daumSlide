@@ -100,17 +100,17 @@
 
     function launchAppendCase(elFrame, elPrev, elNext) {
         loader.load(function(builded) {
-            var ExtendedDataSource = slide.DataSource.extend({
-                willQueryEndOfDataDelegate: function (callback, index) {
-                    var self = this;
-                    loader.load(function (builded) {
-                        self.addNextData(builded);
-                        callback(builded[0]);
-                    });
+            var ds = new slide.DataSource(builded, {
+                delegate: {
+                    willQueryEndOfDataDelegate: function (callback) {
+                        var self = this;
+                        loader.load(function (builded) {
+                            self.addNextData(builded);
+                            callback(true);
+                        });
+                    }
                 }
             });
-
-            var ds = new ExtendedDataSource(builded);
             var sl = new slide.Slide(elFrame, ds, {
                 panelType: slide.FIXED,
                 panelWidth: 150
@@ -187,14 +187,14 @@
                     };
                 },
                 getPositionByGesture: function(deltaX, deltaY) {
-                    var panelWidth = this.controller.panelWidth;
-                    var gestureRatio = this.controller.gestureRatio;
+                    var panelWidth = this.slide.panelWidth;
+                    var gestureRatio = this.slide.gestureRatio;
                     return {
                         deg: (deltaX*gestureRatio/panelWidth)*90
                     };
                 },
                 movePanelPosition: function (panelIndex, position) {
-                    var panel = this.container.getPanel(panelIndex);
+                    var panel = this.slide.container.getPanel(panelIndex);
                     var _deg = position.deg - this.basePosition.deg;
                     panel.setTransform('rotateY(' + _deg +
                     'deg) translate3d(0px, 0px, ' +
@@ -202,18 +202,19 @@
                 },
                 moveSlidePosition: function (position) {
                     var _deg = position.deg + this.basePosition.deg;
-                    this.container.setTransform('translate3d(0px, 0px, -' +
+                    this.slide.container.setTransform('translate3d(0px, 0px, -' +
                     this.slide.perspectiveFactor + 'px) rotateY(' +
                     _deg + 'deg)');
                 },
                 resizePanels: function() {
+                    var _slide = this.slide;
                     var frameEl = this.slide.frameEl;
                     frameEl.style[slide.PERSPECTIVE] = '1000px';
                     frameEl.style[slide.TRANSFORM_STYLE] = 'preserve-3d';
-                    this.container.setStyle(slide.TRANSFORM_STYLE, 'preserve-3d');
-                    this.slide.perspectiveFactor = this.frameWidth / 2;
 
-                    this.container.setPanelStyle('width', this.panelWidth + 'px');
+                    _slide.container.setStyle(slide.TRANSFORM_STYLE, 'preserve-3d');
+                    _slide.perspectiveFactor = this.slide.frameWidth / 2;
+                    _slide.container.setPanelStyle('width', _slide.panelWidth + 'px');
                     this.animator.setDefaultSlidePosition();
                 }
             }
