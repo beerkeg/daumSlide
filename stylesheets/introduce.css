@@ -16,6 +16,8 @@ h3 {
 article pre.prettyprint {
     overflow: auto;
     border: 0;
+    margin: 0 auto;
+    max-width: 700px;
 }
 
 header.document {
@@ -32,7 +34,7 @@ header.section {
 }
 
 section {
-    max-width: 550px;
+    max-width: 750px;
     margin: 0 auto;
     padding: 10px 20px;
 }
@@ -49,7 +51,7 @@ section {
 .slide_frame {
     position: relative;
     width: 100%;
-    max-width: 500px;
+    max-width: 700px;
     height: 100px;
     margin: 0 auto;
     border: solid 1px #2E2F2A;
@@ -68,21 +70,21 @@ section {
 }
 
 .wrapper.case_custom_animation {
-    width: 350px;
-    height: 300px;
+    width: 300px;
+    height: 250px;
     margin: 0 auto;
 }
 
 .case_custom_animation .slide_frame {
-    height: 300px;
+    height: 250px;
 }
 
 .case_custom_animation .number {
-    line-height: 300px;
+    line-height: 250px;
 }
 
 .case_custom_animation .btn {
-    top: 150px;
+    top: 125px;
 }
 
 .image {
@@ -186,4 +188,11 @@ a.link_article {
 
 svg.icon {
     fill: #ffffff;
+}
+
+.fixed .divided_option {
+    display: none;
+}
+.divided .fixed_option {
+    display: none;
 }

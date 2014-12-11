@@ -125,17 +125,19 @@
     }
 
     function launchUserSetting(elFrame, elPrev, elNext) {
-        function getPanelOption() {
-            var panelTypeEl = document.getElementById("panel_type");
-            var panelWidthEl = document.getElementById("panelWidth");
-            var centerEl = document.getElementById("centerAligned");
-            var panelsToShowEl = document.getElementById("panelsToShow");
-            var panelsToSlideEl = document.getElementById("panelsToSlide");
+        var userSettingEl = document.querySelector("#userSetting");
+        var panelTypeEl = document.querySelectorAll("#panel_type input");
+        var panelWidthEl = document.querySelector("#panelWidth");
+        var panelsToShowEl = document.querySelector("#panelsToShow");
+        var panelsToSlideEl = document.querySelector("#panelsToSlide");
+        var alignedTypeEl = document.querySelectorAll("#aligned_type input");
+        var createBtn = document.querySelector('#createUserSettingSlide');
 
+        function getPanelOption() {
             return {
-                panelType: panelTypeEl.checked ? slide.FIXED : slide.DIVIDED,
+                panelType: panelTypeEl[0].checked ? slide.DIVIDED : slide.FIXED,
                 panelWidth: panelWidthEl.value,
-                isCenterAligned: centerEl.checked,
+                isCenterAligned: alignedTypeEl[1].checked,
                 panelsToShow: panelsToShowEl.value,
                 panelsToSlide: panelsToSlideEl.value
             };
@@ -150,11 +152,18 @@
             sl.next();
         });
 
-        var elCreate = document.getElementById('createUserSettingSlide');
-        elCreate.addEventListener('click', function() {
-            sl.destroy();
+        panelTypeEl[0].addEventListener('click', function() {
+            userSettingEl.classList.remove('fixed');
+            userSettingEl.classList.add('divided');
+        });
+        panelTypeEl[1].addEventListener('click', function() {
+            userSettingEl.classList.remove('divided');
+            userSettingEl.classList.add('fixed');
+        });
 
+        createBtn.addEventListener('click', function() {
             var option = getPanelOption();
+            sl.destroy();
             sl = new slide.Slide(elFrame, ds, option);
         });
     }

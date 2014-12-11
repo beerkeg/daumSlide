@@ -49,7 +49,7 @@
             <button type="button" class="btn next">next</button>
         </div>
         <pre class="prettyprint">
-    var sl = new slide.Slide(frameEl, datasource);
+var sl = new slide.Slide(frameEl, datasource);
         </pre>
     </article>
     <article>
@@ -60,9 +60,9 @@
             <button type="button" class="btn next">next</button>
         </div>
         <pre class="prettyprint">
-    var sl = new slide.Slide(frameEl, datasource, {
-        panelsToShow: 3
-    });
+var sl = new slide.Slide(frameEl, datasource, {
+    panelsToShow: 3
+});
         </pre>
     </article>
     <article>
@@ -73,10 +73,10 @@
             <button type="button" class="btn next">next</button>
         </div>
         <pre class="prettyprint">
-    var sl = new slide.Slide(frameEl, datasource, {
-        panelType: slide.FIXED,
-        panelWidth: 150
-    });
+var sl = new slide.Slide(frameEl, datasource, {
+    panelType: slide.FIXED,
+    panelWidth: 150
+});
         </pre>
     </article>
     <article>
@@ -87,10 +87,10 @@
             <button type="button" class="btn next">next</button>
         </div>
         <pre class="prettyprint">
-    var sl = new slide.Slide(frameEl, datasource, {
-        panelsToShow: 2,
-        isCenterAligned: true
-    });
+var sl = new slide.Slide(frameEl, datasource, {
+    panelsToShow: 2,
+    isCenterAligned: true
+});
         </pre>
     </article>
     <article>
@@ -101,11 +101,11 @@
             <button type="button" class="btn next">next</button>
         </div>
         <pre class="prettyprint">
-    var sl = new slide.Slide(frameEl, datasource, {
-        panelType: slide.FIXED,
-        panelWidth: 150,
-        isCenterAligned: true
-    });
+var sl = new slide.Slide(frameEl, datasource, {
+    panelType: slide.FIXED,
+    panelWidth: 150,
+    isCenterAligned: true
+});
         </pre>
     </article>
 </section>
@@ -121,10 +121,10 @@
             <button type="button" class="btn next">next</button>
         </div>
         <pre class="prettyprint">
-    var datasource = new slide.InfiniteDataSource(numbers);
-    var sl = new slide.Slide(frameEl, datasource, {
-        panelsToShow: 3
-    });
+var datasource = new slide.InfiniteDataSource(numbers);
+var sl = new slide.Slide(frameEl, datasource, {
+    panelsToShow: 3
+});
         </pre>
     </article>
     <article>
@@ -135,21 +135,21 @@
             <button type="button" class="btn next">next</button>
         </div>
         <pre class="prettyprint">
-    var ExtendedDataSource = slide.DataSource.extend({
-        willQueryEndOfDataDelegate: function (callback) {
-            var self = this;
-            loader.load(function (builded) {
-                self.addNextData(builded);
-                callback(builded[0]);
-            });
-        }
-    });
-    var dataousrce = new ExtendedDataSource(images);
-    var sl = new slide.Slide(frameEl, dataousrce, {
-        panelType: slide.FIXED,
-        panelWidth: 150,
-        isCenterAligned: true
-    });
+var ExtendedDataSource = slide.DataSource.extend({
+    willQueryEndOfDataDelegate: function (callback) {
+        var self = this;
+        loader.load(function (builded) {
+            self.addNextData(builded);
+            callback(true);
+        });
+    }
+});
+var dataousrce = new ExtendedDataSource(images);
+var sl = new slide.Slide(frameEl, dataousrce, {
+    panelType: slide.FIXED,
+    panelWidth: 150,
+    isCenterAligned: true
+});
         </pre>
     </article>
 </section>
@@ -164,19 +164,32 @@
             <button type="button" class="btn prev">prev</button>
             <button type="button" class="btn next">next</button>
         </div>
-        <div id="userSetting">
-            <span >Fixed Width</span>
-            <input type="checkbox" id="panel_type" value="false" /><br />
-            <span id="fixed_option">Panel Width</span>
-            <input type="number" id="panelWidth" value="300" /><br />
-            <span id="divided_option">Panels To Show</span>
-            <input type="number" id="panelsToShow" value="2" /><br />
-            <span >Panels To Slide</span>
-            <input type="number" id="panelsToSlide" value="1" /><br />
-            <span >Center Aligned</span>
-            <input type="checkbox" id="centerAligned" value="false" /><br />
+        <div id="userSetting" class="divided">
+            <section id="panel_type" class="f_l">
+                <h4>Panel Type</h4>
+                <input type="radio" name="panel_type" value="divied" checked /><span >Divided Panel</span><br />
+                <input type="radio" name="panel_type" value="fixed" /><span >Fixed Panel</span>
+            </section>
+            <section id="aligned_type">
+                <h4 >Center Aligned</h4>
+                <input type="radio" name="aligned_type" value="left" checked /><span >Left Aligned</span><br />
+                <input type="radio" name="aligned_type" value="center" /><span >Center Aligned</span>
+            </section>
+            <section class="fixed_option f_l">
+                <h4>Panel Width</h4>
+                <input type="number" id="panelWidth" value="300" /> px
+            </section>
+            <section class="divided_option f_l">
+                <h4>Panels To Show</h4>
+                <input type="number" id="panelsToShow" value="2" />
+            </section>
+            <section>
+                <h4 >Panels To Slide</h4>
+                <input type="number" id="panelsToSlide" value="1" />
+            </section>
             <button id="createUserSettingSlide">Create Slide</button>
         </div>
+
     </article>
 </section>
 <section>
@@ -195,17 +208,17 @@
             <span class="firing_event">idle</span>
         </div>
         <pre class="prettyprint">
-    var sl = new slide.Slide(elFrame, ds);
+var sl = new slide.Slide(elFrame, ds);
 
-    sl.on('prev', function() {
-        setEventText('prev');
-    });
-    sl.on('next', function() {
-        setEventText('next');
-    });
-    sl.on('resize', function() {
-        setEventText('resize');
-    });
+sl.on('prev', function() {
+    setEventText('prev');
+});
+sl.on('next', function() {
+    setEventText('next');
+});
+sl.on('resize', function() {
+    setEventText('resize');
+});
         </pre>
     </article>
     <article>
@@ -216,12 +229,12 @@
             <button type="button" class="btn next">next</button>
         </div>
         <pre class="prettyprint">
-    var cube_animation_delegate = {
-        // animation function
-    };
-    var sl = new slide.Slide(elFrame, ds, {
-        delegate: cube_animation_delegate
-    });
+var cube_animation_delegate = {
+    // animation function
+};
+var sl = new slide.Slide(elFrame, ds, {
+    delegate: cube_animation_delegate
+});
         </pre>
     </article>
 </section>
