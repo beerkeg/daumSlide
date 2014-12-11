@@ -1,7 +1,7 @@
 (function(exports) {
     'use strict';
 
-    var loader = new exports.SearchImageLoader('고흐');
+    var loader = new exports.SearchImageLoader('구름');
     var numbers = [];
     for(var i=0; i<10; i+=1) {
         numbers.push({
