@@ -124,6 +124,41 @@
         });
     }
 
+    function launchUserSetting(elFrame, elPrev, elNext) {
+        function getPanelOption() {
+            var panelTypeEl = document.getElementById("panel_type");
+            var panelWidthEl = document.getElementById("panelWidth");
+            var centerEl = document.getElementById("centerAligned");
+            var panelsToShowEl = document.getElementById("panelsToShow");
+            var panelsToSlideEl = document.getElementById("panelsToSlide");
+
+            return {
+                panelType: panelTypeEl.checked ? slide.FIXED : slide.DIVIDED,
+                panelWidth: panelWidthEl.value,
+                isCenterAligned: centerEl.checked,
+                panelsToShow: panelsToShowEl.value,
+                panelsToSlide: panelsToSlideEl.value
+            };
+        }
+
+        var ds = new slide.DataSource(numbers);
+        var sl = new slide.Slide(elFrame, ds, getPanelOption());
+        elPrev.addEventListener('click', function() {
+            sl.prev();
+        });
+        elNext.addEventListener('click', function() {
+            sl.next();
+        });
+
+        var elCreate = document.getElementById('createUserSettingSlide');
+        elCreate.addEventListener('click', function() {
+            sl.destroy();
+
+            var option = getPanelOption();
+            sl = new slide.Slide(elFrame, ds, option);
+        });
+    }
+
     function launchCustomEventCase(elFrame, elPrev, elNext) {
         var ds = new slide.InfiniteDataSource(numbers);
         var sl = new slide.Slide(elFrame, ds, {
@@ -241,7 +276,8 @@
         launchFixedCenterCase(elCase[4], elPrev[4], elNext[4]);
         launchInfiniteCase(elCase[5], elPrev[5], elNext[5]);
         launchAppendCase(elCase[6], elPrev[6], elNext[6]);
-        launchCustomEventCase(elCase[7], elPrev[7], elNext[7]);
-        launchCustomAnimationCase(elCase[8], elPrev[8], elNext[8]);
+        launchUserSetting(elCase[7], elPrev[7], elNext[7]);
+        launchCustomEventCase(elCase[8], elPrev[8], elNext[8]);
+        launchCustomAnimationCase(elCase[9], elPrev[9], elNext[9]);
     }
 }(window));
