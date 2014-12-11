@@ -6,11 +6,695 @@
   \__ \ || | (_| |  ___/   
   |___/_||_|\____|\____/   
 
-  Version   : 2.0.0-pre19
-  Copyright : 2014-12-10
+  Version   : 2.0.0-pre21 (standalone)
+  Copyright : 2014-12-11
   Author    : HTML5 Cell, daumkakao corp
 
 */
+/*jshint browser: true
+*/
+
+(function (exports) {
+    "use strict";
+
+    exports.event = {
+        on: function () {
+            if (document.addEventListener) {
+                return function (el, type, fn) {
+                    if (!el) {
+                        throw 'failed to add event. Element: "' + el + '", Event: "' + type + '", handler: ' + fn.toString();
+                    }
+                    el.addEventListener(type, fn, false);
+                };
+            } else {
+                return function (el, type, fn) {
+                    el.attachEvent('on' + type, fn);
+                };
+            }
+        }(),
+        off: function () {
+            if (document.removeEventListener) {
+                return function (el, type, fn) {
+                    el.removeEventListener(type, fn, false);
+                };
+            } else {
+                return function (el, type, fn) {
+                    el.detachEvent("on" + type, fn);
+                };
+            }
+        }(),
+        preventDefault: function (e) {
+            var ev = e || window.event;
+            if (ev.preventDefault) {
+                ev.preventDefault();
+            } else {
+                ev.returnValue = false;
+            }
+        },
+        stopPropagation: function (e) {
+            var ev = e || window.event;
+            if (ev.stopPropagation) {
+                ev.stopPropagation();
+            } else {
+                ev.cancelBubble = true;
+            }
+        },
+        getTarget: function (e) {
+            var ev = e || window.event;
+            return ev.target || ev.srcElement;
+        }
+    };
+})(window.daumtools = (typeof window.daumtools === 'undefined') ? {} : window.daumtools);
+
+/*jshint browser: true
+*/
+
+(function (exports) {
+    "use strict";
+    
+    exports.extend = function (dest, src, overwrite) {
+        dest = dest || {};
+        
+        for(var key in src) {
+            if (src.hasOwnProperty(key)) {
+                if (!dest[key] || overwrite) {
+                    dest[key] = src[key];
+                }
+            }
+        }
+
+        return dest;
+    };
+        
+})(window.daumtools = (typeof window.daumtools === 'undefined') ? {} : window.daumtools);
+/* source: https://gist.github.com/shakyShane/5944153
+ *
+ * Simple JavaScript Inheritance for ES 5.1 ( includes polyfill for IE < 9 )
+ * based on http://ejohn.org/blog/simple-javascript-inheritance/
+ *  (inspired by base2 and Prototype)
+ * MIT Licensed.
+ */
+(function (global) {
+    "use strict";
+
+    if (!Object.create) {
+        Object.create = (function () {
+            function F() {
+            }
+
+            return function (o) {
+                if (arguments.length !== 1) {
+                    throw new Error("Object.create implementation only accepts one parameter.");
+                }
+                F.prototype = o;
+                return new F();
+            };
+        })();
+    }
+
+    var fnTest = /xyz/.test(function () {
+        /* jshint ignore:start */
+        xyz;
+        /* jshint ignore:end */
+    }) ? /\b_super\b/ : /.*/;
+
+    // The base Class implementation (does nothing)
+    function BaseClass() {
+    }
+
+    // Create a new Class that inherits from this class
+    BaseClass.extend = function (props) {
+        var _super = this.prototype;
+
+        // Instantiate a base class (but only create the instance,
+        // don't run the init constructor)
+        var proto = Object.create(_super);
+
+        // Copy the properties over onto the new prototype
+        for (var name in props) {
+            // Check if we're overwriting an existing function
+            proto[name] = typeof props[name] === "function" &&
+                typeof _super[name] === "function" && fnTest.test(props[name]) ?
+                (function (name, fn) {
+                    return function () {
+                        var tmp = this._super;
+
+                        // Add a new ._super() method that is the same method
+                        // but on the super-class
+                        this._super = _super[name];
+
+                        // The method only need to be bound temporarily, so we
+                        // remove it when we're done executing
+                        var ret = fn.apply(this, arguments);
+                        this._super = tmp;
+
+                        return ret;
+                    };
+                })(name, props[name]) :
+                props[name];
+        }
+
+        // The new constructor
+        var newClass = function () {
+            if (typeof this.init === "function") {
+                this.init.apply(this, arguments);
+            }
+        };
+
+
+        // Populate our constructed prototype object
+        newClass.prototype = proto;
+
+        // Enforce the constructor to be what we expect
+        proto.constructor = newClass;
+
+        // And make this class extendable
+        newClass.extend = BaseClass.extend;
+
+        return newClass;
+    };
+
+    // export
+    global.Class = BaseClass;
+})(this);
+/*jshint devel: true
+ */
+(function (exports) {
+    'use strict';
+
+    exports.Observer = Class.extend({
+        on: function (event, listener) {
+            var events = [].concat(event);
+            for (var i = 0, l = events.length; i < l; i++) {
+                this.addListener.apply(this, [events[i], listener]);
+            }
+
+            return this;
+        },
+        addListener: function (event, listener) {
+            var listeners = this.getListeners(event);
+            listeners.push(listener);
+            return this;
+        },
+        once: function (event, listener) {
+            if (!listener) {
+                return ;
+            }
+            var self = this;
+            var onetimeListener = function () {
+                self.off(event, onetimeListener);
+                listener.apply(this, arguments);
+            };
+            listener.__onetime_listener = onetimeListener;
+            this.on(event, onetimeListener);
+        },
+        emit: function (event) {
+            var events = [].concat(event);
+            var args = [].slice.call(arguments, 1);
+            for (var i = 0, l = events.length; i < l; i++) {
+                this._emit(events[i], args);
+            }
+
+            return this;
+        },
+        _emit: function (event, args) {
+            var cloneListeners = this.getListeners(event).slice(0);
+            if (typeof cloneListeners !== 'undefined') {
+                for (var i = 0, len = cloneListeners.length; i < len; i++) {
+                    try {
+                        cloneListeners[i].apply(this, args);
+                    } catch (e) {
+                        if (typeof console !== 'undefined') {
+                            console.error('failed on while "' + event + '" event, caused by\r\n > ' + e);
+                        }
+                        throw e;
+                    }
+                }
+            }
+        },
+        getListeners: function (event) {
+            this.listeners = this.listeners || {};
+            this.listeners[event] = this.listeners[event] || [];
+            return this.listeners[event];
+        },
+        off: function (event, listener) {
+            var events = [].concat(event);
+            if (listener && typeof listener.__onetime_listener === 'function') {
+                listener = listener.__onetime_listener;
+            }
+
+            for (var i = 0, l = events.length; i < l; i++) {
+                this.removeListener.apply(this, [events[i], listener]);
+            }
+
+            if (listener && typeof listener.__onetime_listener === 'function') {
+                delete listener.__onetime_listener;
+            }
+            return this;
+        },
+        removeListener: function (event, listener) {
+            var listeners = this.getListeners(event);
+            if (typeof listeners !== 'undefined') {
+                for (var i = 0, len = listeners.length; i < len; i++) {
+                    if (listeners[i] === listener || listeners[i].__original__ === listener) {
+                        listeners.splice(i, 1);
+                        break;
+                    }
+                }
+            }
+            return this;
+        },
+        destroy: function () {
+            this.listeners = null;
+        }
+    });
+})(this);
+/*! ua_parser - v1.0.14 - 2013-08-08
+* Copyright (c) 2013 HTML5 Tech. Team in Daum Communications Corp.;
+* Licensed MIT - https://github.com/daumcorp/ua_parser/blob/master/LICENSE*/
+/*jshint browser: true, node: true
+*/
+
+(function (exports) {
+    'use strict';
+
+    var userAgent = exports.userAgent = function (ua) {
+        ua = (ua || window.navigator.userAgent).toString().toLowerCase();
+        function checkUserAgent(ua) {
+            var browser = {};
+            var match = /(dolfin)[ \/]([\w.]+)/.exec( ua ) ||
+                    /(chrome)[ \/]([\w.]+)/.exec( ua ) ||
+                    /(opera)(?:.*version)?[ \/]([\w.]+)/.exec( ua ) ||
+                    /(webkit)(?:.*version)?[ \/]([\w.]+)/.exec( ua ) ||
+                    /(msie) ([\w.]+)/.exec( ua ) ||
+                    ua.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+))?/.exec( ua ) ||
+                    ["","unknown"];
+            if (match[1] === "webkit") {
+                match = /(iphone|ipad|ipod)[\S\s]*os ([\w._\-]+) like/.exec(ua) ||
+                    /(android)[ \/]([\w._\-]+);/.exec(ua) || [match[0], "safari", match[2]];
+            } else if (match[1] === "mozilla") {
+                if (/trident/.test(ua)) {
+                    match[1] = "msie";
+                } else {
+                    match[1] = "firefox";
+                }
+            } else if (/polaris|natebrowser|([010|011|016|017|018|019]{3}\d{3,4}\d{4}$)/.test(ua)) {
+                match[1] = "polaris";
+            }
+
+            browser[match[1]] = true;
+            browser.name = match[1];
+            browser.version = setVersion(match[2]);
+
+            return browser;
+        }
+
+        function setVersion(versionString) {
+            var version = {};
+
+            var versions = versionString ? versionString.split(/\.|-|_/) : ["0","0","0"];
+            version.info = versions.join(".");
+            version.major = versions[0] || "0";
+            version.minor = versions[1] || "0";
+            version.patch = versions[2] || "0";
+
+            return version;
+        }
+
+        function checkPlatform (ua) {
+            if (isPc(ua)) {
+                return "pc";
+            } else if (isTablet(ua)) {
+                return "tablet";
+            } else if (isMobile(ua)) {
+                return "mobile";
+            } else {
+                return "";
+            }
+        }
+        function isPc (ua) {
+            if (ua.match(/linux|windows (nt|98)|macintosh/) && !ua.match(/android|mobile|polaris|lgtelecom|uzard|natebrowser|ktf;|skt;/)) {
+                return true;
+            }
+            return false;
+        }
+        function isTablet (ua) {
+            if (ua.match(/ipad/) || (ua.match(/android/) && !ua.match(/mobi|mini|fennec/))) {
+                return true;
+            }
+            return false;
+        }
+        function isMobile (ua) {
+            if (!!ua.match(/ip(hone|od)|android.+mobile|windows (ce|phone)|blackberry|bb10|symbian|webos|firefox.+fennec|opera m(ob|in)i|polaris|iemobile|lgtelecom|nokia|sonyericsson|dolfin|uzard|natebrowser|ktf;|skt;/)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function checkOs (ua) {
+            var os = {},
+                match = /(iphone|ipad|ipod)[\S\s]*os ([\w._\-]+) like/.exec(ua) ||
+                        /(android)[ \/]([\w._\-]+);/.exec(ua) ||
+                        (/android/.test(ua)? ["", "android", "0.0.0"] : false) ||
+                        (/polaris|natebrowser|([010|011|016|017|018|019]{3}\d{3,4}\d{4}$)/.test(ua)? ["", "polaris", "0.0.0"] : false) ||
+                        /(windows)(?: nt | phone(?: os){0,1} | )([\w._\-]+)/.exec(ua) ||
+                        (/(windows)/.test(ua)? ["", "windows", "0.0.0"] : false) ||
+                        /(mac) os x ([\w._\-]+)/.exec(ua) ||
+                        (/(linux)/.test(ua)? ["", "linux", "0.0.0"] : false) ||
+                        (/webos/.test(ua)? ["", "webos", "0.0.0"] : false) ||
+                        /(bada)[ \/]([\w._\-]+)/.exec(ua) ||
+                        (/bada/.test(ua)? ["", "bada", "0.0.0"] : false) ||
+                        (/(rim|blackberry|bb10)/.test(ua)? ["", "blackberry", "0.0.0"] : false) ||
+                        ["", "unknown", "0.0.0"];
+
+            if (match[1] === "iphone" || match[1] === "ipad" || match[1] === "ipod") {
+                match[1] = "ios";
+            } else if (match[1] === "windows" && match[2] === "98") {
+                match[2] = "0.98.0";
+            }
+            os[match[1]] = true;
+            os.name = match[1];
+            os.version = setVersion(match[2]);
+            return os;
+        }
+
+        function checkApp (ua) {
+            var app = {},
+                match = /(crios)[ \/]([\w.]+)/.exec( ua ) ||
+                        /(daumapps)[ \/]([\w.]+)/.exec( ua ) ||
+                        ["",""];
+
+            if (match[1]) {
+                app.isApp = true;
+                app.name = match[1];
+                app.version = setVersion(match[2]);
+            } else {
+                app.isApp = false;
+            }
+
+            return app;
+        }
+
+        return {
+            ua: ua,
+            browser: checkUserAgent(ua),
+            platform: checkPlatform(ua),
+            os: checkOs(ua),
+            app: checkApp(ua)
+        };
+    };
+
+    if (typeof window === 'object' && window.navigator.userAgent) {
+        window.ua_result = userAgent(window.navigator.userAgent) || null;
+    }
+
+})((function (){
+    // Make userAgent a Node module, if possible.
+    if (typeof exports === 'object') {
+        exports.daumtools = exports;
+        exports.util = exports;
+        return exports;
+    } else if (typeof window === 'object') {
+        window.daumtools = (typeof window.daumtools === 'undefined') ? {} : window.daumtools;
+        window.util = (typeof window.util === 'undefined') ? window.daumtools : window.util;
+        return window.daumtools;
+    }
+})());
+/*
+                           _                           
+        _____  ____  ___ _| |_ _   _  _  __  ____      
+       |  _  |/ __ \/ __|_   _| | | || |/__|/ __ \   
+       | (_) |  ___/\__ \ | | | |_| ||  /  |  ___/   
+        \__  |\____/|___/ | |_ \___/ |_|    \____/ 
+        ___) |            |__/                         
+        \____/                                         
+
+  Version   : 2.0.0-pre13
+  Copyright : 2014-10-21
+  Author    : HTML5 tech team, Daum corp
+
+*/
+/*global daumtools:true, Class:true, gesture:true*/
+(function (exports) {
+    "use strict";
+
+    var TOUCH_EVENT = {
+        start: 'touchstart',
+        move: 'touchmove',
+        end: 'touchend',
+        cancel: 'touchcancel'
+    };
+    var MOUSE_EVENT = {
+        start: 'mousedown',
+        move: 'mousemove',
+        end: 'mouseup'
+    };
+
+    exports.EVENT = !!('ontouchstart' in window) ? TOUCH_EVENT : MOUSE_EVENT;
+
+    exports.DIRECTION = {
+        left: 'left',
+        right: 'right',
+        up: 'up',
+        down: 'down',
+        origin: 'origin'
+    };
+    exports.TYPE = {
+        swipe: 'swipe',
+        scroll: 'scroll',
+        tab: 'tab',
+        down: 'down'
+    };
+
+    var util = exports.util = {};
+    try {
+        var eventUtil = window.daumtools.event;
+        
+        util.on = eventUtil.on;
+        util.off = eventUtil.off;
+        util.preventDefault = eventUtil.preventDefault;
+        util.stopPropagation = eventUtil.stopPropagation;
+        util.extend = window.daumtools.extend;
+    } catch(e) {
+        throw new Error("Not found : event and extend");
+    }
+    exports.Class = window.Class || (window.daumtools && window.daumtools.Class);
+    exports.Observable = window.Observer || window.Observable || (window.daumtools && window.daumtools.Observable);
+    if (!exports.Class || !exports.Observable) {
+       new Error("Not found : Class & Observable");
+    }
+
+})(window.gesture = (typeof gesture === 'undefined') ? {} : gesture);
+
+(function (exports) {
+    "use strict";
+
+    var DIRECTION = exports.DIRECTION,
+        TYPE = exports.TYPE;
+
+    exports.Session = Class.extend({
+        init: function(e, threshold) {
+            this.threshold = threshold;
+
+            this.type = TYPE.tab;
+            this.direction = DIRECTION.origin;
+            this.startPos = null;
+            this.delta = null;
+            this.targetEvent = null;
+
+            this._start(e);
+        },
+        _start: function(e) {
+            this.startTime = new Date();
+
+            this.setTargetEvent(e);
+            this.startPos = this.getPoint();
+        },
+        update: function(e) {
+            this.setTargetEvent(e);
+            this.setDelta();
+            this.setType();
+        },
+        setType: function () {
+            if (this.type === TYPE.tab) {
+                var absX = Math.abs(this.delta.x);
+                var absY = Math.abs(this.delta.y);
+
+                if (absX > 0 && absX >= absY) {
+                    this.type = TYPE.swipe;
+                } else if (absY > 0 && absY > absX) {
+                    this.type = TYPE.scroll;
+                }
+            }
+        },
+        finishUpdate: function (e) {
+            this.setTargetEvent(e);
+            this.setDirection();
+        },
+        setDirection: function () {
+            if (this.type === TYPE.swipe && this.delta.x !== 0) {
+                this.direction = (this.delta.x < 0) ? DIRECTION.left : DIRECTION.right;
+            } else if (this.type === TYPE.scroll && this.delta.y !== 0) {
+                this.direction = (this.delta.y < 0) ? DIRECTION.up : DIRECTION.down;
+            }
+        },
+        setTargetEvent: function(e) {
+            this.targetEvent = e || window.event;
+        },
+        setDelta: function () {
+            var currentPos = this.getPoint(),
+                deltaX = currentPos.x - this.startPos.x,
+                deltaY = currentPos.y - this.startPos.y;
+
+            this.delta = {
+                x: (Math.abs(deltaX) > this.threshold) ? deltaX : 0,
+                y: (Math.abs(deltaY) > this.threshold) ? deltaY : 0
+            };
+        },
+        getPoint: function() {
+            return {
+                x: this.getX(this.targetEvent),
+                y: this.getY(this.targetEvent)
+            };
+        },
+        getX: function (e) {
+            var point = e.touches ? e.touches[0] : e;
+            return point.pageX || point.clientX;
+        },
+        getY: function (e) {
+            var point = e.touches ? e.touches[0] : e;
+            return point.pageY || point.clientY;
+        }
+    });
+
+})(window.gesture = (typeof gesture === 'undefined') ? {} : gesture);
+
+(function (exports) {
+    "use strict";
+
+    var util = exports.util;
+
+    var DEFAULT_OPTION = {
+        threshold: 10
+    };
+
+    var EVENT = exports.EVENT,
+        TYPE = exports.TYPE;
+
+    exports.Listener = exports.Observable.extend({
+        init: function(el, option) {
+            this.option = util.extend(option, DEFAULT_OPTION);
+            this.session = null;
+            this.el = el;
+
+            this._bindEvent();
+            this.start();
+        },
+        _bindEvent: function() {
+            var self = this;
+            this._onStart = function _onStart(e) {
+                self._start(e);
+            };
+            this._onMove = function _onMove(e) {
+                self._move(e);
+            };
+            this._onEnd = function _onEnd(e) {
+                self._end(e);
+            };
+        },
+        start: function () {
+            util.on(this.el, EVENT.start, this._onStart);
+        },
+        stop: function () {
+            util.off(this.el, EVENT.start, this._onStart);
+            this._unbindExtraGesureEvent();
+        },
+        _start: function(e) {
+            if (this.session) {
+                this._end(e);
+                return;
+            }
+
+            this.session = new exports.Session(e, this.option.threshold);
+            this._fireStartEvent(this.session);
+            this._bindExtraGestureEvent();
+        },
+        _move: function (e) {
+            var session = this.session;
+            if (session) {
+                session.update(e);
+                this._fireMoveEvent(session);
+            }
+        },
+        _end: function (e) {
+            var session = this.session;
+            if (session) {
+                session.finishUpdate(e);
+                this._fireEndEvent(session);
+            }
+
+            this._unbindExtraGesureEvent();
+            this.session = null;
+        },
+        _fireStartEvent: function(session) {
+            this.emit('start', session);
+        },
+        _fireMoveEvent: function (session) {
+            if(session.type === TYPE.swipe || session.type === TYPE.scroll) {
+                this.emit([session.type, 'move'], session);
+            }
+        },
+        _fireEndEvent: function(session) {
+            if(session.type === TYPE.tab) {
+                this.emit(TYPE.tab, session);
+            }
+            this.emit(session.direction, session);
+            this.emit('end', session);
+        },
+        _bindExtraGestureEvent: function () {
+            util.on(document, EVENT.move, this._onMove);
+            util.on(document, EVENT.end, this._onEnd);
+            if(EVENT.cancel) {
+                util.on(document, EVENT.cancel, this._onEnd);
+            }
+        },
+        _unbindExtraGesureEvent: function () {
+            util.off(document, EVENT.move, this._onMove);
+            util.off(document, EVENT.end, this._onEnd);
+            if(EVENT.cancel) {
+                util.off(document, EVENT.cancel, this._onEnd);
+            }
+        },
+        onSwipe: function(callback) {
+            this.on(TYPE.swipe, callback);
+        },
+        onScroll: function(callback) {
+            this.on(TYPE.scroll, callback);
+        },
+        onStart: function(callback) {
+            this.on('start', callback);
+        },
+        onMove: function(callback) {
+            this.on('move', callback);
+        },
+        onEnd: function(callback) {
+            this.on('end', callback);
+        },
+        onTab: function(callback) {
+            this.on(TYPE.tab, callback);
+        },
+        destroy: function () {
+            util.off(this.el, EVENT.start, this._onStart);
+            this.session = null;
+            this.el = null;
+
+            this._super();
+        }
+    });
+
+})(window.gesture = (typeof gesture === 'undefined') ? {} : gesture);
+
 /*jshint browser: true
 */
 /*global slide:true, Class, gesture, clay, util, daumtools, dongtl*/
@@ -248,6 +932,19 @@
         //    return Object.prototype.toString.call(o) === '[object Array]';
         //};
 
+        util.setDelegates = function(scope, delegate) {
+            if(!util.isObject(delegate)) {
+                return;
+            }
+
+            for(var name in delegate) {
+                if(delegate.hasOwnProperty(name) &&
+                    util.isFunction(scope[name]) && util.isFunction(delegate[name])) {
+                    scope[name] = delegate[name].bind(scope);
+                }
+            }
+        };
+
         util.promise = function(fn) {
             var _value, _self = this;
             var _isResovled = false;
@@ -426,10 +1123,17 @@
          * 새로운 DataSource를 생성/초기화한다.
          * @param data {Array}
          */
-        init: function (data) {
+        init: function (data, option) {
+            var _option = option || {};
+
             this.data = data || [];
-            this.index = 0;
+            this.index = _option.index || 0;
+            this._setDelegate(_option);
         },
+        _setDelegate: function(option) {
+            exports.util.setDelegates(this, option.delegate);
+        },
+
         /**
          * 현재 인덱스를 설정한다.
          *
@@ -837,18 +1541,6 @@
                 panel.render(dataSet[i]);
             });
         },
-        /**
-         * 해당 클래스의 인스턴스 삭제시 할당된 오브젝트들을 destroy 시킨다.
-         *
-         * @method destroy
-         */
-        destroy: function () {
-            this.el = null;
-            this.panels.map(function(panel) {
-                panel.destroy();
-            });
-            delete this.panels;
-        },
 
         getPanel: function(index) {
             if(!exports.util.isNumber(index)) {
@@ -877,6 +1569,18 @@
             this.panels.map(function(panel) {
                 panel.setStyle(name, style);
             });
+        },
+
+        /**
+         * 해당 클래스의 인스턴스 삭제시 할당된 오브젝트들을 destroy 시킨다.
+         *
+         * @method destroy
+         */
+        destroy: function () {
+            this.panels.map(function(panel) {
+                panel.destroy();
+            });
+            delete this.panels;
         }
     });
 })(window.slide = (typeof slide === 'undefined') ? {} : slide);
@@ -1079,6 +1783,10 @@
 
         isOverThreshold: function(deltaX, deltaY) {
             return this.slide.threshold < Math.abs(deltaX);
+        },
+        destroy: function() {
+            delete this.animator;
+            delete this.updater;
         }
     });
 }(window.slide = (typeof slide === 'undefined') ? {} : slide));
@@ -1336,14 +2044,17 @@
             }
         },
         bindResize: function() {
-            var self = this;
             this.resizeTimeId = null;
-            exports.util.on(window, 'resize', function () {
-                window.clearTimeout(self.resizeTimeId);
-                self.resizeTimeId = window.setTimeout(function () {
-                    self.checkAndResizeSlideFrame();
-                }, SLIDE_RESIZE_DELAY_TIME);
-            });
+            this._onResizeEvent = this.onResizeEvent.bind(this);
+            exports.util.on(window, 'resize', this._onResizeEvent);
+        },
+        onResizeEvent: function () {
+            window.clearTimeout(this.resizeTimeId);
+
+            var self = this;
+            this.resizeTimeId = window.setTimeout(function () {
+                self.checkAndResizeSlideFrame();
+            }, SLIDE_RESIZE_DELAY_TIME);
         },
         /**
          * slide 에 visibilitychange event를 bind 시킨다.
@@ -1412,6 +2123,10 @@
         },
         onResize: function (delegate) {
             this.onResizeDelegate = delegate;
+        },
+
+        destroy: function() {
+            exports.util.off(window, 'resize', this._onResizeEvent);
         }
     });
 }(window.slide = (typeof slide === 'undefined') ? {} : slide));
@@ -1485,24 +2200,13 @@
         },
 
         _setDelegate: function(option) {
+            var util = exports.util;
             var delegate = option.delegate;
-            if(!delegate) {
-                return;
-            }
-
             var controller = this.controller;
             var scopes = [controller, controller.animator, controller.updater];
-            for(var name in delegate) {
-                if(delegate.hasOwnProperty(name)) {
-                    var binded = false;
-                    scopes.map(function(scope) {
-                        if(!binded && scope[name]) {
-                            binded = true;
-                            scope[name] = delegate[name].bind(scope);
-                        }
-                    });
-                }
-            }
+            scopes.map(function(scope) {
+                util.setDelegates(scope, delegate);
+            });
         },
 
         _bindResizeEvent: function (option) {
@@ -1595,6 +2299,18 @@
             this.frameEl.style.overflow = 'hidden';
         },
         destroy: function () {
+            this.listener.destroy();
+            this.screen.destroy();
+            this.container.destroy();
+            this.controller.destroy();
+
+            delete this.listener;
+            delete this.screen;
+            delete this.container;
+            delete this.controller;
+
+            this.datasource = null;
+
             this.frameEl.innerHTML = '';
             this.frameEl = null;
         }

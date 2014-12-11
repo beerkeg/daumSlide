@@ -6,8 +6,8 @@
   \__ \ || | (_| |  ___/   
   |___/_||_|\____|\____/   
 
-  Version   : 2.0.0-pre20
-  Copyright : 2014-12-10
+  Version   : 2.0.0-pre21
+  Copyright : 2014-12-11
   Author    : HTML5 Cell, daumkakao corp
 
 */
@@ -857,18 +857,6 @@
                 panel.render(dataSet[i]);
             });
         },
-        /**
-         * 해당 클래스의 인스턴스 삭제시 할당된 오브젝트들을 destroy 시킨다.
-         *
-         * @method destroy
-         */
-        destroy: function () {
-            this.el = null;
-            this.panels.map(function(panel) {
-                panel.destroy();
-            });
-            delete this.panels;
-        },
 
         getPanel: function(index) {
             if(!exports.util.isNumber(index)) {
@@ -897,6 +885,18 @@
             this.panels.map(function(panel) {
                 panel.setStyle(name, style);
             });
+        },
+
+        /**
+         * 해당 클래스의 인스턴스 삭제시 할당된 오브젝트들을 destroy 시킨다.
+         *
+         * @method destroy
+         */
+        destroy: function () {
+            this.panels.map(function(panel) {
+                panel.destroy();
+            });
+            delete this.panels;
         }
     });
 })(window.slide = (typeof slide === 'undefined') ? {} : slide);
@@ -1099,6 +1099,10 @@
 
         isOverThreshold: function(deltaX, deltaY) {
             return this.slide.threshold < Math.abs(deltaX);
+        },
+        destroy: function() {
+            delete this.animator;
+            delete this.updater;
         }
     });
 }(window.slide = (typeof slide === 'undefined') ? {} : slide));
@@ -1356,14 +1360,17 @@
             }
         },
         bindResize: function() {
-            var self = this;
             this.resizeTimeId = null;
-            exports.util.on(window, 'resize', function () {
-                window.clearTimeout(self.resizeTimeId);
-                self.resizeTimeId = window.setTimeout(function () {
-                    self.checkAndResizeSlideFrame();
-                }, SLIDE_RESIZE_DELAY_TIME);
-            });
+            this._onResizeEvent = this.onResizeEvent.bind(this);
+            exports.util.on(window, 'resize', this._onResizeEvent);
+        },
+        onResizeEvent: function () {
+            window.clearTimeout(this.resizeTimeId);
+
+            var self = this;
+            this.resizeTimeId = window.setTimeout(function () {
+                self.checkAndResizeSlideFrame();
+            }, SLIDE_RESIZE_DELAY_TIME);
         },
         /**
          * slide 에 visibilitychange event를 bind 시킨다.
@@ -1432,6 +1439,10 @@
         },
         onResize: function (delegate) {
             this.onResizeDelegate = delegate;
+        },
+
+        destroy: function() {
+            exports.util.off(window, 'resize', this._onResizeEvent);
         }
     });
 }(window.slide = (typeof slide === 'undefined') ? {} : slide));
@@ -1604,6 +1615,18 @@
             this.frameEl.style.overflow = 'hidden';
         },
         destroy: function () {
+            this.listener.destroy();
+            this.screen.destroy();
+            this.container.destroy();
+            this.controller.destroy();
+
+            delete this.listener;
+            delete this.screen;
+            delete this.container;
+            delete this.controller;
+
+            this.datasource = null;
+
             this.frameEl.innerHTML = '';
             this.frameEl = null;
         }
