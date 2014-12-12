@@ -2,39 +2,37 @@ module.exports = function(grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         remotefile: {
-            daumtools: {
-                url: 'http://m1.daumcdn.net/dcombo/v1' +
-                '?daumtools/0.0.1/event.js' +
-                '&daumtools/0.0.1/extend.js',
-                dest: 'javascripts/external/daumtools.js'
-            },
-            simple_inheritance: {
-                url: 'http://s1.daumcdn.net/svc/original/U03/cssjs/bower/1.0.1/class.js',
-                dest: 'javascripts/external/class.js'
-            },
-            simple_observer: {
-                url: 'http://s1.daumcdn.net/svc/original/U03/cssjs/bower/1.0.0/observer.js',
-                dest: 'javascripts/external/observer.js'
-            },
             ua_parser: {
                 url: 'http://s1.daumcdn.net/svc/original/U03/cssjs/userAgent/userAgent-1.0.14.js',
                 dest: 'javascripts/external/ua_parser.js'
             },
             gesture: {
-                url: 'http://m1.daumcdn.net/svc/original/U03/cssjs/gesture/gesture-2.0.0-pre13.merged.js',
+                url: 'http://m1.daumcdn.net/svc/original/U03/cssjs/gesture/gesture-2.0.0-pre14.merged.js',
                 dest: 'javascripts/external/gesture.js'
             },
             slide: {
-                url: 'http://s1.daumcdn.net/svc/attach/U03/cssjs/slide/slide-2.0.0-pre21.merged.js',
+                url: 'http://s1.daumcdn.net/svc/attach/U03/cssjs/slide/slide-2.0.0-pre22.merged.js',
                 dest: 'javascripts/external/slide.js'
+            }
+        },
+        bower: {
+            install: {
+                options: {
+                    targetDir: './dist/dependency',
+                    install: true,
+                    verbose: false,
+                    cleanTargetDir: true,
+                    cleanBowerDir: false,
+                    bowerOptions: {}
+                }
             }
         },
         concat: {
             external: {
                 src: [
-                    '<%= remotefile.daumtools.dest %>',
-                    '<%= remotefile.simple_inheritance.dest %>',
-                    '<%= remotefile.simple_observer.dest %>',
+                    '<%= bower.install.options.targetDir %>/simple-inheritance/class.js',
+                    '<%= bower.install.options.targetDir %>/simple-observer/observer.js',
+                    '<%= bower.install.options.targetDir %>/simple-event/event.js',
                     '<%= remotefile.ua_parser.dest %>',
                     '<%= remotefile.gesture.dest %>',
                     '<%= remotefile.slide.dest %>'
@@ -55,8 +53,11 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-remotefile');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-bower-task');
+
+    grunt.registerTask('remote', ['bower:install', 'remotefile']);
 
     // Default task.
-    grunt.registerTask('build', ['remotefile', 'concat:external', 'uglify:external']);
-    grunt.registerTask('default', ['remotefile', 'concat:external', 'uglify:external']);
+    grunt.registerTask('build', ['remote', 'concat:external', 'uglify:external']);
+    grunt.registerTask('default', ['remote', 'concat:external', 'uglify:external']);
 };

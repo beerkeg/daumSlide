@@ -1,79 +1,3 @@
-/*jshint browser: true
-*/
-
-(function (exports) {
-    "use strict";
-
-    exports.event = {
-        on: function () {
-            if (document.addEventListener) {
-                return function (el, type, fn) {
-                    if (!el) {
-                        throw 'failed to add event. Element: "' + el + '", Event: "' + type + '", handler: ' + fn.toString();
-                    }
-                    el.addEventListener(type, fn, false);
-                };
-            } else {
-                return function (el, type, fn) {
-                    el.attachEvent('on' + type, fn);
-                };
-            }
-        }(),
-        off: function () {
-            if (document.removeEventListener) {
-                return function (el, type, fn) {
-                    el.removeEventListener(type, fn, false);
-                };
-            } else {
-                return function (el, type, fn) {
-                    el.detachEvent("on" + type, fn);
-                };
-            }
-        }(),
-        preventDefault: function (e) {
-            var ev = e || window.event;
-            if (ev.preventDefault) {
-                ev.preventDefault();
-            } else {
-                ev.returnValue = false;
-            }
-        },
-        stopPropagation: function (e) {
-            var ev = e || window.event;
-            if (ev.stopPropagation) {
-                ev.stopPropagation();
-            } else {
-                ev.cancelBubble = true;
-            }
-        },
-        getTarget: function (e) {
-            var ev = e || window.event;
-            return ev.target || ev.srcElement;
-        }
-    };
-})(window.daumtools = (typeof window.daumtools === 'undefined') ? {} : window.daumtools);
-
-/*jshint browser: true
-*/
-
-(function (exports) {
-    "use strict";
-    
-    exports.extend = function (dest, src, overwrite) {
-        dest = dest || {};
-        
-        for(var key in src) {
-            if (src.hasOwnProperty(key)) {
-                if (!dest[key] || overwrite) {
-                    dest[key] = src[key];
-                }
-            }
-        }
-
-        return dest;
-    };
-        
-})(window.daumtools = (typeof window.daumtools === 'undefined') ? {} : window.daumtools);
 /* source: https://gist.github.com/shakyShane/5944153
  *
  * Simple JavaScript Inheritance for ES 5.1 ( includes polyfill for IE < 9 )
@@ -256,6 +180,95 @@
         }
     });
 })(this);
+/*global Selector */
+(function (exports) {
+    "use strict";
+
+    exports.DOMEvent = {
+
+        on: function () {
+            if (document.addEventListener) {
+                return function (el, type, fn) {
+                    if (!el) {
+                        throw new Error('failed to add event. Element: "' + el + '", Event: "' + type + '", handler: ' + fn.toString());
+                    }
+                    el.addEventListener(type, fn, false);
+                };
+            } else {
+                return function (el, type, fn) {
+                    if (!el) {
+                        throw new Error('failed to add event. Element: "' + el + '", Event: "' + type + '", handler: ' + fn.toString());
+                    }
+                    el.attachEvent('on' + type, fn);
+                };
+            }
+        }(),
+
+        off: function () {
+            if (document.removeEventListener) {
+                return function (el, type, fn) {
+                    el.removeEventListener(type, fn, false);
+                };
+            } else {
+                return function (el, type, fn) {
+                    el.detachEvent("on" + type, fn);
+                };
+            }
+        }(),
+
+        preventDefault: function (e) {
+            var ev = e || window.event;
+            if (ev.preventDefault) {
+                ev.preventDefault();
+            } else {
+                ev.returnValue = false;
+            }
+        },
+
+        stopPropagation: function (e) {
+            var ev = e || window.event;
+            if (ev.stopPropagation) {
+                ev.stopPropagation();
+            } else {
+                ev.cancelBubble = true;
+            }
+        },
+
+        getTarget: function (e) {
+            var ev = e || window.event;
+            return ev.target || ev.srcElement;
+        }
+    };
+
+    function delegate(el, selector, type, fn) {
+        if (typeof Selector === 'undefined') {
+            throw new Error('dependency not found. you should include selector-alias module to use delegate function.');
+        }
+        if (!el) {
+            throw new Error('failed to delegate event. Element: "' + el + '", Selector: "' + selector + '", Event: "' + type + '", handler: ' + fn.toString());
+        }
+
+        var $$ = Selector.$$;
+
+        exports.DOMEvent.on(el, type, function (e) {
+            var currentTarget = exports.DOMEvent.getTarget(e),
+                targets = $$(selector, el);
+
+            targets = Array.prototype.slice.apply(targets);
+
+            while (currentTarget && currentTarget !== el) {
+                if (currentTarget.nodeType === 1 && targets.indexOf(currentTarget) > -1) {
+                    fn(e, currentTarget);
+                    break;
+                }
+                currentTarget = currentTarget.parentNode;
+            }
+        });
+    }
+
+    exports.DOMEvent.delegate = delegate;
+
+})(window);
 /*! ua_parser - v1.0.14 - 2013-08-08
 * Copyright (c) 2013 HTML5 Tech. Team in Daum Communications Corp.;
 * Licensed MIT - https://github.com/daumcorp/ua_parser/blob/master/LICENSE*/
@@ -417,9 +430,9 @@
         ___) |            |__/                         
         \____/                                         
 
-  Version   : 2.0.0-pre13
-  Copyright : 2014-10-21
-  Author    : HTML5 tech team, Daum corp
+  Version   : 2.0.0-pre14
+  Copyright : 2014-12-11
+  Author    : HTML5 Cell, daumkakao corp
 
 */
 /*global daumtools:true, Class:true, gesture:true*/
@@ -456,19 +469,18 @@
 
     var util = exports.util = {};
     try {
-        var eventUtil = window.daumtools.event;
+        var eventUtil = window.DOMEvent;
         
         util.on = eventUtil.on;
         util.off = eventUtil.off;
         util.preventDefault = eventUtil.preventDefault;
         util.stopPropagation = eventUtil.stopPropagation;
-        util.extend = window.daumtools.extend;
     } catch(e) {
         throw new Error("Not found : event and extend");
     }
-    exports.Class = window.Class || (window.daumtools && window.daumtools.Class);
-    exports.Observable = window.Observer || window.Observable || (window.daumtools && window.daumtools.Observable);
-    if (!exports.Class || !exports.Observable) {
+    exports.Class = window.Class;
+    exports.Observer = window.Observer;
+    if (!exports.Class || !exports.Observer) {
        new Error("Not found : Class & Observable");
     }
 
@@ -561,17 +573,16 @@
     "use strict";
 
     var util = exports.util;
-
-    var DEFAULT_OPTION = {
-        threshold: 10
-    };
+    var THRESHOLD = 10;
 
     var EVENT = exports.EVENT,
         TYPE = exports.TYPE;
 
-    exports.Listener = exports.Observable.extend({
+    exports.Listener = exports.Observer.extend({
         init: function(el, option) {
-            this.option = util.extend(option, DEFAULT_OPTION);
+            var _option = option || {};
+
+            this.threshold = _option.threshold || THRESHOLD;
             this.session = null;
             this.el = el;
 
@@ -603,7 +614,7 @@
                 return;
             }
 
-            this.session = new exports.Session(e, this.option.threshold);
+            this.session = new exports.Session(e, this.threshold);
             this._fireStartEvent(this.session);
             this._bindExtraGestureEvent();
         },
@@ -690,24 +701,330 @@
   \__ \ || | (_| |  ___/   
   |___/_||_|\____|\____/   
 
-  Version   : 2.0.0-pre21
-  Copyright : 2014-12-11
+  Version   : 2.0.0-pre22
+  Copyright : 2014-12-12
   Author    : HTML5 Cell, daumkakao corp
 
 */
-/*jshint browser: true
-*/
-/*global slide:true, Class, gesture, clay, util, daumtools, dongtl*/
 /**
  * @module slide
  * @main
  */
- /**
+/**
  * @class slide
  * @static
  */
 (function (exports) {
     'use strict';
+
+    // polyfill
+    if (!Function.prototype.bind) {
+        Function.prototype.bind = function(oThis) {
+            if (typeof this !== 'function') {
+                // closest thing possible to the ECMAScript 5
+                // internal IsCallable function
+                throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
+            }
+
+            var aArgs   = Array.prototype.slice.call(arguments, 1),
+              fToBind = this,
+              FNOP    = function() {},
+              FBound  = function() {
+                  return fToBind.apply(this instanceof FNOP && oThis ?
+                          this : oThis,
+                    aArgs.concat(Array.prototype.slice.call(arguments)));
+              };
+
+            FNOP.prototype = this.prototype;
+            FBound.prototype = new FNOP();
+
+            return FBound;
+        };
+    }
+
+    // Production steps of ECMA-262, Edition 5, 15.4.4.19
+    // Reference: http://es5.github.io/#x15.4.4.19
+    if (!Array.prototype.map) {
+        Array.prototype.map = function(callback, thisArg) {
+            var T, A, k;
+            if (this == null) {
+                throw new TypeError(' this is null or not defined');
+            }
+
+            var O = Object(this);
+            var len = O.length >>> 0;
+
+            if (typeof callback !== 'function') {
+                throw new TypeError(callback + ' is not a function');
+            }
+
+            if (arguments.length > 1) {
+                T = thisArg;
+            }
+
+            A = new Array(len);
+            k = 0;
+
+            while (k < len) {
+                var kValue, mappedValue;
+                if (k in O) {
+                    kValue = O[k];
+                    mappedValue = callback.call(T, kValue, k, O);
+                    A[k] = mappedValue;
+                }
+                k++;
+            }
+
+            return A;
+        };
+    }
+
+    var util = exports.util = {};
+    // event & extend library
+    try {
+        var eventUtil = window.DOMEvent;
+        /**
+         * dom event 등록 함수
+         *
+         * @method on
+         * @param el {HTMLElement} 이벤트가 발생하는 엘리먼트
+         * @param eventName {String} 이벤트 이름
+         * @param callback {Function} 이벤트 발생시 동작할 콜백 함수
+         */
+        util.on = eventUtil.on;
+        /**
+         * dom event 제거 함수
+         *
+         * @method off
+         * @param el {HTMLElement} 이벤트가 발생하는 엘리먼트
+         * @param eventName {String} 이벤트 이름
+         * @param callback {Function} 이벤트 발생시 동작 하지 않게 제거할 콜백 함수
+         */
+        util.off = eventUtil.off;
+        /**
+         * 해당 event에 의한 browser 의 기본 동작을 막는 함수.
+         *
+         * @method preventDefault
+         * @param e {Event} dom event object
+         */
+        util.preventDefault = eventUtil.preventDefault;
+        /**
+         * 해당 event에 의한 browser 버블링 현상을 막는 함수.
+         *
+         * @method stopPropagation
+         * @param e {Event} dom event object
+         */
+        util.stopPropagation = eventUtil.stopPropagation;
+
+        util.toNumber = function(n, defaultN) {
+            var _n = parseInt(n, 10);
+            return isNaN(_n) ? defaultN :_n;
+        };
+        util.isObject = function(o) {
+            return o !== exports.EMPTY && typeof o === 'object';
+        };
+        util.isFunction = function(f) {
+            return typeof f === 'function';
+        };
+        util.isString = function(s) {
+            return typeof s === 'string';
+        };
+        util.isNumber = function(n) {
+            return typeof n === 'number';
+        };
+        util.isDOMElement = function(e) {
+            return util.isObject(e) && (e.nodeType === 1 || e.nodeType === 11);
+        };
+        //util.isArray = function(o) {
+        //    return Object.prototype.toString.call(o) === '[object Array]';
+        //};
+
+        util.setDelegates = function(scope, delegate) {
+            if(!util.isObject(delegate)) {
+                return;
+            }
+
+            for(var name in delegate) {
+                if(delegate.hasOwnProperty(name) &&
+                    util.isFunction(scope[name]) &&
+                    util.isFunction(delegate[name])) {
+                    scope[name] = delegate[name].bind(scope);
+                }
+            }
+        };
+
+        util.promise = function promise(fn) {
+            var _value, _isResovled = false;
+            var _handlers  = [];
+            var _self = {
+                resolve: function (value) {
+                    if(value && typeof value.then === 'function') {
+                        value.then(_doFulfill);
+
+                    } else {
+                        _doFulfill(value);
+                    }
+
+                    return _self;
+                },
+                then: function (callback) {
+                    return promise(function(fulfill) {
+                        _handlers.push(function _insertHandlers() {
+                            fulfill(callback(_value));
+                        });
+
+                        if(_isResovled) {
+                            _doFulfill(_value);
+                        }
+                    });
+                }
+            };
+
+            function _doFulfill(value) {
+                _isResovled = true;
+                _value = value;
+                for(var i=0,len=_handlers.length;i<len;i+=1) {
+                    _handlers[i](value);
+                }
+                _handlers = [];
+            }
+
+            if(!!fn && typeof fn === 'function') {
+                fn(_self.resolve);
+            }
+
+            return _self;
+        };
+
+        //util.promise = function(fn) {
+        //    var _value, _self = this;
+        //    var _isResovled = false;
+        //    var _handlers  = [];
+        //
+        //    function _doFulfill(value) {
+        //        _isResovled = true;
+        //        _value = value;
+        //
+        //        _handlers.map(function _launchHandler(handler) {
+        //            handler(value);
+        //        });
+        //        _handlers = [];
+        //    }
+        //
+        //    function _resolve(value) {
+        //        if(value && typeof value.then === 'function') {
+        //            value.then(_doFulfill);
+        //
+        //        } else {
+        //            _doFulfill(value);
+        //        }
+        //
+        //        return _self;
+        //    }
+        //
+        //    function _then(callback) {
+        //        return new _self.constructor(function(fulfill) {
+        //            _handlers.push(function _insertHandlers() {
+        //                fulfill(callback(_value));
+        //            });
+        //
+        //            if(_isResovled) {
+        //                _doFulfill(_value);
+        //            }
+        //        });
+        //    }
+        //
+        //    this.resolve = _resolve;
+        //    this.then = _then;
+        //
+        //    if(fn && typeof fn === 'function') {
+        //        fn(_resolve);
+        //    }
+        //};
+
+    } catch(e) {
+        throw new Error('Not found : DOMEvent');
+    }
+
+    // class & observable library
+    /**
+     * 상속기능을 제공하는 Class library
+     *
+     * @class Class
+     * @static
+     */
+    /**
+     * 상속 기능을 갖는 클래스를 생성한다.
+     *
+     * @method extend
+     * @param object {Object} 클래스로 생성할 객체
+     * @return {Class} 상속을 받아 새롭게 생성된 Class 객체
+     */
+    exports.Class = window.Class;
+    /**
+     * custom event emitter Class.
+     *
+     * @class Observable
+     * @extends Class
+     * @static
+     */
+    /**
+     * Add custom event.
+     *
+     * @method on
+     * @chainable
+     * @param eventName {String} 등록할 커스텀 이벤트
+     * @param callback {Function} 등록한 이벤트 발생시 호출될 콜백 함수
+     */
+    /**
+     * Remove custom event.
+     *
+     * @method off
+     * @chainable
+     * @param eventName {String} 제거할 커스텀 이벤트
+     * @param callback {Function} 제거할 콜백 함수
+     */
+    /**
+     * Emit custom event.
+     *
+     * @method emit
+     * @chainable
+     * @param eventName {String} 호출할 커스텀 이벤트
+     * @param [args]* {mixed} 호출될 콜백 함수에게 넘겨줄 인자 값
+     */
+    exports.Observer = window.Observer;
+    if (!exports.Class || !exports.Observer) {
+        new Error('Not found : Class & Observable');
+    }
+
+    /**
+     * ua_parser library parsing result
+     *
+     * @property ua
+     * @type Object
+     * @for slide
+     */
+    exports.ua = window.ua_result;
+    if (!exports.ua) {
+        new Error('Not found : ua_parser');
+    }
+
+    /**
+     * gesture library
+     *
+     * @class gesture
+     * @static
+     */
+    /**
+     * @method GestureListener
+     * @param frameEl {HTMLElement} gesture 를 감지할 영역에 해당하는 엘리먼트
+     * @param threshold {Number} gesture 를 감지를 시작하기 위한 최소값
+     * @return {GestureListenerObj}
+     */
+    exports.gesture = window.gesture;
+    if (!exports.gesture) {
+        new Error('Not found : gesture');
+    }
 
     var _prefix = ['', '-webkit-'];
     var _style = (document.body || document.documentElement).style;
@@ -748,333 +1065,6 @@
     exports.NEXT = 'next';
     exports.PREV = 'prev';
 
-    // polyfill
-    if (!Function.prototype.bind) {
-        Function.prototype.bind = function(oThis) {
-            if (typeof this !== 'function') {
-                // closest thing possible to the ECMAScript 5
-                // internal IsCallable function
-                throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
-            }
-
-            var aArgs   = Array.prototype.slice.call(arguments, 1),
-                fToBind = this,
-                FNOP    = function() {},
-                FBound  = function() {
-                    return fToBind.apply(this instanceof FNOP && oThis ? this : oThis,
-                        aArgs.concat(Array.prototype.slice.call(arguments)));
-                };
-
-            FNOP.prototype = this.prototype;
-            FBound.prototype = new FNOP();
-
-            return FBound;
-        };
-    }
-
-    // Production steps of ECMA-262, Edition 5, 15.4.4.19
-    // Reference: http://es5.github.io/#x15.4.4.19
-    if (!Array.prototype.map) {
-        Array.prototype.map = function(callback, thisArg) {
-
-            var T, A, k;
-
-            if (this == null) {
-                throw new TypeError(' this is null or not defined');
-            }
-
-            // 1. Let O be the result of calling ToObject passing the |this|
-            //    value as the argument.
-            var O = Object(this);
-
-            // 2. Let lenValue be the result of calling the Get internal
-            //    method of O with the argument "length".
-            // 3. Let len be ToUint32(lenValue).
-            var len = O.length >>> 0;
-
-            // 4. If IsCallable(callback) is false, throw a TypeError exception.
-            // See: http://es5.github.com/#x9.11
-            if (typeof callback !== 'function') {
-                throw new TypeError(callback + ' is not a function');
-            }
-
-            // 5. If thisArg was supplied, let T be thisArg; else let T be undefined.
-            if (arguments.length > 1) {
-                T = thisArg;
-            }
-
-            // 6. Let A be a new array created as if by the expression new Array(len)
-            //    where Array is the standard built-in constructor with that name and
-            //    len is the value of len.
-            A = new Array(len);
-
-            // 7. Let k be 0
-            k = 0;
-
-            // 8. Repeat, while k < len
-            while (k < len) {
-
-                var kValue, mappedValue;
-
-                // a. Let Pk be ToString(k).
-                //   This is implicit for LHS operands of the in operator
-                // b. Let kPresent be the result of calling the HasProperty internal
-                //    method of O with argument Pk.
-                //   This step can be combined with c
-                // c. If kPresent is true, then
-                if (k in O) {
-
-                    // i. Let kValue be the result of calling the Get internal
-                    //    method of O with argument Pk.
-                    kValue = O[k];
-
-                    // ii. Let mappedValue be the result of calling the Call internal
-                    //     method of callback with T as the this value and argument
-                    //     list containing kValue, k, and O.
-                    mappedValue = callback.call(T, kValue, k, O);
-
-                    // iii. Call the DefineOwnProperty internal method of A with arguments
-                    // Pk, Property Descriptor
-                    // { Value: mappedValue,
-                    //   Writable: true,
-                    //   Enumerable: true,
-                    //   Configurable: true },
-                    // and false.
-
-                    // In browsers that support Object.defineProperty, use the following:
-                    // Object.defineProperty(A, k, {
-                    //   value: mappedValue,
-                    //   writable: true,
-                    //   enumerable: true,
-                    //   configurable: true
-                    // });
-
-                    // For best browser support, use the following:
-                    A[k] = mappedValue;
-                }
-                // d. Increase k by 1.
-                k++;
-            }
-
-            // 9. return A
-            return A;
-        };
-    }
-
-    var util = exports.util = {};
-    // event & extend library
-    try {
-        var eventUtil = window.daumtools.event;
-        /**
-         * dom event 등록 함수
-         *
-         * @method on
-         * @param el {HTMLElement} 이벤트가 발생하는 엘리먼트
-         * @param eventName {String} 이벤트 이름
-         * @param callback {Function} 이벤트 발생시 동작할 콜백 함수
-         */
-        util.on = eventUtil.on;
-        /**
-         * dom event 제거 함수
-         *
-         * @method off
-         * @param el {HTMLElement} 이벤트가 발생하는 엘리먼트
-         * @param eventName {String} 이벤트 이름
-         * @param callback {Function} 이벤트 발생시 동작 하지 않게 제거할 콜백 함수
-         */
-        util.off = eventUtil.off;
-        /**
-         * 해당 event에 의한 browser 의 기본 동작을 막는 함수.
-         *
-         * @method preventDefault
-         * @param e {Event} dom event object
-         */
-        util.preventDefault = eventUtil.preventDefault;
-        /**
-         * 해당 event에 의한 browser 버블링 현상을 막는 함수.
-         *
-         * @method stopPropagation
-         * @param e {Event} dom event object
-         */
-        util.stopPropagation = eventUtil.stopPropagation;
-        /**
-         * 해당 event에 의한 browser 버블링 현상을 막는 함수.
-         *
-         * @method stopPropagation
-         * @param e {Event} dom event object
-         */
-        util.extend = window.daumtools.extend;
-
-        util.toNumber = function(n, defaultN) {
-            if(!n) {
-                return defaultN;
-            }
-
-            return n-0;
-        };
-
-        util.isObject = function(o) {
-            return o !== exports.EMPTY && typeof o === 'object';
-        };
-        util.isFunction = function(f) {
-            return typeof f === 'function';
-        };
-        util.isString = function(s) {
-            return typeof s === 'string';
-        };
-        util.isNumber = function(n) {
-            return typeof n === 'number';
-        };
-        util.isDOMElement = function(e) {
-            return util.isObject(e) && (e.nodeType === 1 || e.nodeType === 11);
-        };
-        //util.isArray = function(o) {
-        //    return Object.prototype.toString.call(o) === '[object Array]';
-        //};
-
-        util.setDelegates = function(scope, delegate) {
-            if(!util.isObject(delegate)) {
-                return;
-            }
-
-            for(var name in delegate) {
-                if(delegate.hasOwnProperty(name) &&
-                    util.isFunction(scope[name]) && util.isFunction(delegate[name])) {
-                    scope[name] = delegate[name].bind(scope);
-                }
-            }
-        };
-
-        util.promise = function(fn) {
-            var _value, _self = this;
-            var _isResovled = false;
-            var _handlers  = [];
-
-            function _doFulfill(value) {
-                _isResovled = true;
-                _value = value;
-
-                _handlers.map(function _launchHandler(handler) {
-                    handler(value);
-                });
-                _handlers = [];
-            }
-
-            function _resolve(value) {
-                if(value && typeof value.then === 'function') {
-                    value.then(_doFulfill);
-
-                } else {
-                    _doFulfill(value);
-                }
-
-                return _self;
-            }
-
-            function _then(callback) {
-                return new _self.constructor(function(fulfill) {
-                    _handlers.push(function _insertHandlers() {
-                        fulfill(callback(_value));
-                    });
-
-                    if(_isResovled) {
-                        _doFulfill(_value);
-                    }
-                });
-            }
-
-            this.resolve = _resolve;
-            this.then = _then;
-
-            if(fn && typeof fn === 'function') {
-                fn(_resolve);
-            }
-        };
-
-    } catch(e) {
-        throw new Error("Not found : daumtools event");
-    }
-
-    // class & observable library
-    /**
-     * 상속기능을 제공하는 Class library
-     *
-     * @class Class
-     * @static
-     */
-    /**
-     * 상속 기능을 갖는 클래스를 생성한다.
-     *
-     * @method extend
-     * @param object {Object} 클래스로 생성할 객체
-     * @return {Class} 상속을 받아 새롭게 생성된 Class 객체
-     */
-    exports.Class = window.Class || (window.daumtools && window.daumtools.Class);
-    /**
-     * custom event emitter Class.
-     *
-     * @class Observable
-     * @extends Class
-     * @static
-     */
-    /**
-     * Add custom event.
-     *
-     * @method on
-     * @chainable
-     * @param eventName {String} 등록할 커스텀 이벤트
-     * @param callback {Function} 등록한 이벤트 발생시 호출될 콜백 함수
-     */
-    /**
-     * Remove custom event.
-     *
-     * @method off
-     * @chainable
-     * @param eventName {String} 제거할 커스텀 이벤트
-     * @param callback {Function} 제거할 콜백 함수
-     */
-    /**
-     * Emit custom event.
-     *
-     * @method emit
-     * @chainable
-     * @param eventName {String} 호출할 커스텀 이벤트
-     * @param [args]* {mixed} 호출될 콜백 함수에게 넘겨줄 인자 값
-     */
-    exports.Observable = window.Observer || window.Observable || (window.daumtools && window.daumtools.Observable);
-    if (!exports.Class || !exports.Observable) {
-       new Error("Not found : Class & Observable");
-    }
-    
-    /**
-     * ua_parser library parsing result
-     *
-     * @property ua
-     * @type Object
-     * @for slide
-     */
-    exports.ua = window.ua_result;
-    if (!exports.ua) {
-       new Error("Not found : ua_parser");
-    }
-
-    /**
-     * gesture library
-     *
-     * @class gesture
-     * @static
-     */
-    /**
-     * @method GestureListener
-     * @param frameEl {HTMLElement} gesture 를 감지할 영역에 해당하는 엘리먼트
-     * @param threshold {Number} gesture 를 감지를 시작하기 위한 최소값
-     * @return {GestureListenerObj}
-     */
-    exports.gesture = window.gesture;
-    if (!exports.gesture) {
-       new Error("Not found : gesture");
-    }
-
     /**
      * 3d gpu 가속 여부를 사용할수 있는지 판단한다.
      */
@@ -1091,24 +1081,37 @@
             }
             return false;
         })();
-        return !!(isExist && (isOverIcs || os.ios || browser.safari || browser.chrome || (browser.msie && browserVersion.major >= 10)));
+        var isModernBrowser = isOverIcs || os.ios ||
+                browser.safari || browser.chrome ||
+                (browser.msie && browserVersion.major >= 10);
+
+        return !!(isExist && isModernBrowser);
     })();
+
     var isOldIE = (function () {
-        return !!(ua.platform === "pc" && browser.msie && browserVersion.major <= 9);
+        return !!(ua.platform === 'pc' &&
+            browser.msie && browserVersion.major <= 9);
     })();
 
     exports.config = {
-        mode: isTransformEnabled ? exports.MODE_TRANSFORM : (isOldIE ? exports.MODE_INTERVAL : exports.MODE_SIMPLE),
+        mode: isTransformEnabled ?
+            exports.MODE_TRANSFORM :
+            (isOldIE ? exports.MODE_INTERVAL : exports.MODE_SIMPLE),
         isTransformEnabled: isTransformEnabled,
         isOldIE: isOldIE,
-        isBindingVisibilityChange: !!(os.ios && parseInt(os.version.major, 10) > 6),
-        hardwareAccelStyle: isTransformEnabled ? exports.TRANSFORM + ':translate3d(0,0,0);' : ''
+        isBindingVisibilityChange:
+            !!(os.ios && parseInt(os.version.major, 10) > 6),
+        hardwareAccelStyle:
+            isTransformEnabled ?
+                exports.TRANSFORM + ':translate3d(0,0,0);' : ''
     };
 })(window.slide = (typeof slide === 'undefined') ? {} : slide);
 
 /*global Class: true, slide: true */
 (function (exports) {
     "use strict";
+
+    var util = exports.util;
 
     /**
      * slide 를 위한 데이터소스 delegate
@@ -1131,7 +1134,7 @@
             this._setDelegate(_option);
         },
         _setDelegate: function(option) {
-            exports.util.setDelegates(this, option.delegate);
+            util.setDelegates(this, option.delegate);
         },
 
         /**
@@ -1251,13 +1254,13 @@
             }
         },
         _callNextData: function() {
-            var promise = new exports.util.promise();
+            var promise = util.promise();
             this.willQueryEndOfDataDelegate(promise.resolve);
 
             return promise;
         },
         _callPrevData: function() {
-            var promise = new exports.util.promise();
+            var promise = util.promise();
             this.willQueryFirstOfDataDelegate(promise.resolve);
 
             return promise;
@@ -1268,7 +1271,7 @@
                 var data = this.data[index + i] || exports.EMPTY;
                 dataset.push(data);
             }
-            return new exports.util.promise().resolve(dataset);
+            return util.promise().resolve(dataset);
         },
         /**
          * 해당 클래스의 인스턴스 삭제시 할당된 오브젝트들을 destroy 시킨다.
@@ -1285,6 +1288,8 @@
 /*global Class: true, slide: true */
 (function (exports) {
     "use strict";
+
+    var util = exports.util;
 
     /**
      * slide 를 위한 데이터소스 delegate.
@@ -1313,7 +1318,7 @@
                 var data = this.data[_index] || exports.EMPTY;
                 dataset.push(data);
             }
-            return new exports.util.promise().resolve(dataset);
+            return util.promise().resolve(dataset);
         }
     });
 
@@ -1326,6 +1331,8 @@
     'use strict';
 
     var EMPTY = '&nbsp;';
+
+    var util = exports.util;
 
     /**
      * @class Element
@@ -1355,7 +1362,6 @@
         },
         draw: function(data) {
             var el = this.el;
-            var util = exports.util;
             if(util.isDOMElement(data)) {
                 el.innerHTML = '';
                 el.appendChild(data);
@@ -1376,6 +1382,8 @@
 /* global slide:true, Class: true, gesture: true */
 (function (exports) {
     'use strict';
+
+    var util = exports.util;
 
     /**
      * 새로운 Panel을 생성/초기화 한다.
@@ -1412,7 +1420,7 @@
          * @param data {HTMLElement}
          */
         render: function (data) {
-            var content, util = exports.util;
+            var content;
             if(util.isObject(data)) {
                 content = util.isFunction(data.toHTML) ?
                     data.toHTML(this, this.slide) : data.content;
@@ -1439,6 +1447,8 @@
     'use strict';
 
     var slideInstanceNum = 0;
+
+    var util = exports.util;
 
     /**
      * #### 새로운 Container를 생성/초기화 한다.
@@ -1543,7 +1553,7 @@
         },
 
         getPanel: function(index) {
-            if(!exports.util.isNumber(index)) {
+            if(!util.isNumber(index)) {
                 return;
             }
 
@@ -1587,6 +1597,8 @@
 
 (function(exports) {
     'use strict';
+
+    var util = exports.util;
 
     exports.BasicController = Class.extend({
         init: function(slide, option) {
@@ -1716,12 +1728,12 @@
         },
         queryAnimationStatus: function(type, movedCount) {
             var slide = this.slide;
-            var _movedCount = exports.util.isNumber(movedCount) ?
+            var _movedCount = util.isNumber(movedCount) ?
                 movedCount : slide.panelsToSlide;
 
             if(type === exports.CANCEL || _movedCount === 0) {
                 var cancel = this.createAnimationStatus(exports.CANCEL, []);
-                return new exports.util.promise().resolve(cancel);
+                return util.promise().resolve(cancel);
             }
 
             var self = this;
@@ -1844,11 +1856,13 @@
 
     var DURATION = 200;
 
+    var util = exports.util;
+
     exports.TransformAnimator = Class.extend({
         init: function(slide, option) {
             this.slide = slide;
 
-            this.duration = exports.util.toNumber(option.duration, DURATION);
+            this.duration = util.toNumber(option.duration, DURATION);
 
             this.basePosition = {};
             this.prevPosition = {};
@@ -1861,7 +1875,7 @@
 
         bindTransitionEvent: function () {
             var self = this;
-            exports.util.on(this.slide.container.el, 'webkitTransitionEnd', function() {
+            util.on(this.slide.container.el, 'webkitTransitionEnd', function() {
                 self.timeId = window.setTimeout(function _forceComplete(){
                     self.animateComplete(self.slideTimeId);
                 }, 50);
@@ -1960,7 +1974,7 @@
         },
 
         animateSlidePosition: function(position) {
-            this.promise = new exports.util.promise();
+            this.promise = util.promise();
 
             this.setTransitionDuration(this.duration);
             this.moveSlidePosition(position);
@@ -1982,6 +1996,8 @@
 }(window.slide = (typeof slide === 'undefined') ? {} : slide));
 (function(exports) {
     'use strict';
+
+    var util = exports.util;
 
     exports.SimpleAnimator = exports.TransformAnimator.extend({
         bindTransitionEvent: function () {
@@ -2007,7 +2023,7 @@
             }
         },
         animateSlidePosition: function(position) {
-            this.promise = new exports.util.promise();
+            this.promise = util.promise();
             this.moveSlidePosition(position);
             this.animateComplete();
 
@@ -2023,6 +2039,8 @@
 
     var SLIDE_RESIZE_DELAY_TIME = 200; //200ms
 
+    var util = exports.util;
+
     exports.Screen = Class.extend({
         init: function(el) {
             this.el = el;
@@ -2036,8 +2054,10 @@
             this.bindResize();
 
             /**
-             * ios webapp : 다른 탭에서 orientation 발생시 제대로 사이즈 체크 안되는 버그가 존재.
-             *              현재 탭으로 복귀시 발생하는 visivlityChange 이벤트 발생(ios7 이상)시 강제로 리사이즈 체크.
+             * ios webapp : 다른 탭에서 orientation 발생시 제대로
+             * 사이즈 체크 안되는 버그가 존재.
+             * 현재 탭으로 복귀시 발생하는 visivlityChange
+             * 이벤트 발생(ios7 이상)시 강제로 리사이즈 체크.
              */
             if (exports.config.isBindingVisibilityChange) {
                 this.bindVisibilityChange();
@@ -2046,7 +2066,7 @@
         bindResize: function() {
             this.resizeTimeId = null;
             this._onResizeEvent = this.onResizeEvent.bind(this);
-            exports.util.on(window, 'resize', this._onResizeEvent);
+            util.on(window, 'resize', this._onResizeEvent);
         },
         onResizeEvent: function () {
             window.clearTimeout(this.resizeTimeId);
@@ -2063,16 +2083,16 @@
          */
         bindVisibilityChange: function () {
             var hidden, visibilityChange;
-            if (typeof document.hidden !== "undefined") {
-                hidden = "hidden";
-                visibilityChange = "visibilitychange";
-            } else if (typeof document.webkitHidden !== "undefined") {
-                hidden = "webkitHidden";
-                visibilityChange = "webkitvisibilitychange";
+            if (typeof document.hidden !== 'undefined') {
+                hidden = 'hidden';
+                visibilityChange = 'visibilitychange';
+            } else if (typeof document.webkitHidden !== 'undefined') {
+                hidden = 'webkitHidden';
+                visibilityChange = 'webkitvisibilitychange';
             }
 
             var self = this;
-            exports.util.on(document, visibilityChange, function handleVisibilityChange() {
+            util.on(document, visibilityChange, function handleVisibilityChange() {
                 if (!document[hidden]) {
                     self.checkAndResizeSlideFrame();
                 }
@@ -2126,7 +2146,7 @@
         },
 
         destroy: function() {
-            exports.util.off(window, 'resize', this._onResizeEvent);
+            util.off(window, 'resize', this._onResizeEvent);
         }
     });
 }(window.slide = (typeof slide === 'undefined') ? {} : slide));
@@ -2143,7 +2163,9 @@
     var PANEL_WIDTH = 300;
     var GESTURE_THRESHOLD = 10;
 
-    exports.Slide = exports.Observable.extend({
+    var util = exports.util;
+
+    exports.Slide = exports.Observer.extend({
         init: function (frameEl, dataSource, option) {
             this.frameEl = frameEl;
             this.datasource = dataSource;
@@ -2164,20 +2186,19 @@
             this.isCenterAligned = option.isCenterAligned || false;
             this.isAutoAligned = !this.isCenterAligned && (this.panelType === exports.FIXED);
 
-            var toNumber = exports.util.toNumber;
-            this.threshold = toNumber(option.threshold, SLIDE_THRESHOLD);
-            this.gestureRatio = toNumber(option.gestureRatio, GESTURE_RATIO);
-            this.panelsToSlide = toNumber(option.panelsToSlide, PANELS_TO_SLIDE);
+            this.threshold = util.toNumber(option.threshold, SLIDE_THRESHOLD);
+            this.gestureRatio = util.toNumber(option.gestureRatio, GESTURE_RATIO);
+            this.panelsToSlide = util.toNumber(option.panelsToSlide, PANELS_TO_SLIDE);
 
             this.frameWidth = this.screen.width;
             this.frameHeight = this.screen.height;
 
             if(this.panelType === exports.DIVIDED) {
-                var panelsToShow = toNumber(option.panelsToShow, PANELS_TO_SHOW);
+                var panelsToShow = util.toNumber(option.panelsToShow, PANELS_TO_SHOW);
                 this._setDividedPanelWidth(panelsToShow);
 
             } else {
-                var panelWidth = toNumber(option.panelWidth, PANEL_WIDTH);
+                var panelWidth = util.toNumber(option.panelWidth, PANEL_WIDTH);
                 this._setFixedPanelWidth(panelWidth);
             }
 
@@ -2200,7 +2221,6 @@
         },
 
         _setDelegate: function(option) {
-            var util = exports.util;
             var delegate = option.delegate;
             var controller = this.controller;
             var scopes = [controller, controller.animator, controller.updater];
@@ -2219,7 +2239,7 @@
             });
         },
         _bindGestureEvent: function (option) {
-            var threshold = exports.util.toNumber(option.gestureThreshold, GESTURE_THRESHOLD);
+            var threshold = util.toNumber(option.gestureThreshold, GESTURE_THRESHOLD);
             var listener = this.listener = new gesture.Listener(this.frameEl, {
                 threshold: threshold
             });
@@ -2229,7 +2249,7 @@
                 self.emit('startDrag', session);
             });
             listener.on('swipe', function(session) {
-                exports.util.preventDefault(session.targetEvent);
+                util.preventDefault(session.targetEvent);
                 self.onSwipe(session);
                 self.emit('drag', session);
             });
@@ -2317,10 +2337,6 @@
     });
 })(window.slide = (typeof slide === 'undefined') ? {} : slide);
 
-/*jshint browser: true
-*/
-/*global slide:true, Class, gesture, clay, util, dongtl*/
-
 (function(exports){
     'use strict';
 
@@ -2335,4 +2351,4 @@
     }
 
     exports.Updater = exports.BasicUpdater;
-}(window.slide = (typeof slide === 'undefined') ? {} : slide));
+} (window.slide = (typeof slide === 'undefined') ? {} : slide));

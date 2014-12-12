@@ -1,0 +1,9 @@
+{
+  "name": "slide-bower-dependency",
+  "version": "0.0.0",
+  "dependencies": {
+    "simple-inheritance": "*",
+    "simple-observer": "*",
+    "simple-event": "*"
+  }
+}

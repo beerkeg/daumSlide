@@ -7,9 +7,9 @@
         ___) |            |__/                         
         \____/                                         
 
-  Version   : 2.0.0-pre13
-  Copyright : 2014-10-21
-  Author    : HTML5 tech team, Daum corp
+  Version   : 2.0.0-pre14
+  Copyright : 2014-12-11
+  Author    : HTML5 Cell, daumkakao corp
 
 */
 /*global daumtools:true, Class:true, gesture:true*/
@@ -46,19 +46,18 @@
 
     var util = exports.util = {};
     try {
-        var eventUtil = window.daumtools.event;
+        var eventUtil = window.DOMEvent;
         
         util.on = eventUtil.on;
         util.off = eventUtil.off;
         util.preventDefault = eventUtil.preventDefault;
         util.stopPropagation = eventUtil.stopPropagation;
-        util.extend = window.daumtools.extend;
     } catch(e) {
         throw new Error("Not found : event and extend");
     }
-    exports.Class = window.Class || (window.daumtools && window.daumtools.Class);
-    exports.Observable = window.Observer || window.Observable || (window.daumtools && window.daumtools.Observable);
-    if (!exports.Class || !exports.Observable) {
+    exports.Class = window.Class;
+    exports.Observer = window.Observer;
+    if (!exports.Class || !exports.Observer) {
        new Error("Not found : Class & Observable");
     }
 
@@ -151,17 +150,16 @@
     "use strict";
 
     var util = exports.util;
-
-    var DEFAULT_OPTION = {
-        threshold: 10
-    };
+    var THRESHOLD = 10;
 
     var EVENT = exports.EVENT,
         TYPE = exports.TYPE;
 
-    exports.Listener = exports.Observable.extend({
+    exports.Listener = exports.Observer.extend({
         init: function(el, option) {
-            this.option = util.extend(option, DEFAULT_OPTION);
+            var _option = option || {};
+
+            this.threshold = _option.threshold || THRESHOLD;
             this.session = null;
             this.el = el;
 
@@ -193,7 +191,7 @@
                 return;
             }
 
-            this.session = new exports.Session(e, this.option.threshold);
+            this.session = new exports.Session(e, this.threshold);
             this._fireStartEvent(this.session);
             this._bindExtraGestureEvent();
         },
