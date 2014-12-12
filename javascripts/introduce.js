@@ -276,8 +276,7 @@
         var elCase = document.querySelectorAll('.wrapper .slide_frame');
         var elPrev = document.querySelectorAll('.wrapper .prev');
         var elNext = document.querySelectorAll('.wrapper .next');
-
-
+        
         launchDefaultCase(elCase[0], elPrev[0], elNext[0]);
         launchDividedCase(elCase[1], elPrev[1], elNext[1]);
         launchFixedCase(elCase[2], elPrev[2], elNext[2]);

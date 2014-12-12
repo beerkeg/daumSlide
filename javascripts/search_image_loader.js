@@ -46,7 +46,7 @@
                             panel.el.appendChild(img);
                         };
                         img.ondragstart = function(e) {
-                            daumtools.event.preventDefault(e);
+                            DOMEvent.preventDefault(e);
                         };
 
                         return '<div class="spinner"></div>';

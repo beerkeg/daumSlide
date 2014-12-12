@@ -13,7 +13,7 @@
 <body>
 
 <header class="document">
-    <h1>Daum Slide 2.0</h1>
+    <h1>Slide 2.0</h1>
     <a class="link_header icon_github" href="https://github.daumkakao.com/HTML5Tech/slide">
         <span class="screen_out">github</span>
     </a>
@@ -135,17 +135,19 @@ var sl = new slide.Slide(frameEl, datasource, {
             <button type="button" class="btn next">next</button>
         </div>
         <pre class="prettyprint">
-var ExtendedDataSource = slide.DataSource.extend({
-    willQueryEndOfDataDelegate: function (callback) {
-        var self = this;
-        loader.load(function (builded) {
-            self.addNextData(builded);
-            callback(true);
-        });
+var dsOption = {
+    delegate: {
+        willQueryEndOfDataDelegate: function (callback) {
+            var self = this;
+            loader.load(function (builded) {
+                self.addNextData(builded);
+                callback(true);
+            });
+        }
     }
-});
-var dataousrce = new ExtendedDataSource(images);
-var sl = new slide.Slide(frameEl, dataousrce, {
+};
+var datasource = new slide.DataSource(images, dsOption);
+var sl = new slide.Slide(frameEl, datasource, {
     panelType: slide.FIXED,
     panelWidth: 150,
     isCenterAligned: true
