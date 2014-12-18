@@ -11,7 +11,7 @@ module.exports = function(grunt) {
                 dest: 'javascripts/external/gesture.js'
             },
             slide: {
-                url: 'http://s1.daumcdn.net/svc/attach/U03/cssjs/slide/slide-2.0.0-pre22.merged.js',
+                url: 'http://s1.daumcdn.net/svc/attach/U03/cssjs/slide/slide-2.0.0-pre23.merged.js',
                 dest: 'javascripts/external/slide.js'
             }
         },
@@ -35,9 +35,11 @@ module.exports = function(grunt) {
                     '<%= bower.install.options.targetDir %>/simple-event/event.js',
                     '<%= remotefile.ua_parser.dest %>',
                     '<%= remotefile.gesture.dest %>',
-                    '<%= remotefile.slide.dest %>'
+                    '<%= remotefile.slide.dest %>',
+                    'javascripts/search_image_loader.js',
+                    'javascripts/introduce.js'
                 ],
-                dest: 'javascripts/external/external.merged.js',
+                dest: 'javascripts/external.merged.js',
                 separator: "\n\n"
             }
         },
