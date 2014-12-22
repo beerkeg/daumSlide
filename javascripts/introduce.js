@@ -217,6 +217,49 @@
         });
     }
 
+    function launchResponsiveCase(elFrame, elPrev, elNext) {
+        var getScreenOption = function(width) {
+            var option = {};
+            if(width >= 600) {
+                option.panelType = slide.FIXED;
+                option.panelWidth = 300;
+
+            } else if (width >= 480) {
+                option.panelType = slide.DIVIDED;
+                option.panelsToShow = 3;
+
+            } else {
+                option.panelType = slide.DIVIDED;
+                option.panelsToShow = 1;
+            }
+
+            return option;
+        };
+
+        var slideOption = getScreenOption(elFrame.clientWidth);console.log(slideOption);
+
+        var ds = new slide.InfiniteDataSource(numbers);
+        var sl = new slide.Slide(elFrame, ds, slideOption);
+
+        sl.on('resize', function(width, height) {
+            var option = getScreenOption(width);
+            var keys = Object.keys(option);
+            keys.forEach(function(key) {
+                sl[key] = option[key];
+            });
+
+            console.log(option)
+            sl.controller.resize(width, height);
+        });
+
+        elPrev.addEventListener('click', function() {
+            sl.prev();
+        });
+        elNext.addEventListener('click', function() {
+            sl.next();
+        });
+    }
+
     function launchCustomAnimationCase(elFrame, elPrev, elNext) {
         var ds = new slide.InfiniteDataSource(numbers);
         var sl = new slide.Slide(elFrame, ds, {
@@ -286,6 +329,7 @@
         launchAppendCase(elCase[6], elPrev[6], elNext[6]);
         launchUserSetting(elCase[7], elPrev[7], elNext[7]);
         launchCustomEventCase(elCase[8], elPrev[8], elNext[8]);
-        launchCustomAnimationCase(elCase[9], elPrev[9], elNext[9]);
+        launchResponsiveCase(elCase[9], elPrev[9], elNext[9]);
+        launchCustomAnimationCase(elCase[10], elPrev[10], elNext[10]);
     }
 }(window));

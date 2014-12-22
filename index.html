@@ -8,6 +8,11 @@
     <title>introduce slide</title>
     <link href='https://fonts.googleapis.com/css?family=Damion' rel='stylesheet' type='text/css'>
     <link href="stylesheets/introduce.css" rel="stylesheet" type='text/css'>
+
+    <!--[if lt IE 9]>
+    <script src="http://s1.daumcdn.net/svc/original/U03/cssjs/es-shims/es5-shim-4.0.3.min.js"></script>
+    <![endif]-->
+
 </head>
 <body>
 
@@ -223,6 +228,27 @@ sl.on('resize', function() {
         </pre>
     </article>
     <article>
+        <h3>Responsive<a href="https://github.daumkakao.com/HTML5Tech/slide/wiki/Events" class="link_icon link_article">wiki</a></h3>
+        <div class="wrapper case_responsive">
+            <div class="slide_frame"></div>
+            <button type="button" class="btn prev">prev</button>
+            <button type="button" class="btn next">next</button>
+        </div>
+        <pre class="prettyprint">
+var sl = new slide.Slide(elFrame, ds);
+
+sl.on('prev', function() {
+    setEventText('prev');
+});
+sl.on('next', function() {
+    setEventText('next');
+});
+sl.on('resize', function() {
+    setEventText('resize');
+});
+        </pre>
+    </article>
+    <article>
         <h3>Custom Animation<a href="https://github.daumkakao.com/HTML5Tech/slide/wiki/Practice#5-3d-%ED%81%90%EB%B8%8C-%EC%97%90%EB%8B%88%EB%A9%94%EC%9D%B4%EC%85%98-delegate" class="link_icon link_article">wiki</a></h3>
         <div class="wrapper case_custom_animation">
             <div class="slide_frame"></div>
@@ -242,7 +268,14 @@ var sl = new slide.Slide(elFrame, ds, {
 <footer></footer>
 
 <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
-<script src="javascripts/external.min.js"></script>
-<!--<script src="javascripts/external.merged.js"></script>-->
+<!--<script src="javascripts/external.min.js"></script>-->
+<script src="dist/dependency/simple-inheritance/class.js"></script>
+<script src="dist/dependency/simple-observer/observer.js"></script>
+<script src="dist/dependency/simple-event/event.js"></script>
+<script src="javascripts/external/ua_parser.js"></script>
+<script src="javascripts/external/gesture.js"></script>
+<script src="javascripts/external/slide.js"></script>
+<script src="javascripts/search_image_loader.js"></script>
+<script src="javascripts/introduce.js"></script>
 </body>
 </html>
