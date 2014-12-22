@@ -236,20 +236,25 @@
             return option;
         };
 
-        var slideOption = getScreenOption(elFrame.clientWidth);console.log(slideOption);
+        var slideOption = getScreenOption(elFrame.clientWidth);
 
         var ds = new slide.InfiniteDataSource(numbers);
         var sl = new slide.Slide(elFrame, ds, slideOption);
-
         sl.on('resize', function(width, height) {
-            var option = getScreenOption(width);
-            var keys = Object.keys(option);
-            keys.forEach(function(key) {
-                sl[key] = option[key];
-            });
+            if(width >= 600) {
+                sl.panelType = slide.FIXED;
+                sl.panelWidth = 300;
 
-            console.log(option)
-            sl.controller.resize(width, height);
+            } else if (width >= 480) {
+                sl.panelType = slide.DIVIDED;
+                sl.panelsToShow = 3;
+
+            } else {
+                sl.panelType = slide.DIVIDED;
+                sl.panelsToShow = 1;
+            }
+
+            sl.refresh();
         });
 
         elPrev.addEventListener('click', function() {
@@ -293,13 +298,16 @@
                     this.slide.perspectiveFactor + 'px) rotateY(' +
                     _deg + 'deg)');
                 },
-                resizePanels: function() {
+                redrawPanels: function() {
                     var _slide = this.slide;
                     var frameEl = this.slide.frameEl;
-                    frameEl.style[slide.PERSPECTIVE] = '1000px';
-                    frameEl.style[slide.TRANSFORM_STYLE] = 'preserve-3d';
+                    frameEl.style.perspective = '1000px';
+                    frameEl.style.webkitPerspective = '1000px';
+                    frameEl.style.transformStyle = 'preserve-3d';
+                    frameEl.style.webkitTransformStyle = 'preserve-3d';
 
-                    _slide.container.setStyle(slide.TRANSFORM_STYLE, 'preserve-3d');
+                    _slide.container.setStyle('transform-style', 'preserve-3d');
+                    _slide.container.setStyle('-webkit-transform-style', 'preserve-3d');
                     _slide.perspectiveFactor = this.slide.frameWidth / 2;
                     _slide.container.setPanelStyle('width', _slide.panelWidth + 'px');
                     this.animator.setDefaultSlidePosition();

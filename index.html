@@ -228,23 +228,29 @@ sl.on('resize', function() {
         </pre>
     </article>
     <article>
-        <h3>Responsive<a href="https://github.daumkakao.com/HTML5Tech/slide/wiki/Events" class="link_icon link_article">wiki</a></h3>
+        <h3>Responsive<a href="https://github.daumkakao.com/HTML5Tech/slide/wiki/Events#%EB%B0%98%EC%9D%91%ED%98%95" class="link_icon link_article">wiki</a></h3>
         <div class="wrapper case_responsive">
             <div class="slide_frame"></div>
             <button type="button" class="btn prev">prev</button>
             <button type="button" class="btn next">next</button>
         </div>
         <pre class="prettyprint">
-var sl = new slide.Slide(elFrame, ds);
+var sl = new slide.Slide(elFrame, ds, slideOption);
+sl.on('resize', function(width, height) {
+    if(width >= 600) {
+        sl.panelType = slide.FIXED;
+        sl.panelWidth = 300;
 
-sl.on('prev', function() {
-    setEventText('prev');
-});
-sl.on('next', function() {
-    setEventText('next');
-});
-sl.on('resize', function() {
-    setEventText('resize');
+    } else if (width >= 480) {
+        sl.panelType = slide.DIVIDED;
+        sl.panelsToShow = 3;
+
+    } else {
+        sl.panelType = slide.DIVIDED;
+        sl.panelsToShow = 1;
+    }
+
+    sl.refresh();
 });
         </pre>
     </article>
