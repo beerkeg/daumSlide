@@ -243,7 +243,7 @@
         sl.on('resize', function(width, height) {
             if(width >= 600) {
                 sl.panelType = slide.FIXED;
-                sl.panelWidth = 300;
+                sl.panelWidth = 200;
 
             } else if (width >= 480) {
                 sl.panelType = slide.DIVIDED;

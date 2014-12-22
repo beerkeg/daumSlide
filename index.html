@@ -235,11 +235,11 @@ sl.on('resize', function() {
             <button type="button" class="btn next">next</button>
         </div>
         <pre class="prettyprint">
-var sl = new slide.Slide(elFrame, ds, slideOption);
+var sl = new slide.Slide(elFrame, ds);
 sl.on('resize', function(width, height) {
     if(width >= 600) {
         sl.panelType = slide.FIXED;
-        sl.panelWidth = 300;
+        sl.panelWidth = 200;
 
     } else if (width >= 480) {
         sl.panelType = slide.DIVIDED;
